@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->
-            $table->string('title');
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->text('title');
             $table->text('description');
-            $table->string('image');
-            $table->string('slug');
-            $table->string('status');
-            $table->$table->timestamps();
+            $table->string('image')->nullable();
+            $table->string('slug')->unique();
+            $table->string('status')->default(\App\Enums\PostStatus::PUBLISH->value);
+            $table->timestamps();
         });
     }
 
