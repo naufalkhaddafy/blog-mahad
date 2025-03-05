@@ -13,7 +13,7 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('Tags/Index');
     }
 
     /**

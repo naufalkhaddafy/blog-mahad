@@ -1,10 +1,18 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+} from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, Folder, FolderTree, LayoutGrid, Newspaper, Tags } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -12,6 +20,24 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         url: '/dashboard',
         icon: LayoutGrid,
+    },
+];
+
+const Post: NavItem[] = [
+    {
+        title: 'Blog',
+        url: '/post',
+        icon: Newspaper,
+    },
+    {
+        title: 'Kategori',
+        url: '/category',
+        icon: FolderTree,
+    },
+    {
+        title: 'Tag',
+        url: '/tag',
+        icon: Tags,
     },
 ];
 
@@ -44,7 +70,8 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={mainNavItems} title="Platform" />
+                <NavMain items={Post} title="Artikel" />
             </SidebarContent>
 
             <SidebarFooter>

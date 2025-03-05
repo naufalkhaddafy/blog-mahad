@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
@@ -13,7 +13,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+        return inertia('Categories/Index', [
+            'categories' => $categories
+        ]);
     }
 
     /**
@@ -27,9 +30,14 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(CategoryRequest $request)
     {
-        //
+        // dd($request);
+        Category::create($request->all());
+
+        flashMessage('Success', 'Berhasil menambahkan kategori');
+
+        return back();
     }
 
     /**
@@ -51,9 +59,11 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(CategoryRequest $request, Category $category)
     {
-        //
+        $category->update($request->all());
+        flashMessage("Success", "Berhasil merubah data $category->name");
+        return back();
     }
 
     /**
@@ -61,6 +71,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        flashMessage("Success", "Berhasil menghapus data kategori $category->name");
     }
 }
