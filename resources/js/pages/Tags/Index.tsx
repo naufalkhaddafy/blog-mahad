@@ -16,7 +16,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
-import { columns } from './Partials/Colomns';
+import { columns } from './Partials/Columns';
 import { TagForm, TagProps } from './Partials/Type';
 
 const breadcrumbs: BreadcrumbItem[] = [
