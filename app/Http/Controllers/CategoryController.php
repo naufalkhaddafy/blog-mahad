@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Inertia\Inertia;
 
@@ -13,9 +14,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
         return inertia('Categories/Index', [
-            'categories' => $categories
+            'categories' => CategoryResource::collection(Category::with('posts')->get()),
         ]);
     }
 

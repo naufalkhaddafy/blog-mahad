@@ -103,7 +103,7 @@ export const ModalDeleteCategory = ({ category }: { category: Category }) => {
                     </DialogClose>
                     <Button variant="destructive" asChild>
                         <button onClick={() => deleteCategory(category)} disabled={processing}>
-                            Delete account
+                            Delete
                         </button>
                     </Button>
                 </DialogFooter>

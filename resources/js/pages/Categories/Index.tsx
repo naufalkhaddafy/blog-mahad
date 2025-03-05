@@ -37,7 +37,6 @@ export default function Index({ categories }: { categories: Array<Category> }) {
             onFinish: () => reset(),
         });
     };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Kategori Blog" />

@@ -46,6 +46,11 @@ export const columns: ColumnDef<Category>[] = [
         cell: ({ row }) => <div className="px-2">{row.getValue('name')}</div>,
     },
     {
+        accessorKey: 'count_posts',
+        header: 'Artikel Terkait',
+        cell: ({ row }) => <div className="capitalize">{row.getValue('count_posts')}</div>,
+    },
+    {
         id: 'actions',
         enableHiding: false,
         cell: ({ row }) => {
