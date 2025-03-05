@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use App\Http\Requests\StoreTagRequest;
+use App\Http\Requests\TagRequest;
 use App\Http\Requests\UpdateTagRequest;
+use App\Http\Resources\TagResource;
 
 class TagController extends Controller
 {
@@ -13,7 +15,9 @@ class TagController extends Controller
      */
     public function index()
     {
-        return inertia('Tags/Index');
+        return inertia('Tags/Index', [
+            "tags" => TagResource::collection(Tag::with('posts')->get()),
+        ]);
     }
 
     /**
@@ -27,9 +31,11 @@ class TagController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTagRequest $request)
+    public function store(TagRequest $request)
     {
-        //
+        Tag::create($request->all());
+        flashMessage("Success", " Berhasil menambahkan Tag $request->name");
+        return back();
     }
 
     /**
@@ -51,9 +57,12 @@ class TagController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTagRequest $request, Tag $tag)
+    public function update(TagRequest $request, Tag $tag)
     {
-        //
+        $tag->update($request->all());
+
+        flashMessage('Success', "Berhasil mengubah Tag $tag->name");
+        return back();
     }
 
     /**
@@ -61,6 +70,8 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        $tag->delete();
+        flashMessage('Success', "Berhasil menghapus Tag $tag->name");
+        return back();
     }
 }

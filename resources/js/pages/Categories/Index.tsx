@@ -15,8 +15,8 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { DataTable } from '../../components/DataTable';
 import { columns } from './Partials/Columns';
-import { DataTable } from './Partials/DataTable';
 import { Category, CategoryForm } from './Partials/Type';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -49,7 +49,9 @@ export default function Index({ categories }: { categories: Array<Category> }) {
                             <Card className="w-full">
                                 <CardHeader>
                                     <CardTitle>Tambah Kategori</CardTitle>
-                                    <CardDescription>kategori untuk postingan blog</CardDescription>
+                                    <CardDescription>
+                                        Kategori untuk mengkelompokan postingan blog
+                                    </CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid w-full items-center gap-4">
