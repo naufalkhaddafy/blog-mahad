@@ -18,6 +18,7 @@ class TagSeeder extends Seeder
             ["name" => "Fiqih"],
             ["name" => "Muamalah"],
             ["name" => "Pemuda"],
+            ["name" => "Tafsir"],
 
         ];
 
