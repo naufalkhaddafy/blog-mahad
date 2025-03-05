@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
 use App\Models\Post;
+use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,9 +19,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('dashboard');
 
-    Route::resource('category', CategoryController::class);
+    Route::resource('category', CategoryController::class)->except('show', 'edit', 'create');
     Route::resource('post', PostController::class);
-    Route::resource('tag', TagController::class);
+    Route::resource('tag', TagController::class)->except('show', 'edit', 'create');
 });
 
 
