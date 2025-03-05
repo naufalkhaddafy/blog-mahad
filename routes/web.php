@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
+use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -12,7 +13,9 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        return inertia('dashboard', [
+            'posts' => count(Post::all()),
+        ]);
     })->name('dashboard');
 
     Route::resource('category', CategoryController::class);

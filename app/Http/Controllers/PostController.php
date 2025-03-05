@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\PostResource;
 
 class PostController extends Controller
 {
@@ -13,7 +14,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        return inertia('Posts/Index');
+        return inertia('Posts/Index', [
+            'posts' => PostResource::collection(Post::with('tags', 'category', 'user')->get()),
+        ]);
     }
 
     /**
