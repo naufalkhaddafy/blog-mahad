@@ -18,9 +18,10 @@ class CategorySeeder extends Seeder
             ["name" => "Artikel"],
             ["name" => "Tanya Jawab"],
             ["name" => "Info Taklim"],
+            ["name" => "Poster"],
 
         ];
-        
+
         collect($data)->each(function ($d) {
             Category::create($d);
         });
