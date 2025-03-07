@@ -27,14 +27,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({ categories }: { categories: Array<Category> }) {
-    const { data, setData, post, processing, errors } = useForm<CategoryForm>({
+    const { data, setData, post, processing, errors, reset } = useForm<CategoryForm>({
         name: '',
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('category.store'), {
-            // onFinish: () => reset(),
+            onFinish: () => reset(),
         });
     };
     return (
