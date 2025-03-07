@@ -20,7 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('category', CategoryController::class)->except('show', 'edit', 'create');
-    Route::resource('post', PostController::class);
+    Route::resource('posts', PostController::class);
     Route::resource('tag', TagController::class)->except('show', 'edit', 'create');
 });
 

@@ -11,6 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { PostProps } from './Type';
@@ -81,6 +82,13 @@ export const columns: ColumnDef<PostProps>[] = [
         },
     },
     {
+        accessorKey: 'created_at',
+        header: 'Tanggal dibuat',
+        cell: ({ row }) => {
+            return <div>{row.getValue('created_at')} </div>;
+        },
+    },
+    {
         accessorKey: 'tags',
         header: 'Tags',
         cell: ({ row }) => {
@@ -88,12 +96,17 @@ export const columns: ColumnDef<PostProps>[] = [
             if (!Array.isArray(tags)) return <div>-</div>;
 
             return (
-                <div className="flex flex-wrap gap-1">
-                    {tags.map((tag) => (
-                        <span key={tag.id} className="rounded bg-gray-200 px-2 py-1 capitalize">
-                            {tag.name}
-                        </span>
-                    ))}
+                <div className="flex flex-wrap gap-1 text-black">
+                    {tags.length > 0
+                        ? tags.map((tag) => (
+                              <span
+                                  key={tag.id}
+                                  className="rounded bg-gray-200 px-2 py-1 capitalize"
+                              >
+                                  {tag.name}
+                              </span>
+                          ))
+                        : '-'}
                 </div>
             );
         },
@@ -124,8 +137,12 @@ export const columns: ColumnDef<PostProps>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={`/posts/${category.id}/edit`}>Edit</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            ModalPost
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

@@ -11,7 +11,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +21,34 @@ class StorePostRequest extends FormRequest
      */
     public function rules(): array
     {
+        dd($this->all());
         return [
-            //
+            'category_id' => ['required', 'exists:categories,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'status' => ['required', 'in:archived,publish,pending'],
+            'tags' => ['required', 'array'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'category_id.required' => 'Kategori tidak boleh kosong',
+            'category_id.exists' => 'Kategori tidak ditemukan',
+            'title.required' => 'Judul tidak boleh kosong',
+            'title.string' => 'Judul harus berupa teks',
+            'title.max' => 'Judul tidak boleh lebih dari 255 karakter',
+            'description.required' => 'Deskripsi tidak boleh kosong',
+            'description.string' => 'Deskripsi harus berupa teks',
+            'image.image' => 'File harus berupa gambar',
+            'image.mimes' => 'File harus berupa gambar dengan format jpeg, png, jpg, gif, atau svg',
+            'image.max' => 'Ukuran file tidak boleh lebih dari 2MB',
+            'status.required' => 'Status tidak boleh kosong',
+            'status.in' => 'Status tidak valid',
+            'tags.required' => 'Tag tidak boleh kosong',
+            'tags.array' => 'Tag harus berupa array',
         ];
     }
 }

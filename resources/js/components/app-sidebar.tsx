@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
 const Post: NavItem[] = [
     {
         title: 'Blog',
-        url: '/post',
+        url: '/posts',
         icon: Newspaper,
     },
     {

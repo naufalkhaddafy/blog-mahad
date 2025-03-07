@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-class PostResource extends JsonResource
+class FormResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,16 +17,17 @@ class PostResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "user" => $this->user->name,
-            "category" => $this->category->name,
+            "category_id" => $this->category->id,
             "title" => $this->title,
-            "description" => $this->name,
-            "image" => $this->image ? Storage::url($this->image) : null,
-            "slug" => $this->slug,
+            "description" => $this->description,
+            "image" =>  $this->image ? url(Storage::url($this->image))  : null,
             "status" => $this->status,
-            "tags" => $this->tags ?? [],
-            "created_at" => $this->created_at->format('d F Y, H:i'),
-
+            "tags" => $this->tags ? collect($this->tags)->map(function ($tag) {
+                return [
+                    'value' => $tag->id,
+                    'label' => $tag->name,
+                ];
+            }) : [],
         ];
     }
 }

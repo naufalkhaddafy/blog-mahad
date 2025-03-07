@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\FormResource;
+use App\Http\Resources\PostFormResource;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\TagListResource;
+use App\Models\Category;
+use App\Models\Tag;
 
 class PostController extends Controller
 {
@@ -15,7 +21,7 @@ class PostController extends Controller
     public function index()
     {
         return inertia('Posts/Index', [
-            'posts' => PostResource::collection(Post::with('tags', 'category', 'user')->get()),
+            'posts' => PostResource::collection(Post::with('tags', 'category', 'user')->latest()->get()),
         ]);
     }
 
@@ -24,7 +30,18 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Posts/Form', [
+            'posts' => new Post,
+            'page_settings' => [
+                'title' => 'Tambah Postingan',
+                'description' => 'Menambahkan postingan blog baru',
+                'url' => route('posts.store'),
+                'method' => 'POST',
+            ],
+            'categories' => Category::query()->select('id', 'name')->get(),
+            'tags' => TagListResource::collection(Tag::all()),
+            'status' => PostStatus::cases(),
+        ]);
     }
 
     /**
@@ -32,7 +49,21 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        //
+        $post = $request->user()->posts()->create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'image' => $request->image ? $request->file('image')->store('images/posts', 'public') : null,
+            'status' => $request->status,
+        ]);
+
+        $post->tags()->attach(collect($request->tags)->map(function ($tag) {
+            return $tag['value'];
+        }));
+
+        flashMessage('Success', 'Berhasil menambahkan postingan baru');
+
+        return back();
     }
 
     /**
@@ -48,15 +79,40 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return inertia('Posts/Form', [
+            'posts' => FormResource::make($post->load('tags', 'category')),
+            'page_settings' => [
+                'title' => 'Edit Postingan',
+                'description' => 'Mengubah postingan blog',
+                'url' => route('posts.update', $post),
+                'method' => 'PATCH',
+            ],
+            'categories' => Category::query()->select('id', 'name')->get(),
+            'tags' => TagListResource::collection(Tag::all()),
+            'status' => PostStatus::cases(),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(StorePostRequest $request, Post $post)
     {
-        //
+        $post->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'image' => $request->image ? $request->file('image')->store('images/posts', 'public') : null,
+            'status' => $request->status,
+        ]);
+
+        $post->tags()->sync(collect($request->tags)->map(function ($tag) {
+            return $tag['value'];
+        }));
+
+        flashMessage('Success', 'Berhasil mengubah postingan blog');
+
+        return back();
     }
 
     /**
