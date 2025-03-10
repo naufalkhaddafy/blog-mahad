@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\PostStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePostRequest extends FormRequest
 {
@@ -21,13 +23,14 @@ class StorePostRequest extends FormRequest
      */
     public function rules(): array
     {
-        dd($this->all());
+
+        $image = $this->route('post')?->image === $this->image ? '' : ['image', 'mimes:jpeg,png,jpg,gif,svg'];
         return [
             'category_id' => ['required', 'exists:categories,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'status' => ['required', 'in:archived,publish,pending'],
+            'image' => ['nullable', 'max:2048', $image],
+            'status' => ['required', Rule::in(PostStatus::cases())],
             'tags' => ['required', 'array'],
         ];
     }

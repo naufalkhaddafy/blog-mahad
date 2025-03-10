@@ -11,7 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { PostProps } from './Type';
@@ -100,10 +100,10 @@ export const columns: ColumnDef<PostProps>[] = [
                     {tags.length > 0
                         ? tags.map((tag) => (
                               <span
-                                  key={tag.id}
+                                  key={tag.value}
                                   className="rounded bg-gray-200 px-2 py-1 capitalize"
                               >
-                                  {tag.name}
+                                  {tag.label}
                               </span>
                           ))
                         : '-'}
@@ -124,8 +124,11 @@ export const columns: ColumnDef<PostProps>[] = [
         id: 'actions',
         enableHiding: false,
         cell: ({ row }) => {
-            const category = row.original;
+            const post = row.original;
 
+            const deletePost = (id?: number) => {
+                router.delete(route('posts.destroy', id));
+            };
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -138,10 +141,10 @@ export const columns: ColumnDef<PostProps>[] = [
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            <Link href={`/posts/${category.id}/edit`}>Edit</Link>
+                            <Link href={`/posts/${post.id}/edit`}>Edit</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            ModalPost
+                        <DropdownMenuItem onClick={() => deletePost(post.id)}>
+                            Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

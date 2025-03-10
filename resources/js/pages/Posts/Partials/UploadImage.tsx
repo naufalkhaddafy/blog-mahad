@@ -7,20 +7,19 @@ export default function UploadImage({
     errors,
     data,
 }: {
-    setData: any | null;
-    errors: any | null;
+    setData: any;
+    errors: any;
     data: string;
 }) {
     const [imagePreview, setImagePreview] = useState<string>(data || '');
-    // useEffect(() => {
-    //     if (typeof data === 'string') {
-    //         setData('image', null);
-    //     }
-    // }, []);
-
     const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setData('image', e.target.files[0]);
         setImagePreview(URL.createObjectURL(e.target.files[0]));
+    };
+
+    const fileDelete = () => {
+        setImagePreview('');
+        setData('image', null);
     };
 
     return (
@@ -29,7 +28,7 @@ export default function UploadImage({
                 <>
                     <div className="relative">
                         <button
-                            onClick={() => setImagePreview('')}
+                            onClick={fileDelete}
                             className="absolute top-0 right-0 mt-4 mr-4 flex h-7 w-7 items-center justify-center rounded-full bg-gray-900/50 px-2 py-1 text-xs text-white uppercase hover:bg-gray-900/70"
                         >
                             <XIcon className="h-6 w-6 stroke-2" />
@@ -49,7 +48,7 @@ export default function UploadImage({
                     )}
                 </>
             ) : (
-                <label htmlFor="picture" className="block">
+                <label htmlFor="image" className="block">
                     <div className="hover:border-primary-500 flex aspect-16/9 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-10 transition hover:bg-gray-100">
                         <div className="flex flex-col items-center justify-center">
                             <ImageUp className="inline h-6 w-6 stroke-[1.5] text-gray-400" />
@@ -60,8 +59,8 @@ export default function UploadImage({
                     <input
                         type="file"
                         onChange={onFileChange}
-                        name="picture"
-                        id="picture"
+                        name="image"
+                        id="image"
                         className="sr-only"
                     />
                 </label>

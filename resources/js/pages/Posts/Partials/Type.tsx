@@ -25,6 +25,7 @@ export type PostProps = {
     title: string;
     description: string;
     image: string;
+    imageSrc: string;
     slug: string;
     status: string;
     tags: number;

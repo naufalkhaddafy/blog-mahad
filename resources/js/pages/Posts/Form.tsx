@@ -15,7 +15,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/react'; // ✅ Import useForm dari Inertia
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { Category } from '../Categories/Partials/Type';
 import { PageSettingsProps, PostProps } from './Partials/Type';
 import UploadImage from './Partials/UploadImage';
@@ -40,7 +40,8 @@ type FormAddProps = {
 };
 
 export default function Form({ posts, page_settings, categories, tags, status }: FormAddProps) {
-    const { data, setData, post, patch, processing, errors, reset } = useForm({
+    const { errors } = usePage().props;
+    const { data, setData, reset, processing } = useForm({
         title: posts.title || '',
         category_id: posts.category_id || '',
         description: posts.description || '',
@@ -48,18 +49,23 @@ export default function Form({ posts, page_settings, categories, tags, status }:
         status: posts.status || '',
         tags: posts.tags || ([] as MultiSelectParams[]),
     });
-    
-    const methodType = page_settings.method.toLowerCase();
 
     function onSubmit(e: React.FormEvent) {
         e.preventDefault();
-        (methodType === 'post' ? post : patch)(page_settings.url, {
-            onSuccess: () => {
-                reset();
+        router.post(
+            page_settings.url,
+            {
+                _method: page_settings.method == 'POST' ? 'POST' : 'PATCH',
+                ...data,
             },
-        });
+            {
+                preserveScroll: true,
+                onSuccess: () => (page_settings.method == 'POST' ? reset() : ''),
+            },
+        );
     }
     console.log(data);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={page_settings.title} />
@@ -74,7 +80,7 @@ export default function Form({ posts, page_settings, categories, tags, status }:
                                         <Label htmlFor="image">Image</Label>
                                         <UploadImage
                                             setData={setData}
-                                            data={data.image}
+                                            data={posts.imageSrc}
                                             errors={errors.image}
                                         />
                                         <InputError className="mt-2" message={errors.image} />
