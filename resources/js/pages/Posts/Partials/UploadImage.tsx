@@ -7,14 +7,17 @@ export default function UploadImage({
     errors,
     data,
 }: {
-    setData: any;
-    errors: any;
+    setData: (field: string, value: File | null) => void;
+    errors: { image?: string };
     data: string;
 }) {
     const [imagePreview, setImagePreview] = useState<string>(data || '');
     const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setData('image', e.target.files[0]);
-        setImagePreview(URL.createObjectURL(e.target.files[0]));
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setData('image', file);
+        const objectUrl = URL.createObjectURL(file);
+        setImagePreview(objectUrl);
     };
 
     const fileDelete = () => {
