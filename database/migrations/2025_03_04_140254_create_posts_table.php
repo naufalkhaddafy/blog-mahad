@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('category_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->text('title');
-            $table->text('description');
+            $table->longText('description');
             $table->string('image')->nullable();
             $table->string('slug')->unique();
             $table->string('status')->default(\App\Enums\PostStatus::PUBLISH->value);
