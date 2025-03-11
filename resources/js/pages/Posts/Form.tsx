@@ -1,4 +1,5 @@
 'use client';
+import Editor from '@/components/Editor';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import MultiSelect, { MultiSelectParams } from '@/components/MultiSelect';
@@ -12,10 +13,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { CategoryProps } from '../Categories/Partials/Type';
 import { PageSettingsProps, PostProps } from './Partials/Type';
@@ -68,6 +69,8 @@ export default function Form({ posts, page_settings, categories, tags, status }:
             },
         );
     }
+
+    console.log(data);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={page_settings.title} />
@@ -163,11 +166,11 @@ export default function Form({ posts, page_settings, categories, tags, status }:
 
                                 <div className="gap-2 xl:col-span-4">
                                     <Label htmlFor="description">Deskripsi</Label>
-                                    <Textarea
-                                        className="h-100"
-                                        id="description"
-                                        value={data.description}
-                                        onChange={(e) => setData('description', e.target.value)}
+                                    <Editor
+                                        content={data.description}
+                                        setContent={(newContent) =>
+                                            setData('description', newContent)
+                                        }
                                     />
                                     <InputError className="mt-2" message={errors.description} />
                                 </div>
@@ -176,7 +179,10 @@ export default function Form({ posts, page_settings, categories, tags, status }:
                             <div className="mt-3 py-7">
                                 <Button disabled={processing} asChild className="cursor-pointer">
                                     <button type="submit">
-                                        {processing ? 'Loading...' : 'Simpan'}
+                                        {processing && (
+                                            <LoaderCircle className="h-4 w-4 animate-spin" />
+                                        )}
+                                        Simpan
                                     </button>
                                 </Button>
                             </div>
