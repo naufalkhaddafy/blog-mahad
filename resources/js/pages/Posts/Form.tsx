@@ -16,7 +16,8 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { Category } from '../Categories/Partials/Type';
+import { useState } from 'react';
+import { CategoryProps } from '../Categories/Partials/Type';
 import { PageSettingsProps, PostProps } from './Partials/Type';
 import UploadImage from './Partials/UploadImage';
 
@@ -34,14 +35,15 @@ const breadcrumbs: BreadcrumbItem[] = [
 type FormAddProps = {
     posts: PostProps;
     page_settings: PageSettingsProps;
-    categories: Array<Category>;
+    categories: Array<CategoryProps>;
     tags: Array<MultiSelectParams>;
     status: Array<number>;
 };
 
 export default function Form({ posts, page_settings, categories, tags, status }: FormAddProps) {
     const { errors } = usePage().props;
-    const { data, setData, reset, processing } = useForm({
+    const [processing, setProcessing] = useState<boolean>();
+    const { data, setData, reset } = useForm({
         title: posts.title || '',
         category_id: posts.category_id || '',
         description: posts.description || '',
@@ -60,7 +62,9 @@ export default function Form({ posts, page_settings, categories, tags, status }:
             },
             {
                 preserveScroll: true,
+                onStart: () => setProcessing(true),
                 onSuccess: () => (page_settings.method == 'POST' ? reset() : ''),
+                onFinish: () => setProcessing(false),
             },
         );
     }
