@@ -14,9 +14,9 @@ import { Label } from '@/components/ui/label';
 import { useForm } from '@inertiajs/react';
 import { PencilIcon, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { Category } from './Type';
+import { CategoryProps } from './Type';
 
-export const ModalEditCategory = ({ category }: { category: Category }) => {
+export const ModalEditCategory = ({ category }: { category: CategoryProps }) => {
     const { data, setData, patch, processing, errors } = useForm({
         name: category.name || '',
     });
@@ -72,13 +72,13 @@ export const ModalEditCategory = ({ category }: { category: Category }) => {
     );
 };
 
-export const ModalDeleteCategory = ({ category }: { category: Category }) => {
+export const ModalDeleteCategory = ({ category }: { category: CategoryProps }) => {
     const { delete: destroy, processing } = useForm({
         id: category.id || '',
     });
     const [open, setOpen] = useState<boolean>(false);
 
-    const deleteCategory = (category: Category) => {
+    const deleteCategory = (category: CategoryProps) => {
         destroy(route('category.destroy', category.id), {
             preserveScroll: true,
             onSuccess: () => setOpen(false),

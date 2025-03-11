@@ -1,8 +1,4 @@
-export type Category = {
-    id: number;
-    name: string;
-};
-
-export type CategoryForm = {
+export type CategoryProps = {
+    id?: number;
     name: string;
 };

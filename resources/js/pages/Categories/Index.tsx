@@ -17,7 +17,7 @@ import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import { DataTable } from '../../components/DataTable';
 import { columns } from './Partials/Columns';
-import { Category, CategoryForm } from './Partials/Type';
+import { CategoryProps } from './Partials/Type';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,8 +26,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Index({ categories }: { categories: Array<Category> }) {
-    const { data, setData, post, processing, errors, reset } = useForm<CategoryForm>({
+export default function Index({ categories }: { categories: Array<CategoryProps> }) {
+    const { data, setData, post, processing, errors, reset } = useForm<CategoryProps>({
         name: '',
     });
 
