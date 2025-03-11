@@ -98,12 +98,9 @@ class PostController extends Controller
      */
     public function update(StorePostRequest $request, Post $post)
     {
-        // dd($post->image);
 
-        if ($request->hasFile('image') || $request->image === null) {
-            if (!empty($post->image) && Storage::exists($post->image)) {
-                Storage::delete($post->image);
-            }
+        if (($request->hasFile('image') || $request->image === null) && !empty($post->image) && Storage::disk('public')->exists($post->image)) {
+            Storage::disk('public')->delete($post->image);
         }
 
         $post->update([
@@ -128,7 +125,9 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        Storage::delete($post->image || '');
+        if (!empty($post->image) && Storage::disk('public')->exists($post->image)) {
+            Storage::disk('public')->delete($post->image);
+        }
 
         $post->delete();
 
