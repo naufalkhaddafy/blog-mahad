@@ -17,7 +17,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import { columns } from './Partials/Columns';
-import { TagForm, TagProps } from './Partials/Type';
+import { TagProps } from './Partials/Type';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -27,7 +27,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({ tags }: { tags: Array<TagProps> }) {
-    const { data, setData, post, processing, errors, reset } = useForm<TagForm>({
+    const { data, setData, post, processing, errors, reset } = useForm<TagProps>({
         name: '',
     });
 
