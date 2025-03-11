@@ -64,8 +64,6 @@ export default function Form({ posts, page_settings, categories, tags, status }:
             },
         );
     }
-    console.log(data);
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={page_settings.title} />
@@ -83,7 +81,6 @@ export default function Form({ posts, page_settings, categories, tags, status }:
                                             data={posts.imageSrc}
                                             errors={errors.image}
                                         />
-                                        <InputError className="mt-2" message={errors.image} />
                                     </div>
 
                                     <div>

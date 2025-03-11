@@ -8,7 +8,7 @@ export default function UploadImage({
     data,
 }: {
     setData: (field: string, value: File | null) => void;
-    errors: { image?: string };
+    errors?: string;
     data: string;
 }) {
     const [imagePreview, setImagePreview] = useState<string>(data || '');
@@ -24,7 +24,6 @@ export default function UploadImage({
         setImagePreview('');
         setData('image', null);
     };
-
     return (
         <div className="w-full">
             {imagePreview ? (
@@ -44,11 +43,7 @@ export default function UploadImage({
                             alt="Preview"
                         />
                     </div>
-                    {errors?.image && (
-                        <div className="mb-5">
-                            <InputError message={errors.image} />
-                        </div>
-                    )}
+                    <InputError className="mt-2" message={errors} />
                 </>
             ) : (
                 <label htmlFor="image" className="block">

@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
-use App\Http\Resources\FormPostResource;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\TagListResource;
 use App\Models\Category;
