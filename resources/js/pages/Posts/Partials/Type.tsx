@@ -28,5 +28,6 @@ export type PostProps = {
     imageSrc: string;
     slug: string;
     status: string;
-    tags: number;
+    created_at: string;
+    tags: { label: string; value: number }[];
 };

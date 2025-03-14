@@ -11,6 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getLimitTextContent } from '@/lib/utils';
 import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
@@ -74,9 +75,9 @@ export const columns: ColumnDef<PostProps>[] = [
             const category = row.original.category ?? 'No Category';
 
             return (
-                <div className="flex w-96 gap-1">
+                <div className="flex min-w-96 gap-1">
                     <Badge variant="outline">{category}</Badge>
-                    <span className="w-full">{title}</span>
+                    <span className="w-full">{getLimitTextContent(title, 70)}</span>
                 </div>
             );
         },
