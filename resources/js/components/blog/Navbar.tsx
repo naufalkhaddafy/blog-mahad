@@ -78,10 +78,10 @@ export const Navbar = () => {
                                         />
                                         {/* Dropdown */}
                                         <div
-                                            className={`absolute top-12 left-0 z-10 w-48 flex-col overflow-hidden rounded-md bg-white shadow-lg transition-all duration-300 ${
+                                            className={`absolute top-12 left-0 z-10 w-48 flex-col overflow-hidden rounded-md bg-white shadow-lg transition-all duration-500 ${
                                                 activeDropdown === index
-                                                    ? 'max-h-screen opacity-100'
-                                                    : 'max-h-0 opacity-0'
+                                                    ? 'max-h-screen'
+                                                    : 'max-h-0'
                                             }`}
                                         >
                                             {data.submenu.map((sub, subIndex) => (
