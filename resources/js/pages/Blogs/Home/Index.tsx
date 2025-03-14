@@ -104,7 +104,7 @@ const Index = ({ posts }: { posts: PostProps }) => {
                                                                 )}
                                                             </p>
                                                         </div>
-                                                        <div className="absolute flex flex-wrap gap-2 px-4 py-5 lg:px-6">
+                                                        <div className="absolute top-0 left-0 flex flex-wrap gap-2 px-4 py-5 lg:px-6">
                                                             {dataPost.tags.map(
                                                                 (dataTags, index) => (
                                                                     <span
