@@ -12,3 +12,5 @@ export const getLimitTextContent = (html: string, maxLength: number) => {
     if (stringText.length <= maxLength) return stringText;
     return stringText.substring(0, stringText.lastIndexOf(' ', maxLength)) + '...';
 };
+
+export const asset = (url: string) => `${window.location.origin}/${url}`;

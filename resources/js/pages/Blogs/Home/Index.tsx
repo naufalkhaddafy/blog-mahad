@@ -1,11 +1,9 @@
-import banner from '@/assets/banner.jpg';
-import banner2 from '@/assets/example2.png';
 import Badge from '@/components/blog/Badge';
 import { Container } from '@/components/Container';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import BlogLayout from '@/layouts/BlogLayout';
-import { getLimitTextContent } from '@/lib/utils';
+import { asset, getLimitTextContent } from '@/lib/utils';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { Head, Link } from '@inertiajs/react';
 import { Clock, Send } from 'lucide-react';
@@ -15,7 +13,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-const bannerData = [{ image: banner2 }, { image: banner }];
+const bannerData = [{ image: asset('assets/banner.jpg') }, { image: asset('assets/banner2.png') }];
 
 const Index = ({ posts }: { posts: PostProps[] }) => {
     return (
@@ -48,7 +46,7 @@ const Index = ({ posts }: { posts: PostProps[] }) => {
                     >
                         {bannerData.map((value, index) => (
                             <SwiperSlide key={index}>
-                                <div className="h-full bg-amber-200 text-center align-middle">
+                                <div className="h-full bg-green-400 text-center align-middle">
                                     <img
                                         src={value.image}
                                         alt=""

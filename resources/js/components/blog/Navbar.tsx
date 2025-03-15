@@ -1,4 +1,4 @@
-import Icon from '@/assets/icon.png';
+import { asset } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { ChevronDown, Menu, Search } from 'lucide-react';
 import { useState } from 'react';
@@ -40,7 +40,11 @@ export const Navbar = () => {
             <nav className="flex flex-wrap items-center justify-between bg-green-700 px-3 py-4">
                 <Link href="/">
                     <div className="flex items-center gap-3 lg:gap-4">
-                        <img src={Icon} alt="Icon" className="size-12 lg:size-16" />
+                        <img
+                            src={asset('assets/icon.png')}
+                            alt="Icon"
+                            className="size-12 lg:size-16"
+                        />
                         <div className="flex flex-col">
                             <h1 className="text-md font-semibold xl:text-lg">
                                 Yayasan Ibnu Katsir
