@@ -47,11 +47,13 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
+        $filename = $request->file('image') ? $request->title . '.' . $request->file('image')->getClientOriginalExtension() : $request->image;
+
         $post = $request->user()->posts()->create([
             'title' => $request->title,
             'description' => $request->description,
             'category_id' => $request->category_id,
-            'image' => $request->image ? $request->file('image')->store('images/posts', 'public') : null,
+            'image' => $request->image ? $request->file('image')->storeAs('images/posts', $filename, 'public') : null,
             'status' => $request->status,
         ]);
 
@@ -101,11 +103,13 @@ class PostController extends Controller
             Storage::disk('public')->delete($post->image);
         }
 
+        $filename = $request->file('image') ? $request->title . '.' . $request->file('image')->getClientOriginalExtension() : $request->image;
+
         $post->update([
             'title' => $request->title,
             'description' => $request->description,
             'category_id' => $request->category_id,
-            'image' => $request->file('image') ? $request->file('image')->store('images/posts', 'public') : $request->image,
+            'image' => $request->file('image') ? $request->file('image')->storeAs('images/posts', $filename, 'public') : $request->image,
             'status' => $request->status,
         ]);
 
