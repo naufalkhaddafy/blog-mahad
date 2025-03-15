@@ -11,7 +11,7 @@ type MultiSelectProps = {
 };
 
 export type MultiSelectParams = {
-    value: string;
+    value: number;
     label: string;
 };
 

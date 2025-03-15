@@ -19,7 +19,8 @@ export type PageSettingsProps = {
 
 export type PostProps = {
     id?: number;
-    user_id: number;
+    user_id?: number;
+    user: string;
     category_id?: number;
     category?: string;
     title: string;

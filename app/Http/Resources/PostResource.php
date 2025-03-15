@@ -23,7 +23,7 @@ class PostResource extends JsonResource
             "title" => $this->title,
             "description" => $this->description,
             "image" =>  $this->image,
-            "imageSrc" =>  $this->image ? Storage::url($this->image)  : 'https://placehold.co/1280x720/000000/FFFFFF/?font=source-sans-pro&text=' . $this->title,
+            "imageSrc" =>  $this->image ? asset(Storage::url($this->image))  : 'https://placehold.co/1280x720/000000/FFFFFF/?font=source-sans-pro&text=' . $this->title,
             "slug" => $this->slug,
             "status" => $this->status,
             "created_at" =>  $this->created_at->diffForHumans(),

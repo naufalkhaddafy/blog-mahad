@@ -38,15 +38,17 @@ export const Navbar = () => {
     return (
         <Container>
             <nav className="flex flex-wrap items-center justify-between bg-green-700 px-3 py-4">
-                <div className="flex items-center gap-3 lg:gap-6">
-                    <img src={Icon} alt="Icon" className="size-12 lg:size-16" />
-                    <div className="flex flex-col">
-                        <h1 className="text-md font-semibold xl:text-lg">
-                            Yayasan Ibnu Katsir
-                            <span className="block">Kutai Timur</span>
-                        </h1>
+                <Link href="/">
+                    <div className="flex items-center gap-3 lg:gap-4">
+                        <img src={Icon} alt="Icon" className="size-12 lg:size-16" />
+                        <div className="flex flex-col">
+                            <h1 className="text-md font-semibold xl:text-lg">
+                                Yayasan Ibnu Katsir
+                                <span className="block">Kutai Timur</span>
+                            </h1>
+                        </div>
                     </div>
-                </div>
+                </Link>
 
                 {/* Desktop Navigation */}
                 <div className="hidden lg:flex">

@@ -12,7 +12,7 @@ class PostObserver
      */
     public function creating(Post $post): void
     {
-        $post->slug = str()->slug($post->title) . '-' . Str::random(3);
+        $post->slug = str()->slug($post->title);
     }
 
     /**
@@ -20,7 +20,7 @@ class PostObserver
      */
     public function updating(Post $post): void
     {
-        $post->slug = str()->slug($post->title) . '-' . Str::random(3);
+        $post->slug = str()->slug($post->title);
     }
 
     /**

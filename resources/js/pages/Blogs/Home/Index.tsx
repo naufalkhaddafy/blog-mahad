@@ -1,20 +1,23 @@
 import banner from '@/assets/banner.jpg';
 import banner2 from '@/assets/example2.png';
+import Badge from '@/components/blog/Badge';
 import { Container } from '@/components/Container';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { BlogLayout } from '@/layouts/BlogLayout';
+import BlogLayout from '@/layouts/BlogLayout';
 import { getLimitTextContent } from '@/lib/utils';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { Head, Link } from '@inertiajs/react';
 import { Clock, Send } from 'lucide-react';
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-
 const bannerData = [{ image: banner2 }, { image: banner }];
 
-const Index = ({ posts }: { posts: PostProps }) => {
-    console.log(posts);
+const Index = ({ posts }: { posts: PostProps[] }) => {
     return (
         <BlogLayout>
             <Head title="Beranda">
@@ -71,7 +74,7 @@ const Index = ({ posts }: { posts: PostProps }) => {
                     </div>
                     <div className="py-10">
                         <div className="grid grid-cols-5 place-items-center gap-4 lg:grid-flow-col">
-                            {Array.isArray(posts) &&
+                            {posts.length > 0 ? (
                                 posts.map((dataPost: PostProps, index: number) => {
                                     if (index + 1 == 1) {
                                         return (
@@ -79,8 +82,13 @@ const Index = ({ posts }: { posts: PostProps }) => {
                                                 key={index}
                                                 className="col-span-5 row-span-3 h-full w-full lg:col-span-2"
                                             >
-                                                <Card className="group relative h-full w-full cursor-pointer overflow-hidden bg-green-900 p-0">
-                                                    <Link href="">
+                                                <Card className="group relative h-full w-full cursor-pointer overflow-hidden bg-black p-0">
+                                                    <Link
+                                                        href={route('blog.show', {
+                                                            category: dataPost.category,
+                                                            post: dataPost.slug,
+                                                        })}
+                                                    >
                                                         <img
                                                             src={dataPost.imageSrc}
                                                             alt={dataPost.title}
@@ -107,12 +115,9 @@ const Index = ({ posts }: { posts: PostProps }) => {
                                                         <div className="absolute top-0 left-0 flex flex-wrap gap-2 px-4 py-5 lg:px-6">
                                                             {dataPost.tags.map(
                                                                 (dataTags, index) => (
-                                                                    <span
-                                                                        key={index}
-                                                                        className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl"
-                                                                    >
+                                                                    <Badge key={index}>
                                                                         {dataTags.label}
-                                                                    </span>
+                                                                    </Badge>
                                                                 ),
                                                             )}
                                                         </div>
@@ -126,47 +131,56 @@ const Index = ({ posts }: { posts: PostProps }) => {
                                                 key={index}
                                                 className="col-span-5 w-full max-w-3xl xl:w-3xl"
                                             >
-                                                <Card className="group grid w-full cursor-pointer grid-cols-6 gap-3 overflow-hidden bg-green-100/50 p-2 lg:gap-5">
-                                                    <div className="col-span-2 my-auto h-24 w-full overflow-hidden rounded-xl bg-amber-400 md:h-32 lg:h-34">
-                                                        <img
-                                                            src={dataPost.imageSrc}
-                                                            alt={dataPost.title}
-                                                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-4 py-2">
-                                                        <div className="hidden items-center gap-1 py-1 md:flex">
-                                                            {dataPost.tags.map(
-                                                                (dataTags, index) => (
-                                                                    <span
-                                                                        key={index}
-                                                                        className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl"
-                                                                    >
-                                                                        {dataTags.label}
-                                                                    </span>
-                                                                ),
-                                                            )}
+                                                <Link
+                                                    href={route('blog.show', {
+                                                        category: dataPost.category,
+                                                        post: dataPost.slug,
+                                                    })}
+                                                >
+                                                    <Card className="group grid w-full cursor-pointer grid-cols-6 gap-3 overflow-hidden bg-green-100/50 p-2 lg:gap-5">
+                                                        <div className="col-span-2 my-auto h-24 w-full overflow-hidden rounded-xl md:h-32 lg:h-34">
+                                                            <img
+                                                                src={dataPost.imageSrc}
+                                                                alt={dataPost.title}
+                                                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                                            />
                                                         </div>
-                                                        <h3 className="text-md text-left font-bold lg:text-lg">
-                                                            {dataPost.title}
-                                                        </h3>
-                                                        <div className="flex items-center gap-2 py-2 text-xs font-extralight text-gray-600">
-                                                            <Clock className="size-4" />
-                                                            {dataPost.created_at}
-                                                        </div>
+                                                        <div className="col-span-4 py-2">
+                                                            <div className="hidden items-center gap-1 py-1 md:flex">
+                                                                {dataPost.tags.map(
+                                                                    (dataTags, index) => (
+                                                                        <Badge key={index}>
+                                                                            {dataTags.label}
+                                                                        </Badge>
+                                                                    ),
+                                                                )}
+                                                            </div>
+                                                            <h3 className="text-md text-left font-bold lg:text-lg">
+                                                                {dataPost.title}
+                                                            </h3>
+                                                            <div className="flex items-center gap-2 py-2 text-xs font-extralight text-gray-600">
+                                                                <Clock className="size-4" />
+                                                                {dataPost.created_at}
+                                                            </div>
 
-                                                        <p className="hidden font-sans text-sm font-extralight md:block">
-                                                            {getLimitTextContent(
-                                                                dataPost.description,
-                                                                70,
-                                                            )}
-                                                        </p>
-                                                    </div>
-                                                </Card>
+                                                            <p className="hidden font-sans text-sm font-extralight md:block">
+                                                                {getLimitTextContent(
+                                                                    dataPost.description,
+                                                                    70,
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                    </Card>
+                                                </Link>
                                             </div>
                                         );
                                     }
-                                })}
+                                })
+                            ) : (
+                                <div className="col-span-5 text-lg">
+                                    Mohon maaf artikel belum tersedia
+                                </div>
+                            )}
                         </div>
                     </div>
                 </Container>

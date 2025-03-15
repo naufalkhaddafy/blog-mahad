@@ -70,7 +70,6 @@ export default function Form({ posts, page_settings, categories, tags, status }:
         );
     }
 
-    console.log(data);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={page_settings.title} />

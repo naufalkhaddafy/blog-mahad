@@ -31,6 +31,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([CategorySeeder::class, TagSeeder::class]);
-        Post::factory(100)->withTags()->create();
+        // Post::factory(100)->withTags()->create();
     }
 }
