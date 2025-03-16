@@ -23,8 +23,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('posts', PostController::class);
     Route::resource('tag', TagController::class)->except('show', 'edit', 'create');
 });
-Route::get('/{category}/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
+
+Route::get('/{category}/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
