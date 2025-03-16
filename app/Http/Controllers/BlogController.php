@@ -14,17 +14,22 @@ class BlogController extends Controller
 {
     public function home()
     {
-        $category = Category::where('name', 'Artikel')->first();
-        $post = Post::query()->with('user', 'category', 'tags')->where('category_id', $category->id)->where('status', 'publish')->latest()->take(4)->cursor();
-        // dd($post);
-
+        $artticleCategory = Category::where('name', 'Artikel')->first();
+        $qnaCategory = Category::where('name', 'Tanya Jawab')->first();
+        $posterCategory = Category::where('name', 'Poster')->first();
+        $post = Post::query()->with('user', 'category', 'tags')->where('category_id', $artticleCategory->id)->where('status', 'publish')->latest()->take(4)->cursor();
+        $qna = Post::query()->with('user', 'category', 'tags')->where('category_id', $qnaCategory->id)->where('status', 'publish')->latest()->take(4)->cursor();
+        $poster = Post::query()->with('user', 'category', 'tags')->where('category_id', $posterCategory->id)->where('status', 'publish')->latest()->take(4)->cursor();;
         return Inertia('Blogs/Home/Index', [
             'posts' => PostResource::collection($post),
+            'qna' => PostResource::collection($qna),
+            'poster' => PostResource::collection($poster),
         ]);
     }
 
     public function show($category, Post $post)
     {
+        // dd($post);
 
         $previousPost = Post::whereRaw('created_at = (SELECT MAX(created_at) FROM posts WHERE created_at < ? AND category_id = ? AND status = "publish")', [$post->created_at, $post->category_id])
             ->first();
@@ -60,12 +65,13 @@ class BlogController extends Controller
             ->take(3)
             ->get();
 
+        // dd($relevantPosts);
 
         return Inertia('Blogs/Posts/Show', [
             'post' => PostResource::make($post->load('user', 'category', 'tags')),
-            'previousPost' =>  PostResource::make($previousPost),
-            'nextPost' =>  PostResource::make($nextPost),
-            'relevantPosts' => PostResource::collection($relevantPosts)
+            'previousPost' => $previousPost ? PostResource::make($previousPost) : null,
+            'nextPost' => $nextPost ? PostResource::make($nextPost) : null,
+            'relevantPosts' => $relevantPosts->isNotEmpty() ? PostResource::collection($relevantPosts) : [],
         ]);
     }
 }

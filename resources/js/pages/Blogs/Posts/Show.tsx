@@ -41,6 +41,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                 <article className="h-auto">
                     <header className="py-2">
                         <div className="flex items-center gap-2">
+                            <Badge>{post.category}</Badge>
                             {post.tags.map((dataTags, index) => (
                                 <Badge key={index + 1}>{dataTags.label}</Badge>
                             ))}
@@ -66,7 +67,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                         <img
                             src={post.imageSrc}
                             alt={post.title}
-                            className="aspect-16/9 w-full rounded-lg"
+                            className={`${post.category == 'Poster' ? 'aspect-square' : 'aspect-video'} w-full rounded-lg`}
                         />
                     </figure>
                     <section className="py-5">
@@ -83,35 +84,44 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                     </footer>
                 </article>
                 <div className="my-5 grid grid-cols-2 gap-5 rounded-lg border-1 p-2">
-                    <Link
-                        href={route('blog.show', {
-                            category: previousPost?.category,
-                            post: previousPost?.slug,
-                        })}
-                        className="col-span-2 lg:col-span-1"
-                    >
-                        <div className="col-span-2 flex h-full items-center justify-start gap-2 rounded-lg p-2 transition-all duration-300 hover:border-1 hover:border-green-500 lg:col-span-1">
-                            <span>
-                                <ArrowLeft />
-                            </span>
-                            <h1 className="text-md">{previousPost?.title}</h1>
-                        </div>
-                    </Link>
-                    <Link
-                        href={route('blog.show', {
-                            category: nextPost?.category,
-                            post: nextPost?.slug,
-                        })}
-                        className="col-span-2 lg:col-span-1"
-                    >
-                        <div className="col-span-2 flex h-full items-center justify-end gap-2 rounded-lg p-2 transition-all duration-300 hover:border-1 hover:border-green-500 lg:col-span-1">
-                            <h1 className="text-md">{nextPost?.title}</h1>
-                            <span>
-                                <ArrowRight />
-                            </span>
-                        </div>
-                    </Link>
+                    {previousPost ? (
+                        <Link
+                            href={route('blog.show', {
+                                category: previousPost.category,
+                                post: previousPost.slug,
+                            })}
+                            className="col-span-2 lg:col-span-1"
+                        >
+                            <div className="col-span-2 flex h-full items-center justify-start gap-2 rounded-lg p-2 transition-all duration-300 hover:border-1 hover:border-green-500 lg:col-span-1">
+                                <span>
+                                    <ArrowLeft />
+                                </span>
+                                <h1 className="text-md">{previousPost?.title}</h1>
+                            </div>
+                        </Link>
+                    ) : (
+                        ''
+                    )}
+                    {nextPost ? (
+                        <Link
+                            href={route('blog.show', {
+                                category: nextPost?.category,
+                                post: nextPost?.slug,
+                            })}
+                            className="col-span-2 lg:col-span-1"
+                        >
+                            <div className="col-span-2 flex h-full items-center justify-end gap-2 rounded-lg p-2 transition-all duration-300 hover:border-1 hover:border-green-500 lg:col-span-1">
+                                <h1 className="text-md">{nextPost?.title}</h1>
+                                <span>
+                                    <ArrowRight />
+                                </span>
+                            </div>
+                        </Link>
+                    ) : (
+                        ''
+                    )}
                 </div>
+                {/* Artikel Terkait */}
                 <div className="py-10">
                     <h1 className="relative h-fit w-auto text-xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl">
                         Artikel Terkait
@@ -136,6 +146,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                                           </div>
                                           <div className="col-span-4 py-2">
                                               <div className="hidden items-center gap-1 py-1 md:flex">
+                                                  <Badge>{relevantPost.category}</Badge>
                                                   {relevantPost.tags.map((dataTags, index) => (
                                                       <Badge key={index}>{dataTags.label}</Badge>
                                                   ))}

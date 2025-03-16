@@ -15,7 +15,13 @@ import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 const bannerData = [{ image: asset('assets/banner.jpg') }, { image: asset('assets/banner2.png') }];
 
-const Index = ({ posts }: { posts: PostProps[] }) => {
+interface IndexProps {
+    posts: PostProps[];
+    qna: PostProps[];
+    poster: PostProps[];
+}
+
+const Index = ({ posts, qna, poster }: IndexProps) => {
     return (
         <BlogLayout>
             <Head title="Beranda">
@@ -80,24 +86,24 @@ const Index = ({ posts }: { posts: PostProps[] }) => {
                                                 key={index}
                                                 className="col-span-5 row-span-3 h-full w-full lg:col-span-2"
                                             >
-                                                <Card className="group relative h-full w-full cursor-pointer overflow-hidden bg-black p-0">
-                                                    <Link
-                                                        href={route('blog.show', {
-                                                            category: dataPost.category,
-                                                            post: dataPost.slug,
-                                                        })}
-                                                    >
+                                                <Link
+                                                    href={route('blog.show', {
+                                                        category: dataPost.category,
+                                                        post: dataPost.slug,
+                                                    })}
+                                                >
+                                                    <Card className="group relative flex h-full w-full cursor-pointer flex-col gap-0 overflow-hidden bg-green-100/50 p-0">
                                                         <img
                                                             src={dataPost.imageSrc}
                                                             alt={dataPost.title}
-                                                            className="aspect-square object-fill brightness-100 transition-transform duration-300 group-hover:scale-110"
+                                                            className="aspect-video object-fill brightness-100 transition-transform duration-300 group-hover:scale-110"
                                                         />
-                                                        <div className="absolute bottom-0 w-full rounded-t-lg bg-amber-50/50 p-5 text-left text-black backdrop-blur-md lg:px-10 lg:py-6">
+                                                        <div className="flex h-full w-full flex-col justify-center rounded-t-lg bg-green-100/50 p-5 text-left text-black backdrop-blur-md lg:px-10 lg:py-6">
                                                             <div className="flex items-center gap-2 pb-1 text-xs font-extralight text-green-900 lg:text-sm">
                                                                 <Clock className="size-4" />
                                                                 {dataPost.created_at}
                                                             </div>
-                                                            <h1 className="text-md font-bold lg:text-xl">
+                                                            <h1 className="text-md font-bold lg:py-6 lg:text-xl">
                                                                 {getLimitTextContent(
                                                                     dataPost.title,
                                                                     100,
@@ -111,6 +117,7 @@ const Index = ({ posts }: { posts: PostProps[] }) => {
                                                             </p>
                                                         </div>
                                                         <div className="absolute top-0 left-0 flex flex-wrap gap-2 px-4 py-5 lg:px-6">
+                                                            <Badge>{dataPost.category}</Badge>
                                                             {dataPost.tags.map(
                                                                 (dataTags, index) => (
                                                                     <Badge key={index}>
@@ -119,8 +126,8 @@ const Index = ({ posts }: { posts: PostProps[] }) => {
                                                                 ),
                                                             )}
                                                         </div>
-                                                    </Link>
-                                                </Card>
+                                                    </Card>
+                                                </Link>
                                             </div>
                                         );
                                     } else {
@@ -145,6 +152,7 @@ const Index = ({ posts }: { posts: PostProps[] }) => {
                                                         </div>
                                                         <div className="col-span-4 py-2">
                                                             <div className="hidden items-center gap-1 py-1 md:flex">
+                                                                <Badge>{dataPost.category}</Badge>
                                                                 {dataPost.tags.map(
                                                                     (dataTags, index) => (
                                                                         <Badge key={index}>
@@ -191,33 +199,49 @@ const Index = ({ posts }: { posts: PostProps[] }) => {
                         Galeri Poster Dakwah
                     </h3>
                     <div className="px-5 py-15">
-                        <Swiper
-                            pagination={{
-                                dynamicBullets: true,
-                                clickable: true,
-                            }}
-                            breakpoints={{
-                                0: { slidesPerView: 1 },
-                                640: { slidesPerView: 2 },
-                                1024: { slidesPerView: 4 },
-                            }}
-                            spaceBetween={30}
-                            loop={true}
-                            autoplay={{
-                                delay: 2500,
-                                disableOnInteraction: false,
-                            }}
-                            modules={[Navigation, Pagination, EffectFade, Autoplay]}
-                            className="h-auto w-full"
-                        >
-                            {Array.from({ length: 10 }).map((_, index) => (
-                                <SwiperSlide key={index}>
-                                    <div className="grid aspect-square cursor-pointer place-items-center justify-center rounded-2xl bg-amber-200">
-                                        {index + 1}
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
+                        {poster.length > 0 ? (
+                            <Swiper
+                                pagination={{
+                                    dynamicBullets: true,
+                                    clickable: true,
+                                }}
+                                breakpoints={{
+                                    0: { slidesPerView: 1 },
+                                    640: { slidesPerView: 2 },
+                                    1024: { slidesPerView: 4 },
+                                }}
+                                spaceBetween={30}
+                                loop={true}
+                                autoplay={{
+                                    delay: 2500,
+                                    disableOnInteraction: false,
+                                }}
+                                modules={[Navigation, Pagination, EffectFade, Autoplay]}
+                                className="h-auto w-full"
+                            >
+                                {poster.map((dataPoster, index) => (
+                                    <SwiperSlide key={index}>
+                                        <Link
+                                            href={route('blog.show', {
+                                                category: dataPoster.category,
+                                                post: dataPoster.slug,
+                                            })}
+                                        >
+                                            <div className="grid aspect-square cursor-pointer place-items-center justify-center overflow-hidden rounded-2xl bg-amber-200">
+                                                <img
+                                                    src={dataPoster.imageSrc}
+                                                    alt={dataPoster.title}
+                                                />
+                                            </div>
+                                        </Link>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                        ) : (
+                            <div className="col-span-5 text-sm text-green-50 lg:text-lg">
+                                Mohon maaf poster belum tersedia
+                            </div>
+                        )}
                     </div>
                 </Container>
             </section>
@@ -230,90 +254,48 @@ const Index = ({ posts }: { posts: PostProps[] }) => {
                         Problematika Ummat
                     </h3>
                     <div className="grid gap-4 py-10 lg:grid-cols-2">
-                        <Card className="group cursor-pointer p-4 transition-all duration-200 hover:scale-102 hover:border-green-600">
-                            <div>
-                                <div className="flex items-center gap-1 px-1 py-2">
-                                    <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl">
-                                        Tanya Jawab
-                                    </span>
-                                </div>
-                                <h1 className="text-lg font-semibold">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                                    Doloremque, culpa?
-                                </h1>
-                                <span className="flex items-center gap-2 py-1 text-sm text-gray-400">
-                                    <Clock className="size-4" /> 3 times ago
-                                </span>
-                                <p className="text-justify">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint
-                                    consequatur atque molestiae commodi consectetur adipisci saepe
-                                    eum ut at dolorum.
-                                </p>
+                        {qna.length > 0 ? (
+                            qna.map((qna, index) => (
+                                <Card
+                                    key={index + 1}
+                                    className="group cursor-pointer p-4 transition-all duration-200 hover:scale-102 hover:border-green-600"
+                                >
+                                    <Link
+                                        href={route('blog.show', {
+                                            category: qna.category,
+                                            post: qna.slug,
+                                        })}
+                                    >
+                                        <div>
+                                            <div className="flex items-center gap-1 px-1 py-2">
+                                                <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl">
+                                                    Tanya Jawab
+                                                </span>
+                                                {qna.tags.map((data, index) => (
+                                                    <span
+                                                        key={index}
+                                                        className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl"
+                                                    >
+                                                        {data.label}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                            <h1 className="text-lg font-semibold">{qna.title}</h1>
+                                            <span className="flex items-center gap-2 py-1 text-sm text-gray-400">
+                                                <Clock className="size-4" /> {qna.created_at}
+                                            </span>
+                                            <p className="text-justify">
+                                                {getLimitTextContent(qna.description, 150)}
+                                            </p>
+                                        </div>
+                                    </Link>
+                                </Card>
+                            ))
+                        ) : (
+                            <div className="col-span-5 text-lg">
+                                Mohon maaf postingan belum tersedia
                             </div>
-                        </Card>
-                        <Card className="group cursor-pointer p-4 transition-all duration-200 hover:scale-102 hover:border-green-600">
-                            <div>
-                                <div className="flex items-center gap-1 px-1 py-2">
-                                    <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl">
-                                        Tanya Jawab
-                                    </span>
-                                </div>
-                                <h1 className="text-lg font-semibold">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                                    Doloremque, culpa?
-                                </h1>
-                                <span className="flex items-center gap-2 py-1 text-sm text-gray-400">
-                                    <Clock className="size-4" /> 3 times ago
-                                </span>
-                                <p className="text-justify">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint
-                                    consequatur atque molestiae commodi consectetur adipisci saepe
-                                    eum ut at dolorum.
-                                </p>
-                            </div>
-                        </Card>
-                        <Card className="group cursor-pointer p-4 transition-all duration-200 hover:scale-102 hover:border-green-600">
-                            <div>
-                                <div className="flex items-center gap-1 px-1 py-2">
-                                    <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl">
-                                        Tanya Jawab
-                                    </span>
-                                </div>
-                                <h1 className="text-lg font-semibold">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                                    Doloremque, culpa?
-                                </h1>
-                                <span className="flex items-center gap-2 py-1 text-sm text-gray-400">
-                                    <Clock className="size-4" /> 3 times ago
-                                </span>
-                                <p className="text-justify">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint
-                                    consequatur atque molestiae commodi consectetur adipisci saepe
-                                    eum ut at dolorum.
-                                </p>
-                            </div>
-                        </Card>
-                        <Card className="group cursor-pointer p-4 transition-all duration-200 hover:scale-102 hover:border-green-600">
-                            <div>
-                                <div className="flex items-center gap-1 px-1 py-2">
-                                    <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl">
-                                        Tanya Jawab
-                                    </span>
-                                </div>
-                                <h1 className="text-lg font-semibold">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                                    Doloremque, culpa?
-                                </h1>
-                                <span className="flex items-center gap-2 py-1 text-sm text-gray-400">
-                                    <Clock className="size-4" /> 3 times ago
-                                </span>
-                                <p className="text-justify">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint
-                                    consequatur atque molestiae commodi consectetur adipisci saepe
-                                    eum ut at dolorum.
-                                </p>
-                            </div>
-                        </Card>
+                        )}
                     </div>
                     <div className="w-full pb-15 text-center">
                         <Button className="bg-green-600">
