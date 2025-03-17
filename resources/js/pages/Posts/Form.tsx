@@ -128,6 +128,7 @@ export default function Form({ posts, page_settings, categories, tags, status }:
                                     <div>
                                         <Label htmlFor="tags">Tag</Label>
                                         <MultiSelect
+                                            isMulti
                                             options={tags}
                                             value={Array.isArray(data.tags) ? data.tags : []}
                                             onChange={(selected: MultiSelectParams[]) =>
