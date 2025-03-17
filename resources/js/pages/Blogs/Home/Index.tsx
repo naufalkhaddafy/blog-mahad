@@ -88,7 +88,6 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                             >
                                                 <Link
                                                     href={route('blog.show', {
-                                                        category: dataPost.category,
                                                         post: dataPost.slug,
                                                     })}
                                                 >
@@ -138,7 +137,6 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                             >
                                                 <Link
                                                     href={route('blog.show', {
-                                                        category: dataPost.category,
                                                         post: dataPost.slug,
                                                     })}
                                                 >
@@ -223,7 +221,6 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                     <SwiperSlide key={index}>
                                         <Link
                                             href={route('blog.show', {
-                                                category: dataPoster.category,
                                                 post: dataPoster.slug,
                                             })}
                                         >
@@ -262,7 +259,6 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                 >
                                     <Link
                                         href={route('blog.show', {
-                                            category: qna.category,
                                             post: qna.slug,
                                         })}
                                     >

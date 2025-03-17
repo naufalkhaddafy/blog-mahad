@@ -28,4 +28,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
-Route::get('/{category}/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+// Route::get('/{category}/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/{post:slug}', [BlogController::class, 'show'])->name('blog.show');

@@ -27,7 +27,7 @@ class BlogController extends Controller
         ]);
     }
 
-    public function show($category, Post $post)
+    public function show(Post $post)
     {
         // dd($post);
 
