@@ -45,7 +45,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
             <div className={`${progress ? 'fixed' : 'hidden'} top-0 z-30 w-full bg-gray-300`}>
                 <div
                     style={{ width: `${completion}%` }}
-                    className="h-1 rounded-xl bg-green-700 transition-all lg:h-1.5"
+                    className="h-1 rounded-xl bg-green-700 transition-normal lg:h-1.5"
                 />
             </div>
 
