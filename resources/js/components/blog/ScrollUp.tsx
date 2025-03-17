@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { Button } from '../ui/button';
 
 export const ScrollUp = () => {
-    const completion = useScroll();
+    const { completion } = useScroll();
     const scrollRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
@@ -13,6 +13,7 @@ export const ScrollUp = () => {
         scrollRef.current.classList.toggle('lg:bottom-5', completion > 10);
         scrollRef.current.classList.toggle('-bottom-15', completion <= 10);
     }, [completion]);
+
     return (
         <Button
             ref={scrollRef}

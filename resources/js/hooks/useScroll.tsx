@@ -1,23 +1,37 @@
 import { useEffect, useState } from 'react';
 
-const useScroll = () => {
+const useScroll = (element?: React.RefObject<HTMLElement | null>) => {
     const [completion, setCompletion] = useState<number>(0);
+    const [progress, setProgress] = useState<boolean>(false);
+
     useEffect(() => {
         const updateScrollCompletion = () => {
-            const currentProgress = window.scrollY;
-            const scrollHeight = document.body.scrollHeight - window.innerHeight;
+            const target = element?.current || document.body;
+            const elementTop = target.offsetTop;
+            const elementHeight = !element
+                ? target.scrollHeight - window.innerHeight
+                : target.scrollHeight;
+            const currentScroll = window.scrollY;
 
-            if (scrollHeight) {
-                const progress = parseFloat((currentProgress / scrollHeight).toFixed(2)) * 100;
-                setCompletion(progress);
-            }
+            const progress = parseFloat(
+                Math.min(
+                    100,
+                    Math.max(0, ((currentScroll - elementTop) / elementHeight) * 100),
+                ).toFixed(2),
+            );
+
+            setCompletion(progress);
+            setProgress(progress > 0 && progress < 100);
         };
 
         window.addEventListener('scroll', updateScrollCompletion);
         return () => window.removeEventListener('scroll', updateScrollCompletion);
-    }, []);
+    }, [element]);
 
-    return completion;
+    return {
+        completion,
+        progress,
+    };
 };
 
 export default useScroll;

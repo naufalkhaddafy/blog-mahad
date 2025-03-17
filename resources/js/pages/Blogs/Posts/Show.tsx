@@ -3,11 +3,13 @@ import SocialMediaShare from '@/components/blog/SocialMediaShare';
 
 import { Container } from '@/components/Container';
 import { Card } from '@/components/ui/card';
+import useScroll from '@/hooks/useScroll';
 import BlogLayout from '@/layouts/BlogLayout';
 import { getLimitTextContent } from '@/lib/utils';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { Head, Link } from '@inertiajs/react';
 import { ArrowLeft, ArrowRight, CircleSmall, CircleUserRound, Clock, Share2 } from 'lucide-react';
+import { useRef } from 'react';
 
 interface ShowProps {
     post: PostProps;
@@ -18,6 +20,9 @@ interface ShowProps {
 
 const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
     const shareUrl = window.location.href;
+    const articleRef = useRef<HTMLElement | null>(null);
+    const { completion, progress } = useScroll(articleRef);
+
     return (
         <BlogLayout>
             <Head title={post.title}>
@@ -37,8 +42,15 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                 <meta property="og:type" content={post.category} />
                 <meta property="og:url" content={shareUrl} />
             </Head>
+            <div className={`${progress ? 'fixed' : 'hidden'} top-0 z-30 w-full bg-gray-300`}>
+                <div
+                    style={{ width: `${completion}%` }}
+                    className="h-1 rounded-xl bg-green-700 transition-all lg:h-1.5"
+                />
+            </div>
+
             <Container className="max-w-4xl px-5 py-5">
-                <article className="h-auto">
+                <article ref={articleRef} className="h-auto">
                     <header className="py-2">
                         <div className="flex items-center gap-2">
                             <Badge>{post.category}</Badge>
@@ -63,6 +75,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                             <SocialMediaShare post={post} />
                         </div>
                     </header>
+
                     <figure className="w-full">
                         <img
                             src={post.imageSrc}
@@ -83,11 +96,11 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                         </div>
                     </footer>
                 </article>
+
                 <div className="my-5 grid grid-cols-2 gap-5 rounded-lg border-1 p-2">
                     {previousPost ? (
                         <Link
                             href={route('blog.show', {
-                                category: previousPost.category,
                                 post: previousPost.slug,
                             })}
                             className="col-span-2 lg:col-span-1"
@@ -105,7 +118,6 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                     {nextPost ? (
                         <Link
                             href={route('blog.show', {
-                                category: nextPost?.category,
                                 post: nextPost?.slug,
                             })}
                             className="col-span-2 lg:col-span-1"
@@ -132,7 +144,6 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                                   <Link
                                       key={index + 1}
                                       href={route('blog.show', {
-                                          category: relevantPost.category,
                                           post: relevantPost.slug,
                                       })}
                                   >

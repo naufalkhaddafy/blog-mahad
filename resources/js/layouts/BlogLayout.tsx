@@ -1,5 +1,6 @@
 import { Footer } from '@/components/blog/Footer';
 import { Navbar } from '@/components/blog/Navbar';
+import { ScrollUp } from '@/components/blog/ScrollUp';
 
 const BlogLayout = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -10,6 +11,7 @@ const BlogLayout = ({ children }: { children: React.ReactNode }) => {
             </header>
             <main>{children}</main>
             <Footer />
+            <ScrollUp />
         </>
     );
 };
