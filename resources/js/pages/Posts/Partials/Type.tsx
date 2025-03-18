@@ -1,4 +1,4 @@
-import { TagProps } from '@/pages/Tags/Partials/Type';
+import { TagProps, TagPropsSelect } from '@/pages/Tags/Partials/Type';
 
 export type PostForm = {
     user_id: number;
@@ -30,5 +30,5 @@ export type PostProps = {
     slug: string;
     status: string;
     created_at: string;
-    tags: { label: string; value: number }[];
+    tags: Array<TagPropsSelect>;
 };

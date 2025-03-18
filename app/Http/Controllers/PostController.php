@@ -57,9 +57,7 @@ class PostController extends Controller
             'status' => $request->status,
         ]);
 
-        $post->tags()->attach(collect($request->tags)->map(function ($tag) {
-            return $tag['value'];
-        }));
+        $post->tags()->attach($request->tags);
 
         flashMessage('Success', 'Berhasil menambahkan postingan baru');
 
@@ -113,9 +111,7 @@ class PostController extends Controller
             'status' => $request->status,
         ]);
 
-        $post->tags()->sync(collect($request->tags)->map(function ($tag) {
-            return $tag['value'];
-        }));
+        $post->tags()->sync($request->tags);
 
         flashMessage('Success', 'Berhasil mengubah postingan blog');
 

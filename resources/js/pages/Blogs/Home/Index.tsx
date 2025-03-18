@@ -193,9 +193,9 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             {/* Poster */}
             <section className="bg-green-700 py-15">
                 <Container className="text-center">
-                    <h3 className="relative w-auto text-2xl font-extrabold text-green-50 after:absolute after:-bottom-3 after:left-1/2 after:h-1 after:w-[70px] after:-translate-x-1/2 after:rounded-2xl after:bg-green-500 after:content-['']">
+                    <h1 className="relative w-auto text-2xl font-extrabold text-green-50 after:absolute after:-bottom-3 after:left-1/2 after:h-1 after:w-[70px] after:-translate-x-1/2 after:rounded-2xl after:bg-green-500 after:content-['']">
                         Galeri Poster Dakwah
-                    </h3>
+                    </h1>
                     <div className="px-5 py-15">
                         {poster.length > 0 ? (
                             <Swiper
@@ -247,9 +247,9 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             {/* Question */}
             <section className="pt-15">
                 <Container className="px-3">
-                    <h3 className="relative h-fit w-fit text-2xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-['']">
+                    <h1 className="relative h-fit w-fit text-2xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-['']">
                         Problematika Ummat
-                    </h3>
+                    </h1>
                     <div className="grid gap-4 py-10 lg:grid-cols-2">
                         {qna.length > 0 ? (
                             qna.map((qna, index) => (

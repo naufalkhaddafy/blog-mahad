@@ -2,7 +2,7 @@
 import Editor from '@/components/Editor';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
-import MultiSelect, { MultiSelectParams } from '@/components/MultiSelect';
+import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,6 +19,7 @@ import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { CategoryProps } from '../Categories/Partials/Type';
+import { TagPropsSelect } from '../Tags/Partials/Type';
 import { PageSettingsProps, PostProps } from './Partials/Type';
 import UploadImage from './Partials/UploadImage';
 
@@ -37,7 +38,7 @@ type FormAddProps = {
     posts: PostProps;
     page_settings: PageSettingsProps;
     categories: Array<CategoryProps>;
-    tags: Array<MultiSelectParams>;
+    tags: Array<TagPropsSelect>;
     status: Array<number>;
 };
 
@@ -50,9 +51,12 @@ export default function Form({ posts, page_settings, categories, tags, status }:
         description: posts.description || '',
         image: posts.image || '',
         status: posts.status || '',
-        tags: posts.tags || ([] as MultiSelectParams[]),
+        tags: posts.tags?.map((tag) => tag.value) || [],
     });
 
+    // const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>(
+    //     posts.tags?.map((tag) => tag.value) || [],
+    // );
     function onSubmit(e: React.FormEvent) {
         e.preventDefault();
         router.post(
@@ -69,7 +73,6 @@ export default function Form({ posts, page_settings, categories, tags, status }:
             },
         );
     }
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={page_settings.title} />
@@ -128,13 +131,12 @@ export default function Form({ posts, page_settings, categories, tags, status }:
                                     <div>
                                         <Label htmlFor="tags">Tag</Label>
                                         <MultiSelect
-                                            isMulti
                                             options={tags}
-                                            value={Array.isArray(data.tags) ? data.tags : []}
-                                            onChange={(selected: MultiSelectParams[]) =>
-                                                setData('tags', selected)
-                                            }
-                                            placeholder="Pilih Tag"
+                                            onValueChange={(selected) => setData('tags', selected)}
+                                            defaultValue={data.tags}
+                                            placeholder="Pilih Tags"
+                                            variant="default"
+                                            maxCount={10}
                                         />
                                         <InputError className="mt-2" message={errors.tags} />
                                     </div>
