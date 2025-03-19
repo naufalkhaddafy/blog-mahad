@@ -3,7 +3,7 @@ import { Container } from '@/components/Container';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import BlogLayout from '@/layouts/BlogLayout';
-import { asset, getLimitTextContent } from '@/lib/utils';
+import { getLimitTextContent } from '@/lib/utils';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { Head, Link } from '@inertiajs/react';
 import { Clock, Send } from 'lucide-react';
@@ -13,7 +13,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-const bannerData = [{ image: asset('assets/banner.jpg') }, { image: asset('assets/banner2.png') }];
+import { Banner } from './Partials/Banner';
 
 interface IndexProps {
     posts: PostProps[];
@@ -31,40 +31,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                     rel="stylesheet"
                 />
             </Head>
-            <Container>
-                {/* Banner */}
-                <section className="px-2">
-                    <Swiper
-                        // navigation={true}
-                        pagination={{
-                            dynamicBullets: true,
-                            clickable: true,
-                        }}
-                        spaceBetween={50}
-                        loop={true}
-                        effect={'fade'}
-                        autoplay={{
-                            delay: 3000,
-                            disableOnInteraction: false,
-                        }}
-                        modules={[Navigation, Pagination, EffectFade, Autoplay]}
-                        className="aspect-video w-full rounded-xl shadow-xl lg:aspect-16/6"
-                    >
-                        {bannerData.map((value, index) => (
-                            <SwiperSlide key={index}>
-                                <div className="h-full bg-green-400 text-center align-middle">
-                                    <img
-                                        src={value.image}
-                                        alt=""
-                                        className="h-full w-full object-fill brightness-90"
-                                    />
-                                </div>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </section>
-                {/* Banner End */}
-            </Container>
+            <Banner />
             {/* Top Rencent */}
             <section className="justify-center py-15">
                 <Container className="px-4 xl:px-0">
