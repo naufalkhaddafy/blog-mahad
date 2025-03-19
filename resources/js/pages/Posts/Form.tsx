@@ -54,9 +54,6 @@ export default function Form({ posts, page_settings, categories, tags, status }:
         tags: posts.tags?.map((tag) => tag.value) || [],
     });
 
-    // const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>(
-    //     posts.tags?.map((tag) => tag.value) || [],
-    // );
     function onSubmit(e: React.FormEvent) {
         e.preventDefault();
         router.post(
