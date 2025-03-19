@@ -11,6 +11,7 @@ use Inertia\Inertia;
 
 
 Route::get('/', [BlogController::class, 'home'])->name('home');
+Route::get('/belajar-islam', [BlogController::class, 'list'])->name('blog.list');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
@@ -28,5 +29,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
-// Route::get('/{category}/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/{post:slug}', [BlogController::class, 'show'])->name('blog.show');

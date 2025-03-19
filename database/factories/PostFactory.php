@@ -26,7 +26,7 @@ class PostFactory extends Factory
             'category_id' => Category::inRandomOrder()->first()->id,
             'title' => fake()->text(50),
             'description' => fake()->word(),
-            'image' => now(),
+            'image' => null,
             'status' => fake()->randomElement(PostStatus::cases())->value,
         ];
     }

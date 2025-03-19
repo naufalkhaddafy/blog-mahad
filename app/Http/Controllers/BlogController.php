@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PostResource;
+use App\Http\Resources\TagListResource;
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -19,7 +21,7 @@ class BlogController extends Controller
         $posterCategory = Category::where('name', 'Poster')->first();
         $post = Post::query()->with('user', 'category', 'tags')->where('category_id', $artticleCategory->id)->where('status', 'publish')->latest()->take(4)->cursor();
         $qna = Post::query()->with('user', 'category', 'tags')->where('category_id', $qnaCategory->id)->where('status', 'publish')->latest()->take(4)->cursor();
-        $poster = Post::query()->with('user', 'category', 'tags')->where('category_id', $posterCategory->id)->where('status', 'publish')->latest()->take(4)->cursor();;
+        $poster = Post::query()->with('user', 'category', 'tags')->where('category_id', $posterCategory->id)->where('status', 'publish')->latest()->take(10)->cursor();;
         return Inertia('Blogs/Home/Index', [
             'posts' => PostResource::collection($post),
             'qna' => PostResource::collection($qna),
@@ -72,6 +74,28 @@ class BlogController extends Controller
             'previousPost' => $previousPost ? PostResource::make($previousPost) : null,
             'nextPost' => $nextPost ? PostResource::make($nextPost) : null,
             'relevantPosts' => $relevantPosts->isNotEmpty() ? PostResource::collection($relevantPosts) : [],
+        ]);
+    }
+
+
+    public function list(Request $request)
+    {
+        $filters = $request->only(['search', 'sorting', 'category', 'tags']);
+
+        $posts = Post::where('status', 'publish')
+            ->with(['user', 'category', 'tags'])
+            ->when($filters['search'] ?? null, fn($q, $search) => $q->where('title', 'like', "%$search%"))
+            ->when($filters['category'] ?? null, fn($q, $category) => $q->where('category_id', $category))
+            ->when($filters['sorting'] ?? null, fn($q, $sorting) => $q->orderBy('created_at', $sorting))
+            ->when(!empty($filters['tags'] ?? null), fn($q) => $q->whereHas('tags', fn($q) => $q->whereIn('tags.id', explode(',', $filters['tags']))))
+            ->latest()
+            ->paginate(10)
+            ->appends($filters);
+
+        return Inertia('Blogs/Posts/List', [
+            'posts' => PostResource::collection($posts),
+            'categories' => Category::all(),
+            'tags' => TagListResource::collection(Tag::all()),
         ]);
     }
 }

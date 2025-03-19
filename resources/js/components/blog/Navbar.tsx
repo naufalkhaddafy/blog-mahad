@@ -21,13 +21,13 @@ const dataNav = [
         ],
     },
     {
-        name: 'Kajian Islam',
-        url: '/artikel',
+        name: 'Belajar Islam',
+        url: '/belajar-islam',
         submenu: [],
     },
     {
         name: 'Info Kajian',
-        url: '/info-kajian',
+        url: route('blog.list', { category: 3 }),
         submenu: [],
     },
 ];
@@ -36,19 +36,18 @@ export const Navbar = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
     return (
-        <Container>
-            <nav className="flex flex-wrap items-center justify-between bg-green-700 px-3 py-4">
+        <Container className="px-3 py-4">
+            <nav className="flex flex-wrap items-center justify-between bg-green-700">
                 <Link href="/">
                     <div className="flex items-center gap-3 lg:gap-4">
                         <img
                             src={asset('assets/icon.png')}
                             alt="Icon"
-                            className="size-12 lg:size-16"
+                            className="size-10 lg:size-16"
                         />
                         <div className="flex flex-col">
-                            <h1 className="text-md font-semibold xl:text-lg">
-                                Yayasan Ibnu Katsir
-                                <span className="block">Kutai Timur</span>
+                            <h1 className="text-sm font-semibold xl:text-xl">
+                                Kajian Islam Sangatta
                             </h1>
                         </div>
                     </div>
@@ -60,7 +59,7 @@ export const Navbar = () => {
                         {dataNav.map((data, index) => (
                             <div
                                 key={index}
-                                className="group relative flex cursor-pointer items-center gap-1 rounded-md px-3 py-2 font-semibold transition-normal duration-500 ease-in-out hover:bg-green-800/50"
+                                className="group text-md relative flex cursor-pointer items-center gap-1 rounded-md px-3 py-2 font-semibold transition-normal duration-500 ease-in-out hover:bg-green-800/50"
                                 onClick={() =>
                                     setActiveDropdown(activeDropdown === index ? null : index)
                                 }
