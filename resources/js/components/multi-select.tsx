@@ -206,6 +206,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                                                 {option?.label}
                                                 <XCircle
                                                     className="ml-2 h-4 w-4 cursor-pointer"
+                                                    style={{ pointerEvents: 'auto' }}
                                                     onClick={(event) => {
                                                         event.stopPropagation();
                                                         toggleOption(value);
@@ -226,6 +227,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                                             {`+ ${selectedValues.length - maxCount} more`}
                                             <XCircle
                                                 className="ml-2 h-4 w-4 cursor-pointer"
+                                                style={{ pointerEvents: 'auto' }}
                                                 onClick={(event) => {
                                                     event.stopPropagation();
                                                     clearExtraOptions();
