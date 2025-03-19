@@ -72,8 +72,14 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                         <h1 className="relative h-fit w-auto text-xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl">
                             Artikel Terbaru
                         </h1>
-                        <Button className="bg-green-600">
-                            Lihat Lainnya <Send />
+                        <Button className="bg-green-600" asChild>
+                            <Link
+                                href={route('blog.list', {
+                                    category: 1,
+                                })}
+                            >
+                                Lihat Lainnya <Send />
+                            </Link>
                         </Button>
                     </div>
                     <div className="py-10">
@@ -243,7 +249,6 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                 </Container>
             </section>
             {/* Poster End */}
-
             {/* Question */}
             <section className="pt-15">
                 <Container className="px-3">
@@ -263,9 +268,9 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                         })}
                                     >
                                         <div>
-                                            <div className="flex items-center gap-1 px-1 py-2">
+                                            <div className="flex flex-wrap items-center gap-2 px-1 py-2">
                                                 <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl">
-                                                    Tanya Jawab
+                                                    {qna.category}
                                                 </span>
                                                 {qna.tags.map((data, index) => (
                                                     <span
@@ -294,8 +299,14 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                         )}
                     </div>
                     <div className="w-full pb-15 text-center">
-                        <Button className="bg-green-600">
-                            Lihat Lainnya <Send />
+                        <Button className="bg-green-600" asChild>
+                            <Link
+                                href={route('blog.list', {
+                                    category: 2,
+                                })}
+                            >
+                                Lihat Lainnya <Send />
+                            </Link>
                         </Button>
                     </div>
                     <div className="flex w-full items-center justify-between rounded-t-xl bg-green-600 px-6 py-7 lg:px-10 lg:py-15">
