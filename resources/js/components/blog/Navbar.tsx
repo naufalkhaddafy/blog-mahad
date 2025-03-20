@@ -14,20 +14,22 @@ const dataNav = [
         name: 'Info Mahad',
         url: '',
         submenu: [
-            { name: 'Profil', url: '/profile' },
-            { name: 'Struktur', url: '/struktur' },
-            { name: 'Berita Mahad', url: '/berita' },
-            { name: 'Kontak', url: '/kontak' },
+            { name: 'Profil', url: '' },
+            { name: 'Berita Mahad', url: '' },
+            { name: 'Kontak', url: '' },
+        ],
+    },
+    {
+        name: 'Info Kajian',
+        url: '',
+        submenu: [
+            { name: 'Info Taklim', url: route('blog.list', { category: 3 }) },
+            { name: 'Info Dauroh', url: route('blog.list', { category: 4 }) },
         ],
     },
     {
         name: 'Belajar Islam',
         url: '/belajar-islam',
-        submenu: [],
-    },
-    {
-        name: 'Info Kajian',
-        url: route('blog.list', { category: 3 }),
         submenu: [],
     },
 ];
@@ -154,7 +156,7 @@ export const Navbar = () => {
                                         <Link
                                             key={subIndex}
                                             href={sub.url}
-                                            className="block px-5 py-1 hover:text-green-400/100"
+                                            className="block px-5 py-2 hover:text-green-400/100"
                                         >
                                             {sub.name}
                                         </Link>
