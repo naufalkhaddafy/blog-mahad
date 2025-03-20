@@ -51,19 +51,30 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
             <Head title={post.title}>
                 <meta
                     name="description"
-                    content={`Baca artikel berjudul "${post.title}" di situs kami ${shareUrl}`}
+                    content={`${getLimitTextContent(post.description, 200)}`}
                 />
-                <meta name="keywords" content={post.tags.map((tag) => tag.label).join(', ')} />
                 <meta name="author" content="Kajian Islam Sangatta" />
-
-                <meta property="og:title" content={post.title} />
+                <meta property="og:title" content={`${post.title} - kajianislamsangatta.com`} />
                 <meta
                     property="og:description"
-                    content={`Baca artikel berjudul "${post.title}" di situs kami ${shareUrl}`}
+                    content={`${getLimitTextContent(post.description, 200)}`}
                 />
-                <meta property="og:image" content={post.imageSrc} />
-                <meta property="og:type" content={post.category?.name} />
+                <meta property="og:type" content="article" />
                 <meta property="og:url" content={shareUrl} />
+                <meta property="og:site_name" content="kajianislamsangatta.com" />
+                <meta property="og:image" content={post.imageSrc} />
+                <meta property="og:image:width" content="800" />
+                <meta property="og:image:height" content="451" />
+                <meta property="og:image:type" content="image/jpeg" />
+                <meta property="og:image:type" content="image/png" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={`${post.title} - kajianislamsangatta.com`} />
+                <meta
+                    name="twitter:description"
+                    content={`${getLimitTextContent(post.description, 200)}`}
+                />
+                <meta name="twitter:image" content={post.imageSrc} />
+                <link rel="canonical" href={shareUrl} />
             </Head>
             <div
                 className={`${progress ? 'fixed' : 'hidden'} top-0 z-30 m-0 w-full bg-gray-300 transition-all duration-900`}
