@@ -16,7 +16,7 @@ const BlogLayout = ({
 }) => {
     return (
         <main className="relative">
-            <header className="sticky top-0 z-20 m-0 mb-4 bg-green-700 text-white shadow-2xl">
+            <header className="sticky top-0 z-20 m-0 mb-4 bg-green-700 text-white shadow-xl">
                 {radio && (
                     <div className="m-0 bg-gray-600">
                         <Container>Radio</Container>
@@ -26,7 +26,7 @@ const BlogLayout = ({
             </header>
             {/* Breadcrumbs */}
             {breadcrumbs.length > 0 && (
-                <section className="py-3">
+                <section className="pt-2 lg:pb-2">
                     <Container className="max-w-5xl">
                         <Breadcrumbs breadcrumbs={breadcrumbs} />
                     </Container>
