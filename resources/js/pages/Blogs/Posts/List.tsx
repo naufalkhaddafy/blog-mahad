@@ -1,3 +1,4 @@
+import { EmptyPost } from '@/components/blog/EmptyPost';
 import { Container } from '@/components/Container';
 import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
@@ -234,9 +235,7 @@ const List = ({
                                 </Card>
                             ))
                         ) : (
-                            <div className="text-md col-span-5 py-10 text-center lg:text-lg">
-                                Mohon maaf postingan tidak tersedia
-                            </div>
+                            <EmptyPost>Mohon maaf postingan tidak tersedia</EmptyPost>
                         )}
                     </div>
 

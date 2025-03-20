@@ -1,4 +1,5 @@
 import Badge from '@/components/blog/Badge';
+import { EmptyPost } from '@/components/blog/EmptyPost';
 import { Container } from '@/components/Container';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -156,9 +157,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                     }
                                 })
                             ) : (
-                                <div className="col-span-5 text-lg">
-                                    Mohon maaf artikel belum tersedia
-                                </div>
+                                <EmptyPost>Mohon maaf artikel belum tersedia</EmptyPost>
                             )}
                         </div>
                     </div>
@@ -210,9 +209,9 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                 ))}
                             </Swiper>
                         ) : (
-                            <div className="col-span-5 text-sm text-green-50 lg:text-lg">
+                            <EmptyPost className="text-green-50">
                                 Mohon maaf poster belum tersedia
-                            </div>
+                            </EmptyPost>
                         )}
                     </div>
                 </Container>
@@ -255,9 +254,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                 </Card>
                             ))
                         ) : (
-                            <div className="col-span-5 text-lg">
-                                Mohon maaf postingan belum tersedia
-                            </div>
+                            <EmptyPost>Mohon maaf postingan belum tersedia</EmptyPost>
                         )}
                     </div>
                     <div className="w-full pb-15 text-center">
