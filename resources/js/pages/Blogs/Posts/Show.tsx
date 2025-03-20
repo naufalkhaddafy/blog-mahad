@@ -65,10 +65,12 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                 <meta property="og:type" content={post.category?.name} />
                 <meta property="og:url" content={shareUrl} />
             </Head>
-            <div className={`${progress ? 'fixed' : 'hidden'} top-0 z-30 w-full bg-gray-300`}>
+            <div
+                className={`${progress ? 'fixed' : 'hidden'} top-0 z-30 m-0 w-full bg-gray-300 transition-all duration-900`}
+            >
                 <div
                     style={{ width: `${completion}%` }}
-                    className="h-1 rounded-xl bg-green-700 transition-normal lg:h-1.5"
+                    className="h-1 rounded-sm bg-green-700 transition-normal lg:h-1.5"
                 />
             </div>
             <Container className="max-w-5xl py-5">
