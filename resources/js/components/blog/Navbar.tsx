@@ -123,7 +123,9 @@ export const Navbar = () => {
 
                 {/* Mobile Navigation */}
                 <div className="flex items-center gap-2 lg:gap-4">
-                    <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6" />
+                    <Link href="/belajar-islam">
+                        <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6" />
+                    </Link>
                     <Bookmark className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6" />
                     {appearance == 'dark' ? (
                         <Sun
