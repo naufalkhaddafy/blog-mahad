@@ -32,14 +32,15 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                     rel="stylesheet"
                 />
             </Head>
+            <h1 className="sr-only">Kajian Islam Sangatta</h1>
             <Banner />
             {/* Top Rencent */}
             <Container>
                 <section className="py-10 lg:py-15">
                     <div className="flex items-center justify-between">
-                        <h1 className="relative h-fit w-auto text-xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl">
+                        <h2 className="relative h-fit w-auto text-xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl">
                             Artikel Terbaru
-                        </h1>
+                        </h2>
                         <Button className="bg-green-600" asChild>
                             <Link
                                 href={route('blog.list', {
@@ -70,18 +71,19 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                                             src={dataPost.imageSrc}
                                                             alt={dataPost.title}
                                                             className="aspect-video object-fill brightness-100 transition-transform duration-300 group-hover:scale-110"
+                                                            loading="lazy"
                                                         />
                                                         <div className="flex h-full w-full flex-col justify-center rounded-t-lg bg-green-100/50 p-5 text-left text-black backdrop-blur-md lg:px-10 lg:py-6">
                                                             <div className="flex items-center gap-2 pb-1 text-xs font-extralight text-green-900 lg:text-sm">
                                                                 <Clock className="size-4" />
                                                                 {dataPost.created_at}
                                                             </div>
-                                                            <h1 className="text-md font-bold lg:py-6 lg:text-xl">
+                                                            <h3 className="text-md font-bold lg:py-6 lg:text-xl">
                                                                 {getLimitTextContent(
                                                                     dataPost.title,
                                                                     100,
                                                                 )}
-                                                            </h1>
+                                                            </h3>
                                                             <p className="text-xs lg:text-lg">
                                                                 {getLimitTextContent(
                                                                     dataPost.description,
@@ -120,6 +122,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                                                 src={dataPost.imageSrc}
                                                                 alt={dataPost.title}
                                                                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                                                loading="lazy"
                                                             />
                                                         </div>
                                                         <div className="col-span-4 py-2">
@@ -167,9 +170,9 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             {/* Poster */}
             <section className="bg-green-700 py-15 text-center">
                 <Container>
-                    <h1 className="relative w-auto text-2xl font-extrabold text-green-50 after:absolute after:-bottom-3 after:left-1/2 after:h-1 after:w-[70px] after:-translate-x-1/2 after:rounded-2xl after:bg-green-500 after:content-['']">
+                    <h2 className="relative w-auto text-2xl font-extrabold text-green-50 after:absolute after:-bottom-3 after:left-1/2 after:h-1 after:w-[70px] after:-translate-x-1/2 after:rounded-2xl after:bg-green-500 after:content-['']">
                         Galeri Poster Dakwah
-                    </h1>
+                    </h2>
                     <div className="py-15">
                         {poster.length > 0 ? (
                             <Swiper
@@ -202,6 +205,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                                 <img
                                                     src={dataPoster.imageSrc}
                                                     alt={dataPoster.title}
+                                                    loading="lazy"
                                                 />
                                             </div>
                                         </Link>
@@ -220,9 +224,9 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             {/* Question */}
             <section className="pt-15">
                 <Container>
-                    <h1 className="relative h-fit w-fit text-2xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-['']">
+                    <h2 className="relative h-fit w-fit text-2xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-['']">
                         Problematika Ummat
-                    </h1>
+                    </h2>
                     <div className="grid gap-4 py-10 lg:grid-cols-2">
                         {qna.length > 0 ? (
                             qna.map((qna, index) => (
@@ -242,7 +246,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                                     <Badge key={index}>{data.label}</Badge>
                                                 ))}
                                             </div>
-                                            <h1 className="text-lg font-semibold">{qna.title}</h1>
+                                            <h3 className="text-lg font-semibold">{qna.title}</h3>
                                             <span className="flex items-center gap-2 py-1 text-sm text-gray-400">
                                                 <Clock className="size-4" /> {qna.created_at}
                                             </span>

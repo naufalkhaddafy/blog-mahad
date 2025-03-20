@@ -56,13 +56,14 @@ export const Navbar = () => {
                         <div className="flex items-center gap-2 lg:gap-4">
                             <img
                                 src={asset('assets/icon.png')}
-                                alt="Icon"
-                                className="size-8 lg:size-14"
+                                alt="Kajian Islam Sangatta Icon"
+                                className="aspect-square size-8 lg:size-14"
+                                loading="lazy"
                             />
                             <div className="flex flex-col">
-                                <h1 className="text-sm font-semibold xl:text-xl">
+                                <h5 className="text-sm font-semibold xl:text-xl">
                                     Kajian Islam Sangatta
-                                </h1>
+                                </h5>
                             </div>
                         </div>
                     </Link>

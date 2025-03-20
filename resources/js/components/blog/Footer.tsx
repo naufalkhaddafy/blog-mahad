@@ -6,7 +6,7 @@ export const Footer = () => {
             <Container>
                 <div className="grid gap-10 py-5 lg:grid-cols-4 lg:gap-10">
                     <div className="flex flex-col flex-wrap gap-4 lg:col-span-2">
-                        <h3 className="text-2xl font-bold text-green-600">Ma'had Ibnu Katsir</h3>
+                        <h4 className="text-2xl font-bold text-green-600">Ma'had Ibnu Katsir</h4>
                         <p className="max-w-96 text-sm">
                             Jalan Sawito Pinrang Kanal 3, Sangatta Utara, Kabupaten Kutai
                             Timur,Provinsi Kalimantan Timur, 75683
@@ -22,7 +22,7 @@ export const Footer = () => {
                     </div>
                     <div className="grid gap-6 lg:col-span-2 lg:grid-cols-3">
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-2xl font-bold text-green-600">Tentang</h3>
+                            <h4 className="text-2xl font-bold text-green-600">Tentang</h4>
                             <div>
                                 <ul className="flex flex-col gap-4">
                                     <li>Artikel</li>
@@ -33,7 +33,7 @@ export const Footer = () => {
                             </div>
                         </div>
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-2xl font-bold text-green-600">Kategori</h3>
+                            <h4 className="text-2xl font-bold text-green-600">Kategori</h4>
                             <div>
                                 <ul className="flex flex-col gap-4">
                                     <li>Artikel</li>
@@ -44,7 +44,7 @@ export const Footer = () => {
                             </div>
                         </div>
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-2xl font-bold text-green-600">Sosial Media</h3>
+                            <h4 className="text-2xl font-bold text-green-600">Sosial Media</h4>
                             <div>
                                 <ul className="flex flex-col gap-4">
                                     <li>Artikel</li>

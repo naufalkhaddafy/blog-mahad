@@ -109,14 +109,16 @@ const List = ({
         <BlogLayout breadcrumbs={breadcrumbs}>
             <Head title="Belajar Islam" />
             <Container className="max-w-5xl pt-5">
-                <section className="border-b-2 pb-10">
+                <header className="border-b-2 pb-10">
                     <div className="flex flex-wrap items-center justify-between gap-5 pb-5 lg:pb-10">
                         <div>
                             <h1 className="text-3xl font-bold text-green-700">Belajar Islam</h1>
-                            <h3 className="flex items-center text-sm text-gray-500 lg:text-lg">
+                            <p className="flex items-center text-sm text-gray-500 lg:text-lg">
                                 Media Belajar Islam Sesuai Al-Qur'an & Sunnah
-                                <Dot className="size-8 animate-pulse text-green-700" />
-                            </h3>
+                                <span aria-hidden="true">
+                                    <Dot className="size-8 animate-pulse text-green-700" />
+                                </span>
+                            </p>
                         </div>
                         <div className="w-full lg:w-2/5">
                             <Input
@@ -179,15 +181,15 @@ const List = ({
                             />
                         </div>
                     </div>
-                </section>
+                </header>
                 <section>
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="pt-5 text-lg font-bold">Hasil pencarian</h1>
-                            <h3 className="text-xs text-gray-500 lg:text-sm">
-                                Menampilkan {meta.from} - {meta.to} dari{' '}
+                            <h2 className="pt-5 text-lg font-bold">Hasil pencarian</h2>
+                            <p className="text-xs text-gray-500 lg:text-sm">
+                                Menampilkan {meta.from} - {meta.to} dari
                                 <span className="font-bold text-green-600"> {meta.total}</span>
-                            </h3>
+                            </p>
                         </div>
                         <Button
                             className="flex items-center gap-2 bg-transparent text-gray-600 shadow-none hover:bg-transparent hover:text-green-700"
@@ -223,7 +225,7 @@ const List = ({
                                                     </span>
                                                 ))}
                                             </div>
-                                            <h1 className="text-lg font-semibold">{qna.title}</h1>
+                                            <h3 className="text-lg font-semibold">{qna.title}</h3>
                                             <span className="flex items-center gap-2 py-1 text-sm text-gray-400">
                                                 <Clock className="size-4" /> {qna.created_at}
                                             </span>

@@ -36,6 +36,7 @@ export const Banner = () => {
                                     src={value.image}
                                     alt={value.image}
                                     className="h-full w-full object-fill brightness-90"
+                                    loading="lazy"
                                 />
                             </div>
                         </SwiperSlide>

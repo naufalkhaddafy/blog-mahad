@@ -87,7 +87,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                             <div className="flex items-center gap-2 font-medium">
                                 <div className="flex items-center gap-1">
                                     <CircleUserRound size={15} />
-                                    <h3 className="text-sm">{post.user?.name}</h3>
+                                    <p className="text-sm">{post.user?.name}</p>
                                 </div>
                                 <div className="flex items-center gap-1 text-xs text-gray-500 lg:text-sm">
                                     <span className="text-gray-700">
@@ -114,6 +114,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                             src={post.imageSrc}
                             alt={post.title}
                             className={`${post.category?.name == 'Poster' ? 'aspect-square' : 'aspect-video'} w-full rounded-lg`}
+                            loading="lazy"
                         />
                     </figure>
                     <section className="py-5">
@@ -126,14 +127,14 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                         <div className="flex items-center gap-2 border-y-1 py-3 font-medium lg:gap-5">
                             <div className="flex items-center gap-2">
                                 <Share2 className="size-4 lg:size-5" />
-                                <h3 className="text-sm lg:text-lg">Share</h3>
+                                <p className="text-sm lg:text-lg">Share</p>
                             </div>
                             <SocialMediaShare post={post} />
                         </div>
                     </footer>
                 </article>
 
-                <div className="my-5 grid grid-cols-2 gap-5 rounded-lg border-1 p-2">
+                <section className="my-5 grid grid-cols-2 gap-5 rounded-lg border-1 p-2">
                     {previousPost ? (
                         <Link
                             href={route('blog.show', {
@@ -145,7 +146,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                                 <span>
                                     <ArrowLeft />
                                 </span>
-                                <h1 className="text-md">{previousPost?.title}</h1>
+                                <h2 className="text-md">{previousPost?.title}</h2>
                             </div>
                         </Link>
                     ) : (
@@ -159,7 +160,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                             className="col-span-2 lg:col-span-1"
                         >
                             <div className="col-span-2 flex h-full items-center justify-end gap-2 rounded-lg p-2 transition-all duration-300 hover:border-1 hover:border-green-500 lg:col-span-1">
-                                <h1 className="text-md">{nextPost?.title}</h1>
+                                <h2 className="text-md">{nextPost?.title}</h2>
                                 <span>
                                     <ArrowRight />
                                 </span>
@@ -168,12 +169,12 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                     ) : (
                         ''
                     )}
-                </div>
+                </section>
                 {/* Artikel Terkait */}
-                <div className="py-10">
-                    <h1 className="relative h-fit w-auto text-xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl">
+                <section className="py-10">
+                    <h2 className="relative h-fit w-auto text-xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl">
                         Artikel Terkait
-                    </h1>
+                    </h2>
                     <div className="grid gap-5 py-10">
                         {relevantPosts.length > 0
                             ? relevantPosts.map((relevantPost, index) => (
@@ -189,6 +190,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                                                   src={relevantPost.imageSrc}
                                                   alt={relevantPost.title}
                                                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                                  loading="lazy"
                                               />
                                           </div>
                                           <div className="col-span-4 py-2">
@@ -218,7 +220,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                               ))
                             : ''}
                     </div>
-                </div>
+                </section>
             </Container>
         </BlogLayout>
     );
