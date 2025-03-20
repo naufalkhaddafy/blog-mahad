@@ -16,12 +16,25 @@ class BlogController extends Controller
 {
     public function home()
     {
-        $artticleCategory = Category::where('name', 'Artikel')->first();
+        $articleCategory = Category::where('name', 'Artikel')->first();
         $qnaCategory = Category::where('name', 'Tanya Jawab')->first();
         $posterCategory = Category::where('name', 'Poster')->first();
-        $post = Post::query()->with('user', 'category', 'tags')->where('category_id', $artticleCategory->id)->where('status', 'publish')->latest()->take(4)->cursor();
-        $qna = Post::query()->with('user', 'category', 'tags')->where('category_id', $qnaCategory->id)->where('status', 'publish')->latest()->take(4)->cursor();
-        $poster = Post::query()->with('user', 'category', 'tags')->where('category_id', $posterCategory->id)->where('status', 'publish')->latest()->take(10)->cursor();;
+
+        $post = Post::query()->with('user', 'category', 'tags')
+            ->when($articleCategory, fn($q) => $q->where('category_id', $articleCategory->id))
+            ->where('status', 'publish')
+            ->latest()->take(4)->cursor();
+
+        $qna = Post::query()->with('user', 'category', 'tags')
+            ->when($qnaCategory, fn($q) => $q->where('category_id', $qnaCategory->id))
+            ->where('status', 'publish')
+            ->latest()->take(4)->cursor();
+
+        $poster = Post::query()->with('user', 'category', 'tags')
+            ->when($posterCategory, fn($q) => $q->where('category_id', $posterCategory->id))
+            ->where('status', 'publish')
+            ->latest()->take(10)->cursor();
+
         return Inertia('Blogs/Home/Index', [
             'posts' => PostResource::collection($post),
             'qna' => PostResource::collection($qna),
