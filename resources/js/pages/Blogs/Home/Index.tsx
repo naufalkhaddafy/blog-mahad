@@ -31,6 +31,12 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                     href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600"
                     rel="stylesheet"
                 />
+                <meta name="author" content="Kajian Islam Sangatta"></meta>
+                <meta name="robots" content="index, follow"></meta>
+                <meta
+                    name="description"
+                    content="Kajian Islam Sangatta, Kajian Islam, Belajar Islam, Al Quran, Hadits, Sesuai dengan Pemahaman Salaf"
+                ></meta>
             </Head>
             <h1 className="sr-only">Kajian Islam Sangatta</h1>
             <Banner />

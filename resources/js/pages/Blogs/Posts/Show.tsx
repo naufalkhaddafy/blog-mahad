@@ -54,7 +54,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                     content={`Baca artikel berjudul "${post.title}" di situs kami ${shareUrl}`}
                 />
                 <meta name="keywords" content={post.tags.map((tag) => tag.label).join(', ')} />
-                <meta name="author" content="Admin" />
+                <meta name="author" content="Kajian Islam Sangatta" />
 
                 <meta property="og:title" content={post.title} />
                 <meta

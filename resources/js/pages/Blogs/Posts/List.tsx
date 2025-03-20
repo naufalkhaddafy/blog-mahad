@@ -107,7 +107,14 @@ const List = ({
 
     return (
         <BlogLayout breadcrumbs={breadcrumbs}>
-            <Head title="Belajar Islam" />
+            <Head title="Belajar Islam">
+                <meta name="author" content="Kajian Islam Sangatta"></meta>
+                <meta name="robots" content="index, follow"></meta>
+                <meta
+                    name="description"
+                    content="Kajian Islam Sangatta, Kajian Islam, Belajar Islam, Al Quran, Hadits, Sesuai dengan Pemahaman Salaf"
+                ></meta>
+            </Head>
             <Container className="max-w-5xl pt-5">
                 <header className="border-b-2 pb-10">
                     <div className="flex flex-wrap items-center justify-between gap-5 pb-5 lg:pb-10">
