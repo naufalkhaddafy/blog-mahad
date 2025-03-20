@@ -53,7 +53,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                     content={`Baca artikel berjudul "${post.title}" di situs kami ${shareUrl}`}
                 />
                 <meta property="og:image" content={post.imageSrc} />
-                <meta property="og:type" content={post.category} />
+                <meta property="og:type" content={post.category?.name} />
                 <meta property="og:url" content={shareUrl} />
             </Head>
             <div className={`${progress ? 'fixed' : 'hidden'} top-0 z-30 w-full bg-gray-300`}>
@@ -66,7 +66,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                 <article ref={articleRef} className="h-auto">
                     <header className="py-1">
                         <div className="flex flex-wrap items-center gap-2">
-                            <Badge>{post.category}</Badge>
+                            <Badge>{post.category?.name}</Badge>
                             {post.tags.map((dataTags, index) => (
                                 <Badge key={index + 1}>{dataTags.label}</Badge>
                             ))}
@@ -76,7 +76,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                             <div className="flex items-center gap-2 font-medium">
                                 <div className="flex items-center gap-1">
                                     <CircleUserRound size={15} />
-                                    <h3 className="text-sm">{post.user}</h3>
+                                    <h3 className="text-sm">{post.user?.name}</h3>
                                 </div>
                                 <div className="flex items-center gap-1 text-sm text-gray-500">
                                     <span className="text-gray-700">
@@ -93,7 +93,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                         <img
                             src={post.imageSrc}
                             alt={post.title}
-                            className={`${post.category == 'Poster' ? 'aspect-square' : 'aspect-video'} w-full rounded-lg`}
+                            className={`${post.category?.name == 'Poster' ? 'aspect-square' : 'aspect-video'} w-full rounded-lg`}
                         />
                     </figure>
                     <section className="py-5">
@@ -105,7 +105,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                     <footer className="py-5">
                         <div className="flex items-center gap-2 border-y-1 py-3 font-medium lg:gap-5">
                             <div className="flex items-center gap-2">
-                                <Share2 className="size-5" />
+                                <Share2 className="size-4 lg:size-5" />
                                 <h3 className="text-sm lg:text-lg">Share</h3>
                             </div>
                             <SocialMediaShare post={post} />
@@ -173,7 +173,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                                           </div>
                                           <div className="col-span-4 py-2">
                                               <div className="hidden items-center gap-1 py-1 md:flex">
-                                                  <Badge>{relevantPost.category}</Badge>
+                                                  <Badge>{relevantPost.category?.name}</Badge>
                                                   {relevantPost.tags.map((dataTags, index) => (
                                                       <Badge key={index}>{dataTags.label}</Badge>
                                                   ))}

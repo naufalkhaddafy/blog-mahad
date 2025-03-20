@@ -22,6 +22,7 @@ interface IndexProps {
 }
 
 const Index = ({ posts, qna, poster }: IndexProps) => {
+    console.log(posts);
     return (
         <BlogLayout>
             <Head title="Beranda">
@@ -89,7 +90,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                                             </p>
                                                         </div>
                                                         <div className="absolute top-0 left-0 flex flex-wrap gap-2 px-4 py-5 lg:px-6">
-                                                            <Badge>{dataPost.category}</Badge>
+                                                            <Badge>{dataPost.category?.name}</Badge>
                                                             {dataPost.tags.map(
                                                                 (dataTags, index) => (
                                                                     <Badge key={index}>
@@ -123,7 +124,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                                         </div>
                                                         <div className="col-span-4 py-2">
                                                             <div className="hidden items-center gap-1 py-1 md:flex">
-                                                                <Badge>{dataPost.category}</Badge>
+                                                                <Badge>{dataPost.category?.name}</Badge>
                                                                 {dataPost.tags.map(
                                                                     (dataTags, index) => (
                                                                         <Badge key={index}>
@@ -236,7 +237,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                     >
                                         <div>
                                             <div className="flex flex-wrap items-center gap-2 px-1 py-2">
-                                                <Badge>{qna.category}</Badge>
+                                                <Badge>{qna.category?.name}</Badge>
                                                 {qna.tags.map((data, index) => (
                                                     <Badge key={index}>{data.label}</Badge>
                                                 ))}

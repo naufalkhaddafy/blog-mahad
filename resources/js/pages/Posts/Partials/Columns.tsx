@@ -72,7 +72,7 @@ export const columns: ColumnDef<PostProps>[] = [
         },
         cell: ({ row }) => {
             const title = row.getValue('title') as string;
-            const category = row.original.category ?? 'No Category';
+            const category = row.original.category?.name ?? 'No Category';
 
             return (
                 <div className="flex min-w-96 gap-1">

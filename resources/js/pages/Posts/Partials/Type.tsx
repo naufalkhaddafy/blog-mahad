@@ -19,10 +19,14 @@ export type PageSettingsProps = {
 
 export type PostProps = {
     id?: number;
-    user_id?: number;
-    user: string;
-    category_id?: number;
-    category?: string;
+    user?: {
+        id: number;
+        name: string;
+    };
+    category?: {
+        id: number;
+        name: string;
+    };
     title: string;
     description: string;
     image: string;
@@ -30,5 +34,6 @@ export type PostProps = {
     slug: string;
     status: string;
     created_at: string;
+    views: number;
     tags: Array<TagPropsSelect>;
 };

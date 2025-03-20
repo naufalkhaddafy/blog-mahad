@@ -47,7 +47,7 @@ export default function Form({ posts, page_settings, categories, tags, status }:
     const [processing, setProcessing] = useState<boolean>();
     const { data, setData, reset } = useForm({
         title: posts.title || '',
-        category_id: posts.category_id || '',
+        category_id: posts.category?.id || '',
         description: posts.description || '',
         image: posts.image || '',
         status: posts.status || '',
