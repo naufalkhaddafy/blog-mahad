@@ -33,8 +33,8 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             </Head>
             <Banner />
             {/* Top Rencent */}
-            <section className="justify-center py-15">
-                <Container className="px-4 xl:px-0">
+            <Container>
+                <section className="py-15">
                     <div className="flex items-center justify-between">
                         <h1 className="relative h-fit w-auto text-xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl">
                             Artikel Terbaru
@@ -160,16 +160,16 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                             )}
                         </div>
                     </div>
-                </Container>
-            </section>
+                </section>
+            </Container>
             {/* Top Rencent End*/}
             {/* Poster */}
-            <section className="bg-green-700 py-15">
-                <Container className="text-center">
+            <section className="bg-green-700 py-15 text-center">
+                <Container>
                     <h1 className="relative w-auto text-2xl font-extrabold text-green-50 after:absolute after:-bottom-3 after:left-1/2 after:h-1 after:w-[70px] after:-translate-x-1/2 after:rounded-2xl after:bg-green-500 after:content-['']">
                         Galeri Poster Dakwah
                     </h1>
-                    <div className="px-5 py-15">
+                    <div className="py-15">
                         {poster.length > 0 ? (
                             <Swiper
                                 pagination={{
@@ -218,7 +218,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             {/* Poster End */}
             {/* Question */}
             <section className="pt-15">
-                <Container className="px-3">
+                <Container>
                     <h1 className="relative h-fit w-fit text-2xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-['']">
                         Problematika Ummat
                     </h1>
@@ -236,16 +236,9 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                     >
                                         <div>
                                             <div className="flex flex-wrap items-center gap-2 px-1 py-2">
-                                                <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl">
-                                                    {qna.category}
-                                                </span>
+                                                <Badge>{qna.category}</Badge>
                                                 {qna.tags.map((data, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl"
-                                                    >
-                                                        {data.label}
-                                                    </span>
+                                                    <Badge key={index}>{data.label}</Badge>
                                                 ))}
                                             </div>
                                             <h1 className="text-lg font-semibold">{qna.title}</h1>

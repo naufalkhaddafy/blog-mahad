@@ -3,7 +3,7 @@ import { Container } from '../Container';
 export const Footer = () => {
     return (
         <footer className="bg-gray-700 pt-10 text-green-50">
-            <Container className="px-5 lg:px-8 xl:px-0">
+            <Container>
                 <div className="grid gap-10 py-5 lg:grid-cols-4 lg:gap-10">
                     <div className="flex flex-col flex-wrap gap-4 lg:col-span-2">
                         <h3 className="text-2xl font-bold text-green-600">Ma'had Ibnu Katsir</h3>

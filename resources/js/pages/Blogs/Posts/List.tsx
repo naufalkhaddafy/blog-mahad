@@ -24,6 +24,7 @@ import { getLimitTextContent } from '@/lib/utils';
 import { CategoryProps } from '@/pages/Categories/Partials/Type';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { TagPropsSelect } from '@/pages/Tags/Partials/Type';
+import { BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Clock, Dot, Grid2x2, Rows3 } from 'lucide-react';
 import { useState } from 'react';
@@ -50,6 +51,18 @@ interface PaginatedPosts {
     meta: PaginationMeta;
     links: PaginationLinks;
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Beranda',
+        href: '/',
+    },
+    {
+        title: 'Belajar Islam',
+        href: '/belajar-islam',
+    },
+];
+
 const List = ({
     tags,
     categories,
@@ -92,16 +105,16 @@ const List = ({
     };
 
     return (
-        <BlogLayout>
+        <BlogLayout breadcrumbs={breadcrumbs}>
             <Head title="Belajar Islam" />
-            <Container className="max-w-5xl px-4">
-                <section className="border-b-2 py-10">
+            <Container className="max-w-5xl pt-5">
+                <section className="border-b-2 pb-10">
                     <div className="flex flex-wrap items-center justify-between gap-5 pb-5 lg:pb-10">
                         <div>
                             <h1 className="text-3xl font-bold text-green-700">Belajar Islam</h1>
                             <h3 className="flex items-center text-sm text-gray-500 lg:text-lg">
                                 Media Belajar Islam Sesuai Al-Qur'an & Sunnah
-                                <Dot className="size-7 text-green-700" />
+                                <Dot className="size-8 animate-pulse text-green-700" />
                             </h3>
                         </div>
                         <div className="w-full lg:w-2/5">

@@ -11,11 +11,11 @@ const bannerData = [
 
 export const Banner = () => {
     return (
-        <Container className="px-2 lg:px-0">
+        <Container>
             {/* Banner */}
             <section>
                 <Swiper
-                    // navigation={true}
+
                     pagination={{
                         dynamicBullets: true,
                         clickable: true,
