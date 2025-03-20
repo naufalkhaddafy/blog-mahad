@@ -1,9 +1,9 @@
 import { PostProps } from '@/pages/Posts/Partials/Type';
+import { CopyCheck, Link } from 'lucide-react';
+import { useState } from 'react';
 import {
     FacebookIcon,
     FacebookShareButton,
-    LinkedinIcon,
-    LinkedinShareButton,
     TelegramIcon,
     TelegramShareButton,
     TwitterShareButton,
@@ -14,8 +14,16 @@ import {
 
 const SocialMediaShare = ({ post }: { post: PostProps }) => {
     const shareUrl = window.location.href;
+    const [copy, setCopy] = useState<boolean>(false);
+    const copyLink = () => {
+        navigator.clipboard.writeText(shareUrl);
+        setCopy(true);
+        setTimeout(() => {
+            setCopy(false);
+        }, 3000);
+    };
     return (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
             <TelegramShareButton url={shareUrl} title={post.title}>
                 <TelegramIcon className="size-5 rounded hover:brightness-75 lg:size-7" />
             </TelegramShareButton>
@@ -32,9 +40,22 @@ const SocialMediaShare = ({ post }: { post: PostProps }) => {
                 <XIcon className="size-5 rounded hover:brightness-75 lg:size-7" />
             </TwitterShareButton>
 
-            <LinkedinShareButton url={shareUrl}>
-                <LinkedinIcon className="size-5 rounded hover:brightness-75 lg:size-7" />
-            </LinkedinShareButton>
+            {copy === false ? (
+                <span className="transition duration-900 ease-in-out">
+                    <button
+                        type="button"
+                        className="text-primary-foreground focus-visible:ring-ring/50 hover:bg-primary/80 bg-primary flex items-center gap-1 rounded p-1 shadow-sm focus-visible:ring-2 focus-visible:outline-none"
+                        onClick={copyLink}
+                    >
+                        <Link className="size-3 lg:size-5" />
+                    </button>
+                </span>
+            ) : (
+                <span className="flex items-center gap-1 text-sm transition-all duration-500 ease-out">
+                    <CopyCheck className="size-3" />
+                    copied
+                </span>
+            )}
         </div>
     );
 };
