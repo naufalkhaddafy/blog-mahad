@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('slug')->unique();
             $table->string('status')->default(\App\Enums\PostStatus::PUBLISH->value);
+            $table->bigInteger('views')->default(0);
             $table->timestamps();
         });
     }

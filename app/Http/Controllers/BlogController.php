@@ -31,7 +31,7 @@ class BlogController extends Controller
 
     public function show(Post $post)
     {
-        // dd($post);
+        $post->increment('views');
 
         $previousPost = Post::whereRaw('created_at = (SELECT MAX(created_at) FROM posts WHERE created_at < ? AND category_id = ? AND status = "publish")', [$post->created_at, $post->category_id])
             ->first();
@@ -66,8 +66,6 @@ class BlogController extends Controller
             ->latest()
             ->take(3)
             ->get();
-
-        // dd($relevantPosts);
 
         return Inertia('Blogs/Posts/Show', [
             'post' => PostResource::make($post->load('user', 'category', 'tags')),

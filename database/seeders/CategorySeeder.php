@@ -18,8 +18,8 @@ class CategorySeeder extends Seeder
             ["name" => "Artikel"],
             ["name" => "Tanya Jawab"],
             ["name" => "Info Taklim"],
+            ["name" => "Info Dauroh"],
             ["name" => "Poster"],
-
         ];
 
         collect($data)->each(function ($d) {

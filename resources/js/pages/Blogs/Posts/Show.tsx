@@ -9,7 +9,16 @@ import { getLimitTextContent } from '@/lib/utils';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, ArrowRight, CircleSmall, CircleUserRound, Clock, Share2 } from 'lucide-react';
+import {
+    ArrowLeft,
+    ArrowRight,
+    Bookmark,
+    ChartLine,
+    CircleSmall,
+    CircleUserRound,
+    Clock,
+    Share2,
+} from 'lucide-react';
 import { useRef } from 'react';
 
 interface ShowProps {
@@ -30,10 +39,10 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
         },
         {
             title: 'Belajar Islam',
-            href: '/belajar-islam',
+            href: route('blog.list', { category: post.category?.id }),
         },
         {
-            title: `${post.title}`,
+            title: `${post.category?.name}`,
             href: '/posts',
         },
     ];
@@ -72,20 +81,29 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                             ))}
                         </div>
                         <h1 className="py-8 text-2xl font-bold lg:text-5xl"> {post.title}</h1>
-                        <div className="mb-5 flex items-center justify-between gap-2 border-y-1 py-3 font-medium">
+                        <div className="mb-5 flex items-center justify-between gap-2 border-y-1 px-3 py-3 font-medium lg:px-1">
                             <div className="flex items-center gap-2 font-medium">
                                 <div className="flex items-center gap-1">
                                     <CircleUserRound size={15} />
                                     <h3 className="text-sm">{post.user?.name}</h3>
                                 </div>
-                                <div className="flex items-center gap-1 text-sm text-gray-500">
+                                <div className="flex items-center gap-1 text-xs text-gray-500 lg:text-sm">
                                     <span className="text-gray-700">
                                         <CircleSmall size={8} />
                                     </span>
                                     {post.created_at}
                                 </div>
                             </div>
-                            <SocialMediaShare post={post} />
+                            <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1 text-sm">
+                                    <ChartLine className="size-4 text-gray-500 lg:size-5" />
+                                    <p className="text-sm text-green-500">{post.views}</p>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <Bookmark className="size-4 text-green-800 lg:size-5" />
+                                    {/* <BookmarkCheck className="size-4 lg:size-5" /> */}
+                                </div>
+                            </div>
                         </div>
                     </header>
 

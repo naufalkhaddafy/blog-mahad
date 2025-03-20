@@ -22,7 +22,6 @@ interface IndexProps {
 }
 
 const Index = ({ posts, qna, poster }: IndexProps) => {
-    console.log(posts);
     return (
         <BlogLayout>
             <Head title="Beranda">
@@ -124,7 +123,9 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                                         </div>
                                                         <div className="col-span-4 py-2">
                                                             <div className="hidden items-center gap-1 py-1 md:flex">
-                                                                <Badge>{dataPost.category?.name}</Badge>
+                                                                <Badge>
+                                                                    {dataPost.category?.name}
+                                                                </Badge>
                                                                 {dataPost.tags.map(
                                                                     (dataTags, index) => (
                                                                         <Badge key={index}>
