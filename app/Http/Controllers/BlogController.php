@@ -84,7 +84,7 @@ class BlogController extends Controller
             ->with(['user', 'category', 'tags'])
             ->when($filters['search'] ?? null, fn($q, $search) => $q->where('title', 'like', "%$search%"))
             ->when($filters['category'] ?? null, fn($q, $category) => $q->where('category_id', $category))
-            ->when($filters['sorting'] ?? null, fn($q, $sorting) => $q->orderBy('created_at', $sorting))
+            ->when($filters['sorting'] ?? null, fn($q, $sorting) => $sorting === 'popular' ? $q->orderBy('views', 'desc') : $q->orderBy('created_at', $sorting))
             ->when(!empty($filters['tags'] ?? null), fn($q) => $q->whereHas('tags', fn($q) => $q->whereIn('tags.id', explode(',', $filters['tags']))))
             ->latest()
             ->paginate(10)

@@ -163,6 +163,7 @@ const List = ({
                                 <SelectContent>
                                     <SelectItem value="desc">Terbaru</SelectItem>
                                     <SelectItem value="asc">Terlama</SelectItem>
+                                    <SelectItem value="popular">Populer</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
