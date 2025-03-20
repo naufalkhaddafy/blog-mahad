@@ -15,7 +15,6 @@ export const Banner = () => {
             {/* Banner */}
             <section>
                 <Swiper
-
                     pagination={{
                         dynamicBullets: true,
                         clickable: true,
@@ -32,7 +31,7 @@ export const Banner = () => {
                 >
                     {bannerData.map((value, index) => (
                         <SwiperSlide key={index}>
-                            <div className="h-full bg-green-400 text-center align-middle">
+                            <div className="h-full bg-green-600 text-center align-middle">
                                 <img
                                     src={value.image}
                                     alt={value.image}

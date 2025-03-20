@@ -34,7 +34,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             <Banner />
             {/* Top Rencent */}
             <Container>
-                <section className="py-15">
+                <section className="py-10 lg:py-15">
                     <div className="flex items-center justify-between">
                         <h1 className="relative h-fit w-auto text-xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl">
                             Artikel Terbaru

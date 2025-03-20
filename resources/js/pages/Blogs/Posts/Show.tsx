@@ -12,7 +12,7 @@ import { Head, Link } from '@inertiajs/react';
 import {
     ArrowLeft,
     ArrowRight,
-    Bookmark,
+    BookmarkPlus,
     ChartLine,
     CircleSmall,
     CircleUserRound,
@@ -100,7 +100,7 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                                     <p className="text-sm text-green-500">{post.views}</p>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <Bookmark className="size-4 text-green-800 lg:size-5" />
+                                    <BookmarkPlus className="size-5 text-green-800 lg:size-6" />
                                     {/* <BookmarkCheck className="size-4 lg:size-5" /> */}
                                 </div>
                             </div>
