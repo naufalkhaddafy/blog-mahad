@@ -1,6 +1,7 @@
+import { useAppearance } from '@/hooks/use-appearance';
 import { asset } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
-import { ChevronDown, Menu, Search } from 'lucide-react';
+import { Bookmark, ChevronDown, Menu, Moon, Search, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { Container } from '../Container';
 
@@ -32,28 +33,40 @@ const dataNav = [
         url: '/belajar-islam',
         submenu: [],
     },
+    {
+        name: 'Radio Online',
+        url: '',
+        submenu: [],
+    },
 ];
 
 export const Navbar = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+    const { appearance, updateAppearance } = useAppearance();
+
     return (
-        <Container className="px-3 py-4">
+        <Container className="px-3 py-4 xl:py-3">
             <nav className="flex flex-wrap items-center justify-between bg-green-700">
-                <Link href="/">
-                    <div className="flex items-center gap-3 lg:gap-4">
-                        <img
-                            src={asset('assets/icon.png')}
-                            alt="Icon"
-                            className="size-10 lg:size-16"
-                        />
-                        <div className="flex flex-col">
-                            <h1 className="text-sm font-semibold xl:text-xl">
-                                Kajian Islam Sangatta
-                            </h1>
+                <div className="flex items-center gap-3">
+                    <button className="cursor-pointer lg:hidden" onClick={() => setOpen(!open)}>
+                        <Menu className="size-5 cursor-pointer transition duration-300 hover:text-green-500" />
+                    </button>
+                    <Link href="/">
+                        <div className="flex items-center gap-2 lg:gap-4">
+                            <img
+                                src={asset('assets/icon.png')}
+                                alt="Icon"
+                                className="size-8 lg:size-14"
+                            />
+                            <div className="flex flex-col">
+                                <h1 className="text-sm font-semibold xl:text-xl">
+                                    Kajian Islam Sangatta
+                                </h1>
+                            </div>
                         </div>
-                    </div>
-                </Link>
+                    </Link>
+                </div>
 
                 {/* Desktop Navigation */}
                 <div className="hidden lg:flex">
@@ -109,11 +122,20 @@ export const Navbar = () => {
                 </div>
 
                 {/* Mobile Navigation */}
-                <div className="flex items-center gap-4 lg:hidden">
-                    <Search />
-                    <button className="cursor-pointer" onClick={() => setOpen(!open)}>
-                        <Menu />
-                    </button>
+                <div className="flex items-center gap-2 lg:gap-4">
+                    <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6" />
+                    <Bookmark className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6" />
+                    {appearance == 'dark' ? (
+                        <Sun
+                            className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6"
+                            onClick={() => updateAppearance('light')}
+                        />
+                    ) : (
+                        <Moon
+                            className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6"
+                            onClick={() => updateAppearance('dark')}
+                        />
+                    )}
                 </div>
 
                 {/* Mobile Dropdown */}

@@ -8,25 +8,35 @@ import { BreadcrumbItem } from '@/types';
 const BlogLayout = ({
     children,
     breadcrumbs = [],
+    radio = false,
 }: {
     children: React.ReactNode;
     breadcrumbs?: BreadcrumbItem[];
+    radio?: boolean;
 }) => {
     return (
-        <>
-            <header className="m-0 mb-4 bg-green-700 text-white shadow-2xl">
-                <div></div>
+        <main className="relative">
+            <header className="sticky top-0 z-20 m-0 mb-4 bg-green-700 text-white shadow-2xl">
+                {radio && (
+                    <div className="m-0 bg-gray-600">
+                        <Container>Radio</Container>
+                    </div>
+                )}
                 <Navbar />
             </header>
-            <main>
-                <Container className="max-w-5xl py-3">
-                    <Breadcrumbs breadcrumbs={breadcrumbs} />
-                </Container>
-                {children}
-            </main>
+            {/* Breadcrumbs */}
+            {breadcrumbs.length > 0 && (
+                <section className="py-3">
+                    <Container className="max-w-5xl">
+                        <Breadcrumbs breadcrumbs={breadcrumbs} />
+                    </Container>
+                </section>
+            )}
+            {/* Konten Utama */}
+            <section className="content-container">{children}</section>
             <Footer />
             <ScrollUp />
-        </>
+        </main>
     );
 };
 
