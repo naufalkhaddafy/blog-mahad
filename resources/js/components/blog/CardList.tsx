@@ -42,8 +42,8 @@ export const CardList = ({ dataPost }: { dataPost: PostProps }) => {
                         {dataPost.views}
                     </div>
                 </div>
-                <h3 className="md:text-md text-left text-xs font-bold lg:text-lg">
-                    {dataPost.title}
+                <h3 className="text-md text-left font-bold lg:text-lg">
+                    {getLimitTextContent(dataPost.title, 100)}
                 </h3>
                 <p className="hidden font-sans text-sm font-extralight md:block">
                     {getLimitTextContent(dataPost.description, 70)}
