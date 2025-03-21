@@ -119,11 +119,13 @@ const List = ({
                 <header className="border-b-2 pb-10">
                     <div className="flex flex-wrap items-center justify-between gap-5 pb-5 lg:pb-10">
                         <div>
-                            <h1 className="text-3xl font-bold text-green-700">Belajar Islam</h1>
+                            <h1 className="text-primary text-3xl font-bold dark:text-green-600">
+                                Belajar Islam
+                            </h1>
                             <p className="flex items-center text-sm text-gray-500 lg:text-lg">
                                 Media Belajar Islam Sesuai Al-Qur'an & Sunnah
                                 <span aria-hidden="true">
-                                    <Dot className="size-8 animate-pulse text-green-700" />
+                                    <Dot className="size-8 animate-pulse text-green-700 dark:text-green-400" />
                                 </span>
                             </p>
                         </div>

@@ -35,7 +35,7 @@ export const Banner = () => {
                                 <img
                                     src={value.image}
                                     alt={value.image}
-                                    className="h-full w-full object-fill brightness-90"
+                                    className="h-full w-full object-fill brightness-90 dark:brightness-80"
                                     loading="lazy"
                                 />
                             </div>

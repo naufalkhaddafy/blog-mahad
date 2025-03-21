@@ -16,7 +16,7 @@ const BlogLayout = ({
 }) => {
     return (
         <main className="relative">
-            <header className="sticky top-0 z-20 m-0 mb-4 bg-green-700 text-white shadow-xl">
+            <header className="bg-primary sticky top-0 z-20 m-0 mb-4 text-white shadow-xl">
                 {radio && (
                     <div className="m-0 bg-gray-600">
                         <Container>Radio</Container>

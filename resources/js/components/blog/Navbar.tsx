@@ -47,7 +47,7 @@ export const Navbar = () => {
 
     return (
         <Container className="px-3 py-4 xl:py-3">
-            <nav className="flex flex-wrap items-center justify-between bg-green-700">
+            <nav className="bg-primary flex flex-wrap items-center justify-between">
                 <div className="flex items-center gap-3">
                     <button className="cursor-pointer lg:hidden" onClick={() => setOpen(!open)}>
                         <Menu className="size-5 cursor-pointer transition duration-300 hover:text-green-500" />
@@ -145,7 +145,7 @@ export const Navbar = () => {
                 <div
                     className={`${
                         open ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-                    } w-full overflow-hidden bg-green-700 transition-all duration-500 ease-in-out lg:hidden`}
+                    } bg-primary w-full overflow-hidden transition-all duration-500 ease-in-out lg:hidden`}
                 >
                     <div className="mt-3 flex w-full flex-col gap-1 px-4 py-2">
                         {dataNav.map((data, index) => (

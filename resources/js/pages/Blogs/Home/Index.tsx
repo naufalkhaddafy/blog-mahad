@@ -44,10 +44,10 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             <Container>
                 <section className="py-10 lg:py-15">
                     <div className="flex items-center justify-between">
-                        <h2 className="relative h-fit w-auto text-xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl">
+                        <h2 className="text-primary relative h-fit w-auto text-xl font-extrabold after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl dark:text-green-600 dark:after:bg-green-400">
                             Artikel Terbaru
                         </h2>
-                        <Button className="bg-green-600" asChild>
+                        <Button className="bg-primary text-white dark:bg-green-700" asChild>
                             <Link
                                 href={route('blog.list', {
                                     category: 1,
@@ -174,7 +174,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             </Container>
             {/* Top Rencent End*/}
             {/* Poster */}
-            <section className="bg-green-700 py-15 text-center">
+            <section className="bg-primary py-15 text-center">
                 <Container>
                     <h2 className="relative w-auto text-2xl font-extrabold text-green-50 after:absolute after:-bottom-3 after:left-1/2 after:h-1 after:w-[70px] after:-translate-x-1/2 after:rounded-2xl after:bg-green-500 after:content-['']">
                         Galeri Poster Dakwah
@@ -230,7 +230,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             {/* Question */}
             <section className="pt-15">
                 <Container>
-                    <h2 className="relative h-fit w-fit text-2xl font-extrabold text-green-700 after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-['']">
+                    <h2 className="text-primary relative h-fit w-fit text-2xl font-extrabold after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] dark:text-green-600 dark:after:bg-green-400">
                         Problematika Ummat
                     </h2>
                     <div className="grid gap-4 py-10 lg:grid-cols-2">
@@ -268,7 +268,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                         )}
                     </div>
                     <div className="w-full pb-15 text-center">
-                        <Button className="bg-green-600" asChild>
+                        <Button className="bg-primary text-white dark:bg-green-700" asChild>
                             <Link
                                 href={route('blog.list', {
                                     category: 2,
@@ -278,11 +278,11 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                             </Link>
                         </Button>
                     </div>
-                    <div className="flex w-full items-center justify-between rounded-t-xl bg-green-600 px-6 py-7 lg:px-10 lg:py-15">
+                    <div className="bg-primary flex w-full items-center justify-between rounded-t-xl px-6 py-7 lg:px-10 lg:py-15">
                         <h3 className="font-sans text-xl font-bold text-white lg:text-4xl">
                             Ada hal yang ingin ditanyakan?
                         </h3>
-                        <Button className="cursor-pointer rounded-4xl border-2 border-white bg-transparent py-6 font-semibold transition-all duration-400 hover:-translate-y-2 hover:bg-white hover:text-green-600 lg:px-9 lg:py-7 lg:text-xl">
+                        <Button className="cursor-pointer rounded-4xl border-2 border-white bg-transparent py-6 font-semibold transition-all duration-400 hover:-translate-y-2 hover:bg-white hover:text-green-600 lg:px-9 lg:py-7 lg:text-xl dark:text-white dark:hover:text-green-600">
                             Tanya Asatidz
                         </Button>
                     </div>

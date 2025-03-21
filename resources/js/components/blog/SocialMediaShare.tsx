@@ -44,7 +44,7 @@ const SocialMediaShare = ({ post }: { post: PostProps }) => {
                 <span className="transition duration-900 ease-in-out">
                     <button
                         type="button"
-                        className="text-primary-foreground focus-visible:ring-ring/50 hover:bg-primary/80 bg-primary flex items-center gap-1 rounded p-1 shadow-sm focus-visible:ring-2 focus-visible:outline-none"
+                        className="focus-visible:ring-ring/50 hover:bg-primary/80 bg-primary flex items-center gap-1 rounded p-1 text-white shadow-sm focus-visible:ring-2 focus-visible:outline-none"
                         onClick={copyLink}
                     >
                         <Link className="size-3 lg:size-5" />
