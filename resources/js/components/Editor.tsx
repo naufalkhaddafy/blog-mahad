@@ -23,6 +23,7 @@ const Editor = ({
             config={config}
             onBlur={(newContent) => setContent(newContent)}
             // onChange={(newContent) => setContent(newContent)}
+            className="dark:text-black"
         />
     );
 };
