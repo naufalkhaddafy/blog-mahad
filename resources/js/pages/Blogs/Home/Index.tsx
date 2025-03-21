@@ -1,4 +1,6 @@
 import Badge from '@/components/blog/Badge';
+import { CardGrid } from '@/components/blog/CardGrid';
+import { CardList } from '@/components/blog/CardList';
 import { EmptyPost } from '@/components/blog/EmptyPost';
 import { Container } from '@/components/Container';
 import { Button } from '@/components/ui/button';
@@ -42,7 +44,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
             <Banner />
             {/* Top Rencent */}
             <Container>
-                <section className="py-10 lg:py-15">
+                <div className="py-10 lg:py-15">
                     <div className="flex items-center justify-between">
                         <h2 className="text-primary relative h-fit w-auto text-xl font-extrabold after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl dark:text-green-600 dark:after:bg-green-400">
                             Artikel Terbaru
@@ -72,42 +74,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                                         post: dataPost.slug,
                                                     })}
                                                 >
-                                                    <Card className="group relative flex h-full w-full cursor-pointer flex-col gap-0 overflow-hidden bg-green-100/50 p-0">
-                                                        <img
-                                                            src={dataPost.imageSrc}
-                                                            alt={dataPost.title}
-                                                            className="aspect-video object-fill brightness-100 transition-transform duration-300 group-hover:scale-110"
-                                                            loading="lazy"
-                                                        />
-                                                        <div className="flex h-full w-full flex-col justify-center rounded-t-lg bg-green-100/50 p-5 text-left text-black backdrop-blur-md lg:px-10 lg:py-6">
-                                                            <div className="flex items-center gap-2 pb-1 text-xs font-extralight text-green-900 lg:text-sm">
-                                                                <Clock className="size-4" />
-                                                                {dataPost.created_at}
-                                                            </div>
-                                                            <h3 className="text-md font-bold lg:py-6 lg:text-xl">
-                                                                {getLimitTextContent(
-                                                                    dataPost.title,
-                                                                    100,
-                                                                )}
-                                                            </h3>
-                                                            <p className="text-xs lg:text-lg">
-                                                                {getLimitTextContent(
-                                                                    dataPost.description,
-                                                                    100,
-                                                                )}
-                                                            </p>
-                                                        </div>
-                                                        <div className="absolute top-0 left-0 flex flex-wrap gap-2 px-4 py-5 lg:px-6">
-                                                            <Badge>{dataPost.category?.name}</Badge>
-                                                            {dataPost.tags.map(
-                                                                (dataTags, index) => (
-                                                                    <Badge key={index}>
-                                                                        {dataTags.label}
-                                                                    </Badge>
-                                                                ),
-                                                            )}
-                                                        </div>
-                                                    </Card>
+                                                    <CardGrid dataPost={dataPost} />
                                                 </Link>
                                             </div>
                                         );
@@ -122,44 +89,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                                         post: dataPost.slug,
                                                     })}
                                                 >
-                                                    <Card className="group grid w-full cursor-pointer grid-cols-6 gap-3 overflow-hidden bg-green-100/50 p-2 lg:gap-5">
-                                                        <div className="col-span-2 my-auto h-24 w-full overflow-hidden rounded-xl md:h-32 lg:h-34">
-                                                            <img
-                                                                src={dataPost.imageSrc}
-                                                                alt={dataPost.title}
-                                                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                                                loading="lazy"
-                                                            />
-                                                        </div>
-                                                        <div className="col-span-4 py-2">
-                                                            <div className="hidden items-center gap-1 py-1 md:flex">
-                                                                <Badge>
-                                                                    {dataPost.category?.name}
-                                                                </Badge>
-                                                                {dataPost.tags.map(
-                                                                    (dataTags, index) => (
-                                                                        <Badge key={index}>
-                                                                            {dataTags.label}
-                                                                        </Badge>
-                                                                    ),
-                                                                )}
-                                                            </div>
-                                                            <h3 className="text-md text-left font-bold lg:text-lg">
-                                                                {dataPost.title}
-                                                            </h3>
-                                                            <div className="flex items-center gap-2 py-2 text-xs font-extralight text-gray-600">
-                                                                <Clock className="size-4" />
-                                                                {dataPost.created_at}
-                                                            </div>
-
-                                                            <p className="hidden font-sans text-sm font-extralight md:block">
-                                                                {getLimitTextContent(
-                                                                    dataPost.description,
-                                                                    70,
-                                                                )}
-                                                            </p>
-                                                        </div>
-                                                    </Card>
+                                                    <CardList dataPost={dataPost} />
                                                 </Link>
                                             </div>
                                         );
@@ -170,7 +100,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                             )}
                         </div>
                     </div>
-                </section>
+                </div>
             </Container>
             {/* Top Rencent End*/}
             {/* Poster */}

@@ -1,8 +1,9 @@
+import { CardGrid } from '@/components/blog/CardGrid';
+import { CardList } from '@/components/blog/CardList';
 import { EmptyPost } from '@/components/blog/EmptyPost';
 import { Container } from '@/components/Container';
 import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
     Pagination,
@@ -21,13 +22,12 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import BlogLayout from '@/layouts/BlogLayout';
-import { getLimitTextContent } from '@/lib/utils';
 import { CategoryProps } from '@/pages/Categories/Partials/Type';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { TagPropsSelect } from '@/pages/Tags/Partials/Type';
 import { BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Clock, Dot, Grid2x2, Rows3 } from 'lucide-react';
+import { Dot, Grid2x2, Rows3 } from 'lucide-react';
 import { useState } from 'react';
 
 interface PaginationMeta {
@@ -204,47 +204,35 @@ const List = ({
                             className="flex items-center gap-2 bg-transparent text-gray-600 shadow-none hover:bg-transparent hover:text-green-700"
                             onClick={() => setListStyle(!listStyle)}
                         >
-                            {listStyle ? <Grid2x2 /> : <Rows3 />}
+                            {listStyle ? <Rows3 /> : <Grid2x2 />}
                         </Button>
                     </div>
 
-                    <div className="grid gap-4 py-5 lg:grid-cols-2">
+                    <div
+                        className={`grid auto-rows-min gap-4 py-5 ${listStyle ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}
+                    >
                         {posts.length > 0 ? (
-                            posts.map((qna, index: number) => (
-                                <Card
-                                    key={index + 1}
-                                    className="group cursor-pointer p-4 transition-all duration-200 hover:scale-102 hover:border-green-600"
-                                >
+                            posts.map((post, index: number) =>
+                                listStyle ? (
                                     <Link
+                                        key={index}
                                         href={route('blog.show', {
-                                            post: qna.slug,
+                                            post: post.slug,
                                         })}
                                     >
-                                        <div>
-                                            <div className="flex flex-wrap items-center gap-2 px-1 py-2">
-                                                <span className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl">
-                                                    {qna.category?.name}
-                                                </span>
-                                                {qna.tags.map((data, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className="rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white shadow-xl"
-                                                    >
-                                                        {data.label}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                            <h3 className="text-lg font-semibold">{qna.title}</h3>
-                                            <span className="flex items-center gap-2 py-1 text-sm text-gray-400">
-                                                <Clock className="size-4" /> {qna.created_at}
-                                            </span>
-                                            <p className="text-justify">
-                                                {getLimitTextContent(qna.description, 150)}
-                                            </p>
-                                        </div>
+                                        <CardGrid dataPost={post} />
                                     </Link>
-                                </Card>
-                            ))
+                                ) : (
+                                    <Link
+                                        key={index}
+                                        href={route('blog.show', {
+                                            post: post.slug,
+                                        })}
+                                    >
+                                        <CardList dataPost={post} />
+                                    </Link>
+                                ),
+                            )
                         ) : (
                             <EmptyPost>Mohon maaf postingan tidak tersedia</EmptyPost>
                         )}
