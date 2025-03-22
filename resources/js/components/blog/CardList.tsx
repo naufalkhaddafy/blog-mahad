@@ -1,10 +1,14 @@
+import { useBookmark } from '@/hooks/useBookmark';
 import { getLimitTextContent } from '@/lib/utils';
 import { PostProps } from '@/pages/Posts/Partials/Type';
-import { BookmarkPlus, ChartLine, Clock } from 'lucide-react';
+import { BookmarkCheck, BookmarkPlus, ChartLine, Clock } from 'lucide-react';
 import { Card } from '../ui/card';
 import Badge from './Badge';
 
 export const CardList = ({ dataPost }: { dataPost: PostProps }) => {
+    const { bookmarks, addBookmark } = useBookmark();
+    const isBookmarked = bookmarks.some((item) => item.slug === dataPost.slug);
+
     return (
         <Card className="group relative grid w-full cursor-pointer grid-cols-6 gap-3 overflow-hidden bg-green-100/50 p-2 lg:gap-5 dark:bg-green-100/20">
             <div className="col-span-2 my-auto h-24 w-full overflow-hidden rounded-xl md:h-36 lg:h-40">
@@ -23,13 +27,22 @@ export const CardList = ({ dataPost }: { dataPost: PostProps }) => {
                             <Badge key={index}>{dataTags.label}</Badge>
                         ))}
                     </div>
-                    <div className="absolute top-3 right-3 transition-all duration-300 hover:scale-130 md:static md:-translate-x-3 md:-translate-y-2">
-                        <BookmarkPlus
-                            className="size-5.5 cursor-pointer text-green-600 lg:size-7"
-                            onClick={(e) => {
-                                e.preventDefault();
-                            }}
-                        />
+                    <div className="absolute top-3 right-3 transition-all duration-300 hover:scale-130 active:scale-130 md:static md:-translate-x-3 md:-translate-y-2">
+                        {isBookmarked ? (
+                            <BookmarkCheck className="size-5.5 text-green-600 lg:size-7" />
+                        ) : (
+                            <BookmarkPlus
+                                className="size-5.5 cursor-pointer text-green-600 lg:size-7"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    addBookmark({
+                                        slug: dataPost.slug,
+                                        title: dataPost.title,
+                                        image: dataPost.imageSrc,
+                                    });
+                                }}
+                            />
+                        )}
                     </div>
                 </div>
                 <div className="flex items-center gap-2 py-1 text-green-900 lg:py-2 dark:text-green-700">

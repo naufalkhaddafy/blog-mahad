@@ -1,10 +1,14 @@
+import { useBookmark } from '@/hooks/useBookmark';
 import { getLimitTextContent } from '@/lib/utils';
 import { PostProps } from '@/pages/Posts/Partials/Type';
-import { BookmarkPlus, ChartLine, Clock } from 'lucide-react';
+import { BookmarkCheck, BookmarkPlus, ChartLine, Clock } from 'lucide-react';
 import { Card } from '../ui/card';
 import Badge from './Badge';
 
 export const CardGrid = ({ dataPost }: { dataPost: PostProps }) => {
+    const { bookmarks, addBookmark } = useBookmark();
+    const isBookmarked = bookmarks.some((item) => item.slug === dataPost.slug);
+
     return (
         <Card className="group relative flex h-full w-full cursor-pointer flex-col gap-0 overflow-hidden bg-green-100/50 p-0 dark:bg-green-100/20">
             <img
@@ -38,13 +42,24 @@ export const CardGrid = ({ dataPost }: { dataPost: PostProps }) => {
                         <Badge key={index}>{dataTags.label}</Badge>
                     ))}
                 </div>
-                <div className="rounded-sm bg-green-100 p-1 transition-all duration-300 hover:scale-130">
-                    <BookmarkPlus
-                        className="size-5 cursor-pointer text-green-600 lg:size-6"
-                        onClick={(e) => {
-                            e.preventDefault();
-                        }}
-                    />
+                <div className="rounded-sm bg-green-100 p-1 transition-all duration-300 hover:scale-130 active:scale-130">
+                    {isBookmarked ? (
+                        <BookmarkCheck className="size-5 cursor-no-drop text-green-600 lg:size-6" />
+                    ) : (
+                        <BookmarkPlus
+                            className="size-5 cursor-pointer text-green-600 lg:size-6"
+                            style={{ pointerEvents: 'auto' }}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                addBookmark({
+                                    slug: dataPost.slug,
+                                    title: dataPost.title,
+                                    image: dataPost.imageSrc,
+                                });
+                            }}
+                        />
+                    )}
                 </div>
             </div>
         </Card>

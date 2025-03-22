@@ -1,7 +1,8 @@
 import { useAppearance } from '@/hooks/use-appearance';
-import { asset } from '@/lib/utils';
+import { useBookmark } from '@/hooks/useBookmark';
+import { asset, getLimitTextContent } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
-import { Bookmark, ChevronDown, Menu, Moon, Search, Sun } from 'lucide-react';
+import { Bookmark, ChevronDown, Menu, Moon, Search, Sun, Trash } from 'lucide-react';
 import { useState } from 'react';
 import { Container } from '../Container';
 
@@ -44,12 +45,21 @@ export const Navbar = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
     const { appearance, updateAppearance } = useAppearance();
+    const [openBookmark, setOpenBookmark] = useState<boolean>(false);
+
+    const { bookmarks, removeBoomark } = useBookmark();
 
     return (
         <Container className="px-3 py-4 xl:py-3">
             <nav className="bg-primary flex flex-wrap items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <button className="cursor-pointer lg:hidden" onClick={() => setOpen(!open)}>
+                    <button
+                        className="cursor-pointer lg:hidden"
+                        onClick={() => {
+                            setOpen(!open);
+                            setOpenBookmark(false);
+                        }}
+                    >
                         <Menu className="size-5 cursor-pointer transition duration-300 hover:text-green-500" />
                     </button>
                     <Link href="/">
@@ -125,17 +135,62 @@ export const Navbar = () => {
                 {/* Mobile Navigation */}
                 <div className="flex items-center gap-2 lg:gap-4">
                     <Link href="/belajar-islam">
-                        <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6" />
+                        <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6" />
                     </Link>
-                    <Bookmark className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6" />
+                    <div className="relative">
+                        <Bookmark
+                            className={`size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6`}
+                            onClick={() => setOpenBookmark(!openBookmark)}
+                        />
+                        {bookmarks.length > 0 && (
+                            <span className="absolute -top-1.5 -right-1 rounded-full bg-gray-200/100 px-1 text-xs text-green-800">
+                                {bookmarks.length}
+                            </span>
+                        )}
+                        {openBookmark && (
+                            <div className="fixed top-18 right-1/2 h-auto max-h-1/2 w-[97vw] translate-x-1/2 overflow-y-scroll rounded-2xl border-1 bg-gray-100 opacity-100 shadow-xl transition-all transition-discrete duration-500 md:absolute md:top-15 md:-right-1 md:max-h-96 md:w-[600px] md:translate-x-0 dark:bg-gray-900 starting:opacity-0">
+                                <div className="relative grid h-full w-full gap-1 p-5 md:gap-4">
+                                    <span className="text-primary sticky top-5 flex h-full w-full items-center justify-between rounded-lg p-2 text-sm font-bold backdrop-blur-lg md:p-3 dark:text-green-500">
+                                        <p>Daftar Bacaan</p>
+                                        <p>{bookmarks.length} belum dibaca</p>
+                                    </span>
+                                    {bookmarks.map((data, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex items-center justify-between gap-5"
+                                        >
+                                            <div className="flex cursor-pointer items-center gap-2 md:gap-5">
+                                                <img
+                                                    src={data.image}
+                                                    alt={data.slug}
+                                                    loading="lazy"
+                                                    className="aspect-square w-20 rounded-2xl md:aspect-video md:w-30"
+                                                />
+                                                <p className="md:text-md p-2 text-sm text-black dark:text-white">
+                                                    {getLimitTextContent(data.title, 100)}
+                                                </p>
+                                            </div>
+                                            <button>
+                                                <Trash
+                                                    className="text-primary size-4 cursor-pointer hover:text-green-500 active:text-green-500 md:size-6"
+                                                    onClick={() => removeBoomark(data.slug)}
+                                                />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     {appearance == 'dark' ? (
                         <Sun
-                            className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6"
+                            className="size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6"
                             onClick={() => updateAppearance('light')}
                         />
                     ) : (
                         <Moon
-                            className="size-5 cursor-pointer transition duration-300 hover:text-green-500 lg:size-6"
+                            className="size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6"
                             onClick={() => updateAppearance('dark')}
                         />
                     )}
