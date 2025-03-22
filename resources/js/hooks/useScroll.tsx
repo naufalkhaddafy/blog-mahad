@@ -10,7 +10,7 @@ const useScroll = (element?: React.RefObject<HTMLElement | null>) => {
             const elementTop = target.offsetTop;
             const elementHeight = !element
                 ? target.scrollHeight - window.innerHeight
-                : target.scrollHeight;
+                : target.scrollHeight - 150;
             const currentScroll = window.scrollY;
 
             const progress = parseFloat(
