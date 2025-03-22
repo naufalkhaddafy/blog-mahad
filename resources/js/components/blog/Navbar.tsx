@@ -2,9 +2,11 @@ import { useAppearance } from '@/hooks/use-appearance';
 import { useBookmark } from '@/hooks/useBookmark';
 import { asset, getLimitTextContent } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
-import { Bookmark, ChevronDown, Menu, Moon, Search, Sun, Trash } from 'lucide-react';
+import { Bookmark, BookOpenText, ChevronDown, Menu, Moon, Search, Sun, Trash } from 'lucide-react';
 import { useState } from 'react';
 import { Container } from '../Container';
+import { Button } from '../ui/button';
+import { EmptyPost } from './EmptyPost';
 
 const dataNav = [
     {
@@ -133,7 +135,7 @@ export const Navbar = () => {
                 </div>
 
                 {/* Mobile Navigation */}
-                <div className="flex items-center gap-2 lg:gap-4">
+                <div className="flex items-center gap-3 lg:gap-4">
                     <Link href="/belajar-islam">
                         <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6" />
                     </Link>
@@ -149,35 +151,54 @@ export const Navbar = () => {
                         )}
                         {openBookmark && (
                             <div className="fixed top-18 right-1/2 h-auto max-h-1/2 w-[97vw] translate-x-1/2 overflow-y-scroll rounded-2xl border-1 bg-gray-100 opacity-100 shadow-xl transition-all transition-discrete duration-500 md:absolute md:top-15 md:-right-1 md:max-h-96 md:w-[600px] md:translate-x-0 dark:bg-gray-900 starting:opacity-0">
-                                <div className="relative grid h-full w-full gap-1 p-5 md:gap-4">
+                                <div className="relative grid h-full w-full gap-3 p-3 md:gap-4 md:p-4">
                                     <span className="text-primary sticky top-5 flex h-full w-full items-center justify-between rounded-lg p-2 text-sm font-bold backdrop-blur-lg md:p-3 dark:text-green-500">
                                         <p>Daftar Bacaan</p>
                                         <p>{bookmarks.length} belum dibaca</p>
                                     </span>
-                                    {bookmarks.map((data, index) => (
-                                        <div
-                                            key={index}
-                                            className="flex items-center justify-between gap-5"
-                                        >
-                                            <div className="flex cursor-pointer items-center gap-2 md:gap-5">
-                                                <img
-                                                    src={data.image}
-                                                    alt={data.slug}
-                                                    loading="lazy"
-                                                    className="aspect-square w-20 rounded-2xl md:aspect-video md:w-30"
-                                                />
-                                                <p className="md:text-md p-2 text-sm text-black dark:text-white">
-                                                    {getLimitTextContent(data.title, 100)}
-                                                </p>
+                                    {bookmarks.length > 0 ? (
+                                        bookmarks.map((data, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex items-center justify-between gap-5"
+                                            >
+                                                <Link
+                                                    href={route('blog.show', {
+                                                        post: data.slug,
+                                                    })}
+                                                >
+                                                    <div className="flex cursor-pointer items-center gap-2 md:gap-5">
+                                                        <img
+                                                            src={data.image}
+                                                            alt={data.slug}
+                                                            loading="lazy"
+                                                            className="aspect-square w-20 rounded-2xl object-cover md:aspect-video md:w-30"
+                                                        />
+                                                        <p className="md:text-md p-2 text-sm text-black dark:text-white">
+                                                            {getLimitTextContent(data.title, 100)}
+                                                        </p>
+                                                    </div>
+                                                </Link>
+
+                                                <button>
+                                                    <Trash
+                                                        className="text-primary size-4 cursor-pointer hover:text-green-500 active:text-green-500 md:size-6"
+                                                        onClick={() => removeBoomark(data.slug)}
+                                                    />
+                                                </button>
                                             </div>
-                                            <button>
-                                                <Trash
-                                                    className="text-primary size-4 cursor-pointer hover:text-green-500 active:text-green-500 md:size-6"
-                                                    onClick={() => removeBoomark(data.slug)}
-                                                />
-                                            </button>
+                                        ))
+                                    ) : (
+                                        <div className="w-full text-center">
+                                            <EmptyPost className="text-black dark:text-gray-200">
+                                                Daftar bacaan belum ada
+                                            </EmptyPost>
+                                            <Button className="bg-primary w-full rounded-lg py-2 text-sm md:text-lg">
+                                                Lihat semua artikel
+                                                <BookOpenText />
+                                            </Button>
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
                         )}
