@@ -150,66 +150,82 @@ export const Navbar = () => {
                             </span>
                         )}
                         {openBookmark && (
-                            <div className="fixed top-18 right-1/2 h-auto max-h-1/2 w-[97vw] translate-x-1/2 overflow-y-scroll rounded-lg border-1 bg-gray-200 opacity-100 shadow-2xl transition-all transition-discrete duration-500 md:absolute md:top-15 md:-right-1 md:max-h-96 md:w-[600px] md:translate-x-0 dark:bg-gray-800 starting:opacity-0">
-                                <div className="relative grid gap-3 px-3 py-4 md:gap-4 md:px-4">
-                                    <span className="text-primary sticky top-4 flex items-center justify-between rounded-lg p-2 text-sm font-bold backdrop-blur-lg md:p-3 dark:text-green-500">
-                                        <p>Daftar Bacaan</p>
-                                        <p>{bookmarks.length} belum dibaca</p>
-                                    </span>
-                                    {bookmarks.length > 0 ? (
-                                        bookmarks.map((data, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex items-center justify-between gap-5"
-                                            >
-                                                <Link
-                                                    href={route('blog.show', {
-                                                        post: data.slug,
-                                                    })}
-                                                    onClick={() => setOpenBookmark(false)}
-                                                >
-                                                    <div className="flex cursor-pointer items-center gap-2 md:gap-5">
-                                                        <img
-                                                            src={data.image}
-                                                            alt={data.slug}
-                                                            loading="lazy"
-                                                            className="aspect-square w-20 rounded-2xl object-cover md:aspect-video md:w-30"
-                                                        />
-                                                        <p className="md:text-md p-2 text-sm text-black dark:text-white">
-                                                            {getLimitTextContent(data.title, 100)}
-                                                        </p>
+                            <>
+                                <div
+                                    className="fixed inset-0 h-full w-full bg-gray-500/50 md:bg-transparent"
+                                    onClick={(e) => {
+                                        if (e.target === e.currentTarget) {
+                                            setOpenBookmark(false);
+                                        }
+                                    }}
+                                ></div>
+                                <div className="fixed top-18 right-1/2 w-[97vw] translate-x-1/2 rounded-lg border-1 bg-white px-2 py-3 opacity-100 shadow-2xl transition-all transition-discrete duration-500 md:absolute md:top-15 md:-right-1 md:w-[600px] md:translate-x-0 md:p-4 dark:bg-gray-800 starting:opacity-0">
+                                    <div className="grid gap-3 overflow-hidden">
+                                        <span className="text-primary flex items-center justify-between rounded-3xl p-1 text-sm font-bold md:p-3 dark:text-green-500">
+                                            <p>Daftar Bacaan</p>
+                                            <p>{bookmarks.length} belum dibaca</p>
+                                        </span>
+                                        <div className="scrollbar-hide custom-scrollbar grid h-auto max-h-80 gap-4 overflow-y-scroll rounded-lg md:max-h-96">
+                                            {bookmarks.length > 0 ? (
+                                                bookmarks.map((data, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="flex items-center justify-between gap-5"
+                                                    >
+                                                        <Link
+                                                            href={route('blog.show', {
+                                                                post: data.slug,
+                                                            })}
+                                                            onClick={() => setOpenBookmark(false)}
+                                                        >
+                                                            <div className="flex cursor-pointer items-center gap-2 md:gap-5">
+                                                                <img
+                                                                    src={data.image}
+                                                                    alt={data.slug}
+                                                                    loading="lazy"
+                                                                    className="aspect-square w-20 rounded-2xl object-cover md:aspect-video md:w-30"
+                                                                />
+                                                                <p className="md:text-md p-2 text-sm text-black dark:text-white">
+                                                                    {getLimitTextContent(
+                                                                        data.title,
+                                                                        100,
+                                                                    )}
+                                                                </p>
+                                                            </div>
+                                                        </Link>
+                                                        <button className="-translate-x-3 md:-translate-x-5">
+                                                            <Trash
+                                                                className="size-4 cursor-pointer text-red-800 hover:text-red-500 active:text-red-500 md:size-6"
+                                                                onClick={() =>
+                                                                    removeBoomark(data.slug)
+                                                                }
+                                                            />
+                                                        </button>
                                                     </div>
-                                                </Link>
-
-                                                <button>
-                                                    <Trash
-                                                        className="size-4 cursor-pointer text-red-800 hover:text-red-500 active:text-red-500 md:size-6"
-                                                        onClick={() => removeBoomark(data.slug)}
-                                                    />
-                                                </button>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="w-full text-center">
-                                            <EmptyPost className="text-black dark:text-gray-200">
-                                                Daftar bacaan belum ada
-                                            </EmptyPost>
-                                            <Button
-                                                className="bg-primary w-full rounded-lg py-2 text-sm md:text-lg"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href="belajar-islam"
-                                                    onClick={() => setOpenBookmark(false)}
-                                                >
-                                                    Lihat semua artikel
-                                                    <BookOpenText />
-                                                </Link>
-                                            </Button>
+                                                ))
+                                            ) : (
+                                                <div className="w-full text-center">
+                                                    <EmptyPost className="text-black dark:text-gray-200">
+                                                        Daftar bacaan belum ada
+                                                    </EmptyPost>
+                                                    <Button
+                                                        className="bg-primary w-full rounded-lg py-2 text-sm md:text-lg"
+                                                        asChild
+                                                    >
+                                                        <Link
+                                                            href="belajar-islam"
+                                                            onClick={() => setOpenBookmark(false)}
+                                                        >
+                                                            Lihat semua artikel
+                                                            <BookOpenText />
+                                                        </Link>
+                                                    </Button>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
+                                    </div>
                                 </div>
-                            </div>
+                            </>
                         )}
                     </div>
 
