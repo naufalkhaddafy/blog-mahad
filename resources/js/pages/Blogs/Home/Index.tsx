@@ -1,15 +1,13 @@
-import Badge from '@/components/blog/Badge';
 import { CardGrid } from '@/components/blog/CardGrid';
 import { CardList } from '@/components/blog/CardList';
+import { CardNoImage } from '@/components/blog/CardNoImage';
 import { EmptyPost } from '@/components/blog/EmptyPost';
 import { Container } from '@/components/Container';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import BlogLayout from '@/layouts/BlogLayout';
-import { getLimitTextContent } from '@/lib/utils';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { Head, Link } from '@inertiajs/react';
-import { Clock, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
@@ -26,7 +24,7 @@ interface IndexProps {
 
 const Index = ({ posts, qna, poster }: IndexProps) => {
     return (
-        <BlogLayout>
+        <>
             <Head title="Beranda">
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link
@@ -96,7 +94,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                                     }
                                 })
                             ) : (
-                                <EmptyPost>Mohon maaf artikel belum tersedia</EmptyPost>
+                                <EmptyPost>Afwan artikel belum tersedia</EmptyPost>
                             )}
                         </div>
                     </div>
@@ -150,7 +148,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                             </Swiper>
                         ) : (
                             <EmptyPost className="text-green-50">
-                                Mohon maaf poster belum tersedia
+                                Afwan poster belum tersedia
                             </EmptyPost>
                         )}
                     </div>
@@ -166,35 +164,17 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                     <div className="grid gap-4 py-10 lg:grid-cols-2">
                         {qna.length > 0 ? (
                             qna.map((qna, index) => (
-                                <Card
-                                    key={index + 1}
-                                    className="group cursor-pointer p-4 transition-all duration-200 hover:scale-102 hover:border-green-600"
+                                <Link
+                                    key={index}
+                                    href={route('blog.show', {
+                                        post: qna.slug,
+                                    })}
                                 >
-                                    <Link
-                                        href={route('blog.show', {
-                                            post: qna.slug,
-                                        })}
-                                    >
-                                        <div>
-                                            <div className="flex flex-wrap items-center gap-2 px-1 py-2">
-                                                <Badge>{qna.category?.name}</Badge>
-                                                {qna.tags.map((data, index) => (
-                                                    <Badge key={index}>{data.label}</Badge>
-                                                ))}
-                                            </div>
-                                            <h3 className="text-lg font-semibold">{qna.title}</h3>
-                                            <span className="flex items-center gap-2 py-1 text-sm text-gray-400">
-                                                <Clock className="size-4" /> {qna.created_at}
-                                            </span>
-                                            <p className="text-justify">
-                                                {getLimitTextContent(qna.description, 150)}
-                                            </p>
-                                        </div>
-                                    </Link>
-                                </Card>
+                                    <CardNoImage dataPost={qna} />
+                                </Link>
                             ))
                         ) : (
-                            <EmptyPost>Mohon maaf postingan belum tersedia</EmptyPost>
+                            <EmptyPost>Afwan postingan belum tersedia</EmptyPost>
                         )}
                     </div>
                     <div className="w-full pb-15 text-center">
@@ -219,8 +199,10 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                 </Container>
             </section>
             {/* Question End*/}
-        </BlogLayout>
+        </>
     );
 };
 
 export default Index;
+
+Index.layout = (page: React.ReactNode) => <BlogLayout children={page} />;

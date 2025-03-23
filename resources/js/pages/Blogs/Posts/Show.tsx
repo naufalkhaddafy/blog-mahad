@@ -1,8 +1,9 @@
 import Badge from '@/components/blog/Badge';
+import { CardList } from '@/components/blog/CardList';
 import SocialMediaShare from '@/components/blog/SocialMediaShare';
 
 import { Container } from '@/components/Container';
-import { Card } from '@/components/ui/card';
+import useBookmark from '@/hooks/useBookmark';
 import useScroll from '@/hooks/useScroll';
 import BlogLayout from '@/layouts/BlogLayout';
 import { getLimitTextContent } from '@/lib/utils';
@@ -12,11 +13,11 @@ import { Head, Link } from '@inertiajs/react';
 import {
     ArrowLeft,
     ArrowRight,
+    BookmarkCheck,
     BookmarkPlus,
     ChartLine,
     CircleSmall,
     CircleUserRound,
-    Clock,
     Share2,
 } from 'lucide-react';
 import { useRef } from 'react';
@@ -28,26 +29,16 @@ interface ShowProps {
     relevantPosts: PostProps[];
 }
 
-const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
+export default function Show({ post, previousPost, nextPost, relevantPosts }: ShowProps) {
+    const { bookmarks, addBookmark, removeBoomark } = useBookmark();
+
     const shareUrl = window.location.href;
     const articleRef = useRef<HTMLElement | null>(null);
     const { completion, progress } = useScroll(articleRef);
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Beranda',
-            href: '/',
-        },
-        {
-            title: 'Belajar Islam',
-            href: route('blog.list', { category: post.category?.id }),
-        },
-        {
-            title: `${post.category?.name}`,
-            href: '/posts',
-        },
-    ];
+    const isBookmarked = bookmarks.some((item) => item.slug === post.slug);
+
     return (
-        <BlogLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={post.title}>
                 <meta
                     name="description"
@@ -107,14 +98,34 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                                     {post.created_at}
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1 text-sm">
                                     <ChartLine className="size-4 text-gray-500 lg:size-5" />
                                     <p className="text-sm text-green-500">{post.views}</p>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <BookmarkPlus className="size-5 text-green-800 lg:size-6" />
-                                    {/* <BookmarkCheck className="size-4 lg:size-5" /> */}
+                                    {isBookmarked ? (
+                                        <BookmarkCheck
+                                            className="size-6 cursor-pointer text-green-500 transition-all duration-500 hover:scale-130 active:scale-130 lg:size-7"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                removeBoomark(post.slug);
+                                            }}
+                                        />
+                                    ) : (
+                                        <BookmarkPlus
+                                            className="size-6 cursor-pointer text-green-500 transition-all duration-500 hover:scale-130 active:scale-130 lg:size-7"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                addBookmark({
+                                                    slug: post.slug,
+                                                    title: post.title,
+                                                    image: post.imageSrc,
+                                                });
+                                            }}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -195,46 +206,31 @@ const Show = ({ post, previousPost, nextPost, relevantPosts }: ShowProps) => {
                                           post: relevantPost.slug,
                                       })}
                                   >
-                                      <Card className="group grid w-full cursor-pointer grid-cols-6 gap-3 overflow-hidden bg-green-100/50 p-2 lg:gap-5">
-                                          <div className="col-span-2 my-auto h-24 w-full overflow-hidden rounded-xl bg-amber-400 md:h-32 lg:h-34">
-                                              <img
-                                                  src={relevantPost.imageSrc}
-                                                  alt={relevantPost.title}
-                                                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                                  loading="lazy"
-                                              />
-                                          </div>
-                                          <div className="col-span-4 py-2">
-                                              <div className="hidden items-center gap-1 py-1 md:flex">
-                                                  <Badge>{relevantPost.category?.name}</Badge>
-                                                  {relevantPost.tags.map((dataTags, index) => (
-                                                      <Badge key={index}>{dataTags.label}</Badge>
-                                                  ))}
-                                              </div>
-                                              <h3 className="text-md text-left font-bold lg:text-lg">
-                                                  {relevantPost.title}
-                                              </h3>
-                                              <div className="flex items-center gap-2 py-2 text-xs font-extralight text-gray-600">
-                                                  <Clock className="size-4" />
-                                                  {relevantPost.created_at}
-                                              </div>
-
-                                              <p className="hidden font-sans text-sm font-extralight md:block">
-                                                  {getLimitTextContent(
-                                                      relevantPost.description,
-                                                      70,
-                                                  )}
-                                              </p>
-                                          </div>
-                                      </Card>
+                                      <CardList dataPost={relevantPost} />
                                   </Link>
                               ))
                             : ''}
                     </div>
                 </section>
             </Container>
-        </BlogLayout>
+        </>
     );
-};
+}
 
-export default Show;
+Show.layout = (page: React.ReactNode) => {
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Beranda',
+            href: '/',
+        },
+        {
+            title: 'Belajar Islam',
+            href: route('blog.list', { category: page.props?.post?.category?.id }),
+        },
+        {
+            title: `${page.props?.post?.category?.name}`,
+            href: '/posts',
+        },
+    ];
+    return <BlogLayout breadcrumbs={breadcrumbs} children={page} />;
+};

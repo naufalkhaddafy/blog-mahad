@@ -1,4 +1,4 @@
-import { useBookmark } from '@/hooks/useBookmark';
+import useBookmark from '@/hooks/useBookmark';
 import { getLimitTextContent } from '@/lib/utils';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { BookmarkCheck, BookmarkPlus, ChartLine, Clock } from 'lucide-react';
@@ -6,7 +6,7 @@ import { Card } from '../ui/card';
 import Badge from './Badge';
 
 export const CardGrid = ({ dataPost }: { dataPost: PostProps }) => {
-    const { bookmarks, addBookmark } = useBookmark();
+    const { bookmarks, addBookmark, removeBoomark } = useBookmark();
     const isBookmarked = bookmarks.some((item) => item.slug === dataPost.slug);
 
     return (
@@ -44,7 +44,13 @@ export const CardGrid = ({ dataPost }: { dataPost: PostProps }) => {
                 </div>
                 <div className="rounded-sm bg-green-100 p-1 transition-all duration-300 hover:scale-130 active:scale-130">
                     {isBookmarked ? (
-                        <BookmarkCheck className="size-5 cursor-no-drop text-green-600 lg:size-6" />
+                        <BookmarkCheck
+                            className="size-5 cursor-pointer text-green-600 lg:size-6"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                removeBoomark(dataPost.slug);
+                            }}
+                        />
                     ) : (
                         <BookmarkPlus
                             className="size-5 cursor-pointer text-green-600 lg:size-6"

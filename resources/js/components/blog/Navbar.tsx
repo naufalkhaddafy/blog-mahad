@@ -1,5 +1,5 @@
 import { useAppearance } from '@/hooks/use-appearance';
-import { useBookmark } from '@/hooks/useBookmark';
+import useBookmark from '@/hooks/useBookmark';
 import { asset, getLimitTextContent } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { Bookmark, BookOpenText, ChevronDown, Menu, Moon, Search, Sun, Trash } from 'lucide-react';
@@ -134,7 +134,7 @@ export const Navbar = () => {
                     </ul>
                 </div>
 
-                {/* Mobile Navigation */}
+                {/* BookMark  */}
                 <div className="flex items-center gap-3 lg:gap-4">
                     <Link href="/belajar-islam">
                         <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6" />
@@ -150,9 +150,9 @@ export const Navbar = () => {
                             </span>
                         )}
                         {openBookmark && (
-                            <div className="fixed top-18 right-1/2 h-auto max-h-1/2 w-[97vw] translate-x-1/2 overflow-y-scroll rounded-2xl border-1 bg-gray-100 opacity-100 shadow-xl transition-all transition-discrete duration-500 md:absolute md:top-15 md:-right-1 md:max-h-96 md:w-[600px] md:translate-x-0 dark:bg-gray-900 starting:opacity-0">
-                                <div className="relative grid h-full w-full gap-3 p-3 md:gap-4 md:p-4">
-                                    <span className="text-primary sticky top-5 flex h-full w-full items-center justify-between rounded-lg p-2 text-sm font-bold backdrop-blur-lg md:p-3 dark:text-green-500">
+                            <div className="fixed top-18 right-1/2 h-auto max-h-1/2 w-[97vw] translate-x-1/2 overflow-y-scroll rounded-lg border-1 border-green-900 bg-gray-200 opacity-100 shadow-2xl transition-all transition-discrete duration-500 md:absolute md:top-15 md:-right-1 md:max-h-96 md:w-[600px] md:translate-x-0 dark:bg-gray-800 starting:opacity-0">
+                                <div className="relative grid gap-3 px-3 py-4 md:gap-4 md:px-4">
+                                    <span className="text-primary sticky top-4 flex items-center justify-between rounded-lg p-2 text-sm font-bold backdrop-blur-lg md:p-3 dark:text-green-500">
                                         <p>Daftar Bacaan</p>
                                         <p>{bookmarks.length} belum dibaca</p>
                                     </span>
@@ -166,6 +166,7 @@ export const Navbar = () => {
                                                     href={route('blog.show', {
                                                         post: data.slug,
                                                     })}
+                                                    onClick={() => setOpenBookmark(false)}
                                                 >
                                                     <div className="flex cursor-pointer items-center gap-2 md:gap-5">
                                                         <img
@@ -182,7 +183,7 @@ export const Navbar = () => {
 
                                                 <button>
                                                     <Trash
-                                                        className="text-primary size-4 cursor-pointer hover:text-green-500 active:text-green-500 md:size-6"
+                                                        className="size-4 cursor-pointer text-red-800 hover:text-red-500 active:text-red-500 md:size-6"
                                                         onClick={() => removeBoomark(data.slug)}
                                                     />
                                                 </button>
@@ -193,9 +194,17 @@ export const Navbar = () => {
                                             <EmptyPost className="text-black dark:text-gray-200">
                                                 Daftar bacaan belum ada
                                             </EmptyPost>
-                                            <Button className="bg-primary w-full rounded-lg py-2 text-sm md:text-lg">
-                                                Lihat semua artikel
-                                                <BookOpenText />
+                                            <Button
+                                                className="bg-primary w-full rounded-lg py-2 text-sm md:text-lg"
+                                                asChild
+                                            >
+                                                <Link
+                                                    href="belajar-islam"
+                                                    onClick={() => setOpenBookmark(false)}
+                                                >
+                                                    Lihat semua artikel
+                                                    <BookOpenText />
+                                                </Link>
                                             </Button>
                                         </div>
                                     )}
@@ -231,6 +240,7 @@ export const Navbar = () => {
                                     onClick={(e) => {
                                         setActiveDropdown(activeDropdown === index ? null : index);
                                         if (!data.url) return e.preventDefault();
+                                        setOpen(false);
                                     }}
                                     className="flex w-full cursor-pointer items-center justify-between rounded-lg p-2 font-semibold hover:bg-green-800/50"
                                 >
@@ -258,6 +268,7 @@ export const Navbar = () => {
                                             key={subIndex}
                                             href={sub.url}
                                             className="block px-5 py-2 hover:text-green-400/100"
+                                            onClick={() => setOpen(false)}
                                         >
                                             {sub.name}
                                         </Link>

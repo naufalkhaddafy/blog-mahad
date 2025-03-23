@@ -45,34 +45,12 @@ export const BookmarkProvider = ({ children }: { children: React.ReactNode }) =>
     return <BookmarkContext.Provider value={value}>{children}</BookmarkContext.Provider>;
 };
 
-export const useBookmark = () => {
+const useBookmark = () => {
     const context = useContext(BookmarkContext);
     if (!context) {
         throw new Error('useBookmark must be used within a BookmarkProvider');
     }
     return context;
 };
-// };
-// const useBookmark = () => {
-//     const getStoredBookmarks = (): BookmarkProps[] => {
-//         const saved = localStorage.getItem('bookmarks');
-//         return saved ? JSON.parse(saved) : [];
-//     };
 
-//     const [bookmarks, setBookmarks] = useState<BookmarkProps[]>(getStoredBookmarks());
-
-//     useEffect(() => {
-//         localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-//     }, [bookmarks]);
-
-//     const addBookmark = (newBookmark: BookmarkProps) => {
-//         const stored = getStoredBookmarks();
-//         if (stored.some((b) => b.slug === newBookmark.slug)) return;
-//         const updatedBookmarks = [...stored, newBookmark];
-//         setBookmarks(updatedBookmarks);
-//     };
-
-//     return { bookmarks, addBookmark };
-// };
-
-// export default useBookmark;
+export default useBookmark;

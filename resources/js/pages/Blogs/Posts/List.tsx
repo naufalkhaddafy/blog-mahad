@@ -27,7 +27,7 @@ import { PostProps } from '@/pages/Posts/Partials/Type';
 import { TagPropsSelect } from '@/pages/Tags/Partials/Type';
 import { BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Dot, Grid2x2, Rows3 } from 'lucide-react';
+import { Dot, Grid2x2, RotateCcw, Rows3 } from 'lucide-react';
 import { useState } from 'react';
 
 interface PaginationMeta {
@@ -106,7 +106,7 @@ const List = ({
     };
 
     return (
-        <BlogLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title="Belajar Islam">
                 <meta name="author" content="Kajian Islam Sangatta"></meta>
                 <meta name="robots" content="index, follow"></meta>
@@ -234,7 +234,14 @@ const List = ({
                                 ),
                             )
                         ) : (
-                            <EmptyPost>Mohon maaf postingan tidak tersedia</EmptyPost>
+                            <div className="col-span-2 text-center">
+                                <EmptyPost>Afwan postingan tidak tersedia</EmptyPost>
+                                <Button asChild>
+                                    <Link href="belajar-islam">
+                                        Reset Filter <RotateCcw />
+                                    </Link>
+                                </Button>
+                            </div>
                         )}
                     </div>
 
@@ -267,8 +274,10 @@ const List = ({
                     </div>
                 </section>
             </Container>
-        </BlogLayout>
+        </>
     );
 };
 
 export default List;
+
+List.layout = (page: React.ReactNode) => <BlogLayout breadcrumbs={breadcrumbs} children={page} />;
