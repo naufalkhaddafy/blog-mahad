@@ -17,7 +17,7 @@ export const ScrollUp = () => {
     return (
         <Button
             ref={scrollRef}
-            className="fixed right-1.5 z-10 bg-green-600 p-1 shadow-2xl transition-all duration-500 lg:right-7 lg:p-5 dark:text-white"
+            className="fixed right-1.5 z-10 cursor-pointer bg-green-600 p-1 shadow-2xl transition-all duration-500 lg:right-7 lg:p-5 dark:text-white"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
             <ChevronUp className="size-5 lg:size-6" />
