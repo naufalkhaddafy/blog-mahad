@@ -150,7 +150,7 @@ export const Navbar = () => {
                             </span>
                         )}
                         {openBookmark && (
-                            <div className="fixed top-18 right-1/2 h-auto max-h-1/2 w-[97vw] translate-x-1/2 overflow-y-scroll rounded-lg border-1 border-green-900 bg-gray-200 opacity-100 shadow-2xl transition-all transition-discrete duration-500 md:absolute md:top-15 md:-right-1 md:max-h-96 md:w-[600px] md:translate-x-0 dark:bg-gray-800 starting:opacity-0">
+                            <div className="fixed top-18 right-1/2 h-auto max-h-1/2 w-[97vw] translate-x-1/2 overflow-y-scroll rounded-lg border-1 bg-gray-200 opacity-100 shadow-2xl transition-all transition-discrete duration-500 md:absolute md:top-15 md:-right-1 md:max-h-96 md:w-[600px] md:translate-x-0 dark:bg-gray-800 starting:opacity-0">
                                 <div className="relative grid gap-3 px-3 py-4 md:gap-4 md:px-4">
                                     <span className="text-primary sticky top-4 flex items-center justify-between rounded-lg p-2 text-sm font-bold backdrop-blur-lg md:p-3 dark:text-green-500">
                                         <p>Daftar Bacaan</p>
