@@ -129,7 +129,7 @@ class PostController extends Controller
 
         $post->delete();
 
-        flashMessage('success', 'Berhasil menghapus data postingan');
+        flashMessage('success', 'Berhasil menghapus postingan ' . $post->title);
         return back();
     }
 }

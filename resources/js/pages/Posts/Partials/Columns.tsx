@@ -12,9 +12,10 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { getLimitTextContent } from '@/lib/utils';
-import { Link, router } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { Archive, ArrowUpDown, ClockArrowUp, MoreHorizontal, Rss } from 'lucide-react';
+import { ModalDeletePost } from './ModalPost';
 import { PostProps } from './Type';
 
 export const columns: ColumnDef<PostProps>[] = [
@@ -91,7 +92,7 @@ export const columns: ColumnDef<PostProps>[] = [
     },
     {
         accessorKey: 'tags',
-        header: 'Tags',
+        header: 'Bab',
         cell: ({ row }) => {
             const tags = row.getValue('tags');
             if (!Array.isArray(tags)) return <div>-</div>;
@@ -102,7 +103,7 @@ export const columns: ColumnDef<PostProps>[] = [
                         ? tags.map((tag) => (
                               <span
                                   key={tag.value}
-                                  className="rounded bg-gray-200 px-2 py-1 capitalize"
+                                  className="rounded bg-gray-200 px-2 py-1 text-xs capitalize"
                               >
                                   {tag.label}
                               </span>
@@ -115,11 +116,21 @@ export const columns: ColumnDef<PostProps>[] = [
     {
         accessorKey: 'status',
         header: 'Status',
-        cell: ({ row }) => (
-            <div className="capitalize">
-                <Badge variant="outline">{row.getValue('status')}</Badge>
-            </div>
-        ),
+        cell: ({ row }) => {
+            const valueStatus = row.getValue('status');
+            return (
+                <div className="text-md flex items-center gap-2 capitalize">
+                    {valueStatus === 'pending' ? (
+                        <ClockArrowUp className="h-4 w-4 text-red-500" />
+                    ) : valueStatus === 'publish' ? (
+                        <Rss className="h-4 w-4 text-green-500" />
+                    ) : (
+                        <Archive className="h-4 w-4 text-yellow-500" />
+                    )}
+                    {row.getValue('status')}
+                </div>
+            );
+        },
     },
     {
         id: 'actions',
@@ -127,9 +138,6 @@ export const columns: ColumnDef<PostProps>[] = [
         cell: ({ row }) => {
             const post = row.original;
 
-            const deletePost = (id?: number) => {
-                router.delete(route('posts.destroy', id));
-            };
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -144,8 +152,8 @@ export const columns: ColumnDef<PostProps>[] = [
                         <DropdownMenuItem asChild>
                             <Link href={`/posts/${post.id}/edit`}>Edit</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => deletePost(post.id)}>
-                            Delete
+                        <DropdownMenuItem asChild>
+                            <ModalDeletePost post={post} />
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

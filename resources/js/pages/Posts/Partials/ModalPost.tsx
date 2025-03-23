@@ -9,7 +9,6 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { useForm } from '@inertiajs/react';
-import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { PostProps } from './Type';
 
@@ -19,8 +18,8 @@ export const ModalDeletePost = ({ post }: { post: PostProps }) => {
     });
     const [open, setOpen] = useState<boolean>(false);
 
-    const deleteCategory = (post: PostProps) => {
-        destroy(route('post.destroy', post.id), {
+    const deletePost = (post: PostProps) => {
+        destroy(route('posts.destroy', post.id), {
             preserveScroll: true,
             onSuccess: () => setOpen(false),
         });
@@ -29,19 +28,19 @@ export const ModalDeletePost = ({ post }: { post: PostProps }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="border border-red-500 bg-transparent text-red-600 hover:bg-white hover:text-red-500">
-                    <Trash2 />
-                </Button>
+                <button className="hover:bg-secondary w-full rounded-sm px-2 py-1 text-start text-sm text-red-500">
+                    Hapus
+                </button>
             </DialogTrigger>
             <DialogContent>
-                <DialogTitle>Apakah anda ingin mengapus Post {post.title}?</DialogTitle>
-                <DialogDescription>Konfirmasi ingin menghapus Post</DialogDescription>
+                <DialogTitle>Apakah anda ingin mengapus postingan ?</DialogTitle>
+                <DialogDescription>Konfirmasi ingin menghapus {post.title}</DialogDescription>
                 <DialogFooter className="gap-2">
                     <DialogClose asChild>
                         <Button variant="secondary">Cancel</Button>
                     </DialogClose>
                     <Button variant="destructive" asChild>
-                        <button onClick={() => deleteCategory(post)} disabled={processing}>
+                        <button onClick={() => deletePost(post)} disabled={processing}>
                             Delete
                         </button>
                     </Button>
