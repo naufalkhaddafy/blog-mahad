@@ -140,15 +140,19 @@ export const Navbar = () => {
                         <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6" />
                     </Link>
                     <div className="relative">
-                        <Bookmark
-                            className={`size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6`}
+                        <div
                             onClick={() => setOpenBookmark(!openBookmark)}
-                        />
-                        {bookmarks.length > 0 && (
-                            <span className="absolute -top-1.5 -right-1 rounded-full bg-gray-200/100 px-1 text-xs text-green-800">
-                                {bookmarks.length}
-                            </span>
-                        )}
+                            className="cursor-pointer"
+                        >
+                            <Bookmark
+                                className={`size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6`}
+                            />
+                            {bookmarks.length > 0 && (
+                                <span className="absolute -top-1.5 -right-1 rounded-full bg-gray-200/100 px-1 text-xs text-green-800">
+                                    {bookmarks.length}
+                                </span>
+                            )}
+                        </div>
                         {openBookmark && (
                             <>
                                 <div
