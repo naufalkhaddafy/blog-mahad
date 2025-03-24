@@ -11,8 +11,18 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Airplay, AudioLines, FolderTree, LayoutGrid, Newspaper, Radio, Tags } from 'lucide-react';
+import {
+    Airplay,
+    AudioLines,
+    FolderTree,
+    LayoutGrid,
+    Newspaper,
+    Radio,
+    Tags,
+    Users,
+} from 'lucide-react';
 import AppLogo from './app-logo';
+import { NavFooter } from './nav-footer';
 
 const mainNavItems: NavItem[] = [
     {
@@ -58,18 +68,13 @@ const radioMenu: NavItem[] = [
     },
 ];
 
-// const footerNavItems: NavItem[] = [
-//     {
-//         title: 'Repository',
-//         url: 'https://github.com/laravel/react-starter-kit',
-//         icon: Folder,
-//     },
-//     {
-//         title: 'Documentation',
-//         url: 'https://laravel.com/docs/starter-kits',
-//         icon: BookOpen,
-//     },
-// ];
+const footerNavItems: NavItem[] = [
+    {
+        title: 'Manajemen User',
+        url: '/users',
+        icon: Users,
+    },
+];
 
 export function AppSidebar() {
     return (
@@ -93,7 +98,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
+                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

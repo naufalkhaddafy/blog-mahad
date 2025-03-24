@@ -5,6 +5,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\UserController;
 use App\Models\Banner;
 use App\Models\Post;
 use GuzzleHttp\Promise\Create;
@@ -27,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('tag', TagController::class)->except('show', 'edit', 'create');
     Route::resource('banner', BannerController::class)->except('show', 'edit', 'create');
     Route::post('/banner/reorder', [BannerController::class, 'reorder'])->name('banner.reorder');
+    Route::resource('users', UserController::class)->except('create', 'show', 'edit');
 });
 
 

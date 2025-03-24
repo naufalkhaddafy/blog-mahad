@@ -1,7 +1,7 @@
 export type TagProps = {
     id?: number;
     name: string;
-    slug: string;
+    slug?: string;
 };
 
 export type TagPropsSelect = {
