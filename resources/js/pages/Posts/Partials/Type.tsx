@@ -26,6 +26,7 @@ export type PostProps = {
     category?: {
         id: number;
         name: string;
+        slug: string;
     };
     title: string;
     description: string;

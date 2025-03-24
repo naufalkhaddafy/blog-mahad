@@ -24,6 +24,7 @@ class PostResource extends JsonResource
             "category" => (object)[
                 'id' => $this->category->id,
                 'name' => $this->category->name,
+                'slug' => $this->category->slug,
             ],
             "title" => $this->title,
             "description" => $this->description,

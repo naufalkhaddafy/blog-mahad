@@ -225,7 +225,7 @@ Show.layout = (page: React.ReactNode) => {
         },
         {
             title: 'Belajar Islam',
-            href: route('blog.list', { category: page.props?.post?.category?.id }),
+            href: route('blog.list', { category: page.props.post.category.slug }),
         },
         {
             title: `${page.props?.post?.category?.name}`,
