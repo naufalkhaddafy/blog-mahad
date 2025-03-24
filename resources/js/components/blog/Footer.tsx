@@ -75,12 +75,17 @@ export const Footer = () => {
                                         <a
                                             href="https://www.instagram.com/galeripostersangatta"
                                             target="_blank"
+                                            rel="noopener noreferrer"
                                         >
                                             <Instagram className="size-5 transition hover:text-green-600 active:text-green-500 md:size-6" />
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="https://t.me/kajianislamsangatta" target="_blank">
+                                        <a
+                                            href="https://t.me/kajianislamsangatta"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
                                             <Send className="size-5 transition hover:text-green-600 active:text-green-500 md:size-6" />
                                         </a>
                                     </li>
