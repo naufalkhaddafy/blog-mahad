@@ -123,9 +123,9 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        if (!empty($post->image) && Storage::disk('public')->exists($post->image)) {
-            Storage::disk('public')->delete($post->image);
-        }
+        // if (!empty($post->image) && Storage::disk('public')->exists($post->image)) {
+        //     Storage::disk('public')->delete($post->image);
+        // }
 
         $post->delete();
 

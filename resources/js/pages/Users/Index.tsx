@@ -10,6 +10,7 @@ export type UserParams = {
     name: string;
     email: string;
     username: string;
+    posts_count: number;
 };
 
 const Index = ({ users }: { users: UserParams[] }) => {

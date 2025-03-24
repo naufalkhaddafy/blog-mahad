@@ -17,15 +17,15 @@ class PostResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "user" => (object) [
+            "user" => $this->user ? (object) [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
-            ],
-            "category" => (object)[
+            ] : null,
+            "category" => $this->category ? (object)[
                 'id' => $this->category->id,
                 'name' => $this->category->name,
                 'slug' => $this->category->slug,
-            ],
+            ] : null,
             "title" => $this->title,
             "description" => $this->description,
             "image" =>  $this->image,

@@ -37,7 +37,7 @@ export const CardGrid = ({ dataPost }: { dataPost: PostProps }) => {
             </div>
             <div className="absolute top-0 left-0 flex w-full items-start justify-between gap-2 px-4 py-4 lg:px-6 lg:py-6">
                 <div className="flex h-fit flex-wrap gap-2 overflow-hidden">
-                    <Badge>{dataPost.category?.name}</Badge>
+                    <Badge>{dataPost.category?.name || 'No Category'}</Badge>
                     {dataPost.tags.map((dataTags, index) => (
                         <Badge key={index}>{dataTags.label}</Badge>
                     ))}

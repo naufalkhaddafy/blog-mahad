@@ -79,7 +79,7 @@ export default function Show({ post, previousPost, nextPost, relevantPosts }: Sh
                 <article ref={articleRef} className="h-auto">
                     <header className="py-1">
                         <div className="flex flex-wrap items-center gap-2">
-                            <Badge>{post.category?.name}</Badge>
+                            <Badge>{post.category?.name || 'No Category'}</Badge>
                             {post.tags.map((dataTags, index) => (
                                 <Badge key={index + 1}>{dataTags.label}</Badge>
                             ))}
@@ -225,10 +225,10 @@ Show.layout = (page: React.ReactNode) => {
         },
         {
             title: 'Belajar Islam',
-            href: route('blog.list', { category: page.props.post.category.slug }),
+            href: route('blog.list', { category: page.props?.post?.category?.slug || '' }),
         },
         {
-            title: `${page.props?.post?.category?.name}`,
+            title: `${page.props?.post?.category?.name || 'No Category'}`,
             href: '/posts',
         },
     ];

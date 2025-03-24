@@ -64,6 +64,11 @@ export const columns: ColumnDef<UserParams>[] = [
         cell: ({ row }) => <div>{row.getValue('email')}</div>,
     },
     {
+        accessorKey: 'posts_count',
+        header: 'Postingan',
+        cell: ({ row }) => <div>{row.getValue('posts_count')}</div>,
+    },
+    {
         id: 'actions',
         enableHiding: false,
         cell: ({ row }) => {

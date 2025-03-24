@@ -9,17 +9,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Observers\PostObserver;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ObservedBy(PostObserver::class)]
 
 class Post extends Model
 {
     /** @use HasFactory<\Database\Factories\PostFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $casts = [
         'status' => PostStatus::class,
     ];
+
+    protected $dates = ['deleted_at'];
 
     public function user(): BelongsTo
     {

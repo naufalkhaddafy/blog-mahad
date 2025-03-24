@@ -14,7 +14,7 @@ export const CardNoImage = ({ dataPost }: { dataPost: PostProps }) => {
             <div className="grid">
                 <div className="flex items-start justify-between">
                     <div className="flex flex-wrap items-center gap-2 px-1 py-2">
-                        <Badge>{dataPost.category?.name}</Badge>
+                        <Badge>{dataPost.category?.name || 'No Category'}</Badge>
                         {dataPost.tags.map((data, index) => (
                             <Badge key={index}>{data.label}</Badge>
                         ))}

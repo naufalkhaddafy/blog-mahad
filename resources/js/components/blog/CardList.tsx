@@ -22,7 +22,7 @@ export const CardList = ({ dataPost }: { dataPost: PostProps }) => {
             <div className="col-span-4 py-2">
                 <div className="h-0 w-full items-center gap-1 md:flex md:h-auto md:justify-between md:py-1">
                     <div className="hidden flex-wrap items-center gap-1 py-1 md:flex">
-                        <Badge>{dataPost.category?.name}</Badge>
+                        <Badge>{dataPost.category?.name || 'No Category'}</Badge>
                         {dataPost.tags.map((dataTags, index) => (
                             <Badge key={index}>{dataTags.label}</Badge>
                         ))}
