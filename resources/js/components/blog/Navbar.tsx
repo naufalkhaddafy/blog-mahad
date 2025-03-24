@@ -18,8 +18,7 @@ const dataNav = [
         name: 'Info Mahad',
         url: '',
         submenu: [
-            { name: 'Profil', url: '' },
-            { name: 'Berita Mahad', url: '' },
+            { name: 'Info Mahad', url: route('blog.list', { category: 'info-mahad' }) },
             { name: 'Kontak', url: '' },
         ],
     },
@@ -27,8 +26,8 @@ const dataNav = [
         name: 'Info Kajian',
         url: '',
         submenu: [
-            { name: 'Info Taklim', url: route('blog.list', { category: 3 }) },
-            { name: 'Info Dauroh', url: route('blog.list', { category: 4 }) },
+            { name: 'Info Taklim', url: route('blog.list', { category: 'info-taklim' }) },
+            { name: 'Info Dauroh', url: route('blog.list', { category: 'info-dauroh' }) },
         ],
     },
     {

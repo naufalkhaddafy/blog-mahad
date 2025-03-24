@@ -15,11 +15,14 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ["name" => "Artikel"],
+            ["name" => "Artikel",],
             ["name" => "Tanya Jawab"],
             ["name" => "Info Taklim"],
             ["name" => "Info Dauroh"],
             ["name" => "Poster"],
+            ["name" => "Info Mahad"],
+            ["name" => "Audio"],
+            ["name" => "E-Book"],
         ];
 
         collect($data)->each(function ($d) {

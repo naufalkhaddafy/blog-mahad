@@ -17,6 +17,7 @@ class TagListResource extends JsonResource
         return [
             'value' => $this->id,
             'label' => $this->name,
+            'slug' => $this->slug
         ];
     }
 }

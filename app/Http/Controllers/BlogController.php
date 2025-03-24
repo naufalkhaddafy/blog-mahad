@@ -99,9 +99,12 @@ class BlogController extends Controller
         $posts = Post::where('status', 'publish')
             ->with(['user', 'category', 'tags'])
             ->when($filters['search'] ?? null, fn($q, $search) => $q->where('title', 'like', "%$search%"))
-            ->when($filters['category'] ?? null, fn($q, $category) => $q->where('category_id', $category))
+            ->when(!empty($filters['category'] ?? null), function ($q) use ($filters) {
+                $category = Category::where('slug', $filters['category'])->first();
+                return $q->where('category_id', $category->id ?? null);
+            })
             ->when($filters['sorting'] ?? null, fn($q, $sorting) => $sorting === 'popular' ? $q->orderBy('views', 'desc') : $q->orderBy('created_at', $sorting))
-            ->when(!empty($filters['tags'] ?? null), fn($q) => $q->whereHas('tags', fn($q) => $q->whereIn('tags.id', explode(',', $filters['tags']))))
+            ->when(!empty($filters['tags'] ?? null), fn($q) => $q->whereHas('tags', fn($q) => $q->whereIn('tags.slug', explode(',', $filters['tags']))))
             ->latest()
             ->paginate(10)
             ->appends($filters);

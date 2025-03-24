@@ -59,6 +59,7 @@ interface MultiSelectProps
         value: string;
         /** Optional icon component to display alongside the option. */
         icon?: React.ComponentType<{ className?: string }>;
+        slug?: string;
     }[];
 
     /**
@@ -284,7 +285,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                                                 : 'opacity-50 [&_svg]:invisible',
                                         )}
                                     >
-                                        <CheckIcon className="h-4 w-4" />
+                                        <CheckIcon className="h-4 w-4 text-white" />
                                     </div>
                                     <span>(Select All)</span>
                                 </CommandItem>
@@ -304,7 +305,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                                                         : 'opacity-50 [&_svg]:invisible',
                                                 )}
                                             >
-                                                <CheckIcon className="h-4 w-4" />
+                                                <CheckIcon className="h-4 w-4 text-white" />
                                             </div>
                                             {option.icon && (
                                                 <option.icon className="text-muted-foreground mr-2 h-4 w-4" />

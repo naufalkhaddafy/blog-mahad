@@ -76,19 +76,23 @@ const List = ({
         return params.get(key);
     };
 
+    const tagsSelected = getQueryParam('tags') ? getQueryParam('tags')!.split(',').map(String) : [];
+
     const [filter, setFilter] = useState({
         search: getQueryParam('search') || '',
         category: getQueryParam('category') || '',
         sorting: getQueryParam('sorting') || '',
-        tags: getQueryParam('tags')
-            ? getQueryParam('tags')!.split(',').map(Number)
-            : ([] as string[]),
+        tags: tags.filter((tag) => tagsSelected.includes(tag.slug)).map((tag) => tag.value),
     });
 
     const [listStyle, setListStyle] = useState<boolean>(true);
     const { data: posts, meta, links } = usePage<{ posts: PaginatedPosts }>().props.posts;
 
     const search = async (type: string, data: string | string[]) => {
+        if (type === 'tags') {
+            const tagSlugs = tags.filter((tag) => data.includes(tag.value)).map((tag) => tag.slug);
+            data = tagSlugs;
+        }
         setFilter((prev) => {
             const updatedFilter = { ...prev, [type]: data };
             const dataReady = Object.fromEntries(
@@ -153,7 +157,10 @@ const List = ({
                                 <SelectContent>
                                     {categories.length > 0 &&
                                         categories.map((category) => (
-                                            <SelectItem value={`${category.id}`} key={category.id}>
+                                            <SelectItem
+                                                value={`${category.slug}`}
+                                                key={category.id}
+                                            >
                                                 {category.name}
                                             </SelectItem>
                                         ))}

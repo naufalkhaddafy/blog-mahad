@@ -52,7 +52,7 @@ const Index = ({ posts, qna, poster, banner }: IndexProps) => {
                         <Button className="bg-primary text-white dark:bg-green-700" asChild>
                             <Link
                                 href={route('blog.list', {
-                                    category: 1,
+                                    category: 'artikel',
                                 })}
                             >
                                 Lihat Lainnya <Send />
@@ -183,7 +183,7 @@ const Index = ({ posts, qna, poster, banner }: IndexProps) => {
                         <Button className="bg-primary text-white dark:bg-green-700" asChild>
                             <Link
                                 href={route('blog.list', {
-                                    category: 2,
+                                    category: 'tanya-jawab',
                                 })}
                             >
                                 Lihat Lainnya <Send />

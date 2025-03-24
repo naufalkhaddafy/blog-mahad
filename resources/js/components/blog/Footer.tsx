@@ -1,3 +1,5 @@
+import { Link } from '@inertiajs/react';
+import { Instagram, Send } from 'lucide-react';
 import { Container } from '../Container';
 
 export const Footer = () => {
@@ -25,10 +27,22 @@ export const Footer = () => {
                             <h4 className="text-2xl font-bold text-green-600">Tentang</h4>
                             <div>
                                 <ul className="flex flex-col gap-4">
-                                    <li>Artikel</li>
-                                    <li>Poster</li>
-                                    <li>E-Book</li>
-                                    <li>Tanya Jawab</li>
+                                    <li className="transition hover:text-green-600 active:text-green-500">
+                                        <Link href="belajar-islam?category=info-mahad">
+                                            Info Mahad
+                                        </Link>
+                                    </li>
+                                    <li className="transition hover:text-green-600 active:text-green-500">
+                                        <Link href="belajar-islam?category=info-taklim">
+                                            Info Kajian
+                                        </Link>
+                                    </li>
+                                    <li className="transition hover:text-green-600 active:text-green-500">
+                                        <Link href="belajar-islam?category=audio">Audio</Link>
+                                    </li>
+                                    <li className="transition hover:text-green-600 active:text-green-500">
+                                        <Link href="belajar-islam?category=e-book">E-book</Link>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -36,21 +50,40 @@ export const Footer = () => {
                             <h4 className="text-2xl font-bold text-green-600">Kategori</h4>
                             <div>
                                 <ul className="flex flex-col gap-4">
-                                    <li>Artikel</li>
-                                    <li>Poster</li>
-                                    <li>E-Book</li>
-                                    <li>Tanya Jawab</li>
+                                    <li className="transition hover:text-green-600 active:text-green-500">
+                                        <Link href="belajar-islam?category=artikel">Artikel</Link>
+                                    </li>
+                                    <li className="transition hover:text-green-600 active:text-green-500">
+                                        <Link href="belajar-islam?category=poster">Poster</Link>
+                                    </li>
+                                    <li className="transition hover:text-green-600 active:text-green-500">
+                                        <Link href="belajar-islam?category=tanya-jawab">
+                                            Tanya Jawab
+                                        </Link>
+                                    </li>
+                                    <li className="transition hover:text-green-600 active:text-green-500">
+                                        <Link href="belajar-islam?sorting=popular">Populer</Link>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                         <div className="flex flex-col gap-4">
                             <h4 className="text-2xl font-bold text-green-600">Sosial Media</h4>
                             <div>
-                                <ul className="flex flex-col gap-4">
-                                    <li>Artikel</li>
-                                    <li>Poster</li>
-                                    <li>E-Book</li>
-                                    <li>Tanya Jawab</li>
+                                <ul className="flex gap-4">
+                                    <li>
+                                        <a
+                                            href="https://www.instagram.com/galeripostersangatta"
+                                            target="_blank"
+                                        >
+                                            <Instagram className="size-5 transition hover:text-green-600 active:text-green-500 md:size-6" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://t.me/kajianislamsangatta" target="_blank">
+                                            <Send className="size-5 transition hover:text-green-600 active:text-green-500 md:size-6" />
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
