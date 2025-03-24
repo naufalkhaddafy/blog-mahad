@@ -138,6 +138,11 @@ export const columns: ColumnDef<PostProps>[] = [
         cell: ({ row }) => {
             const post = row.original;
 
+            const copyLink = () => {
+                const url = new URL(window.location.href);
+                const shareUrl = `${url.protocol}//${url.hostname}:${url.port}/${post.slug}`;
+                navigator.clipboard.writeText(shareUrl);
+            };
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -149,6 +154,7 @@ export const columns: ColumnDef<PostProps>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={copyLink}>Salin link</DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <Link href={`/posts/${post.id}/edit`}>Edit</Link>
                         </DropdownMenuItem>
