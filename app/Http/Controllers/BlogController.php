@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BannerResource;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\TagListResource;
+use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
@@ -39,6 +41,7 @@ class BlogController extends Controller
             'posts' => PostResource::collection($post),
             'qna' => PostResource::collection($qna),
             'poster' => PostResource::collection($poster),
+            "banner" => BannerResource::collection(Banner::query()->where('status', true)->orderBy('order')->get())
         ]);
     }
 

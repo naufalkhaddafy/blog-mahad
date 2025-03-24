@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, FolderTree, LayoutGrid, Newspaper, Tags } from 'lucide-react';
+import { Airplay, AudioLines, FolderTree, LayoutGrid, Newspaper, Radio, Tags } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -22,9 +22,14 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const Post: NavItem[] = [
+const Blog: NavItem[] = [
     {
-        title: 'Blog',
+        title: 'Banner',
+        url: '/banner',
+        icon: Airplay,
+    },
+    {
+        title: 'Postingan',
         url: '/posts',
         icon: Newspaper,
     },
@@ -40,18 +45,31 @@ const Post: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
+const radioMenu: NavItem[] = [
     {
-        title: 'Repository',
-        url: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
+        title: 'Channel',
+        url: '',
+        icon: Radio,
     },
     {
-        title: 'Documentation',
-        url: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
+        title: 'Live Stream',
+        url: '',
+        icon: AudioLines,
     },
 ];
+
+// const footerNavItems: NavItem[] = [
+//     {
+//         title: 'Repository',
+//         url: 'https://github.com/laravel/react-starter-kit',
+//         icon: Folder,
+//     },
+//     {
+//         title: 'Documentation',
+//         url: 'https://laravel.com/docs/starter-kits',
+//         icon: BookOpen,
+//     },
+// ];
 
 export function AppSidebar() {
     return (
@@ -70,7 +88,8 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} title="Platform" />
-                <NavMain items={Post} title="Artikel" />
+                <NavMain items={Blog} title="Blog" />
+                <NavMain items={radioMenu} title="Radio" />
             </SidebarContent>
 
             <SidebarFooter>

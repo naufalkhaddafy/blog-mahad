@@ -5,6 +5,7 @@ import { EmptyPost } from '@/components/blog/EmptyPost';
 import { Container } from '@/components/Container';
 import { Button } from '@/components/ui/button';
 import BlogLayout from '@/layouts/BlogLayout';
+import { BannerProps } from '@/pages/Banner/Index';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { Head, Link } from '@inertiajs/react';
 import { Send } from 'lucide-react';
@@ -20,9 +21,10 @@ interface IndexProps {
     posts: PostProps[];
     qna: PostProps[];
     poster: PostProps[];
+    banner: BannerProps[];
 }
 
-const Index = ({ posts, qna, poster }: IndexProps) => {
+const Index = ({ posts, qna, poster, banner }: IndexProps) => {
     return (
         <>
             <Head title="Beranda">
@@ -39,7 +41,7 @@ const Index = ({ posts, qna, poster }: IndexProps) => {
                 ></meta>
             </Head>
             <h1 className="sr-only">Kajian Islam Sangatta</h1>
-            <Banner />
+            {banner.length > 0 && <Banner bannerData={banner} />}
             {/* Top Rencent */}
             <Container>
                 <div className="py-10 lg:py-15">

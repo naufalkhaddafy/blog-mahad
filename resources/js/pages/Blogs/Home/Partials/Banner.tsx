@@ -1,15 +1,10 @@
 import { Container } from '@/components/Container';
-import { asset } from '@/lib/utils';
+import { BannerProps } from '@/pages/Banner/Index';
+import { Link } from '@inertiajs/react';
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-const bannerData = [
-    { image: asset('assets/banner.jpg') },
-    { image: asset('assets/banner2.png') },
-    { image: asset('assets/banner3.png') },
-    { image: asset('assets/banner4.png') },
-];
 
-export const Banner = () => {
+export const Banner = ({ bannerData }: { bannerData: BannerProps[] }) => {
     return (
         <Container>
             {/* Banner */}
@@ -31,14 +26,16 @@ export const Banner = () => {
                 >
                     {bannerData.map((value, index) => (
                         <SwiperSlide key={index}>
-                            <div className="h-full bg-green-600 text-center align-middle">
-                                <img
-                                    src={value.image}
-                                    alt={value.image}
-                                    className="h-full w-full object-fill brightness-90 dark:brightness-80"
-                                    loading="lazy"
-                                />
-                            </div>
+                            <Link href={value.url || ''}>
+                                <div className="h-full bg-green-600 text-center align-middle">
+                                    <img
+                                        src={value.image}
+                                        alt={value.title}
+                                        className="h-full w-full object-fill brightness-90 dark:brightness-80"
+                                        loading="lazy"
+                                    />
+                                </div>
+                            </Link>
                         </SwiperSlide>
                     ))}
                 </Swiper>

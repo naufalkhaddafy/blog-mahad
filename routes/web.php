@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
+use App\Models\Banner;
 use App\Models\Post;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +25,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('category', CategoryController::class)->except('show', 'edit', 'create');
     Route::resource('posts', PostController::class);
     Route::resource('tag', TagController::class)->except('show', 'edit', 'create');
+    Route::resource('banner', BannerController::class)->except('show', 'edit', 'create');
+    Route::post('/banner/reorder', [BannerController::class, 'reorder'])->name('banner.reorder');
 });
 
 
