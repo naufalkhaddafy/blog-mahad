@@ -22,5 +22,5 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-/.github/workflows/
+!/.github/workflows/deploy.yml
 
