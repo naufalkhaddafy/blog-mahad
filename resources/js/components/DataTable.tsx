@@ -101,7 +101,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <div className="">
+            <div className="flex justify-center">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
