@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\PostStatus;
 use App\Models\Post;
-use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\TagListResource;
 use App\Models\Category;
@@ -45,7 +45,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostRequest $request)
+    public function store(PostRequest $request)
     {
         $filename = $request->file('image') ? str()->slug($request->title) . '.' . $request->file('image')->getClientOriginalExtension() : $request->image;
 
@@ -94,7 +94,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StorePostRequest $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
 
         if (($request->hasFile('image') || $request->image === null) && !empty($post->image) && Storage::disk('public')->exists($post->image)) {

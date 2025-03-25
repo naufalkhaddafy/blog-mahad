@@ -6,7 +6,7 @@ use App\Enums\PostStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StorePostRequest extends FormRequest
+class PostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,7 @@ class StorePostRequest extends FormRequest
         $image = $this->route('post')?->image === $this->image ? '' : ['image', 'mimes:jpeg,png,jpg,gif,svg'];
         return [
             'category_id' => ['required', 'exists:categories,id'],
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255', 'unique:posts,title'],
             'description' => ['required', 'string'],
             'image' => ['nullable', 'max:2048', $image],
             'status' => ['required', Rule::in(PostStatus::cases())],
@@ -42,6 +42,7 @@ class StorePostRequest extends FormRequest
             'category_id.exists' => 'Kategori tidak ditemukan',
             'title.required' => 'Judul tidak boleh kosong',
             'title.string' => 'Judul harus berupa teks',
+            'title.unique' => 'Judul sudah di pakai',
             'title.max' => 'Judul tidak boleh lebih dari 255 karakter',
             'description.required' => 'Deskripsi tidak boleh kosong',
             'description.string' => 'Deskripsi harus berupa teks',
