@@ -121,11 +121,19 @@ const List = ({
             </Head>
             <Container className="max-w-5xl pt-5">
                 <header className="border-b-2 pb-10">
+                    <h1 className="sr-only">
+                        {getQueryParam('category')
+                            ?.replace(/-/g, ' ')
+                            .split(' ')
+                            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                            .join(' ') || 'Belajar Islam'}
+                    </h1>
+
                     <div className="flex flex-wrap items-center justify-between gap-5 pb-5 lg:pb-10">
                         <div>
-                            <h1 className="text-primary text-3xl font-bold dark:text-green-600">
+                            <h2 className="text-primary text-3xl font-bold dark:text-green-600">
                                 Belajar Islam
-                            </h1>
+                            </h2>
                             <p className="flex items-center text-sm text-gray-500 lg:text-lg">
                                 Media Belajar Islam Sesuai Al-Qur'an & Sunnah
                                 <span aria-hidden="true">
@@ -201,7 +209,7 @@ const List = ({
                 <section>
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="pt-5 text-lg font-bold">Hasil pencarian</h2>
+                            <h3 className="pt-5 text-lg font-bold">Hasil pencarian</h3>
                             <p className="text-xs text-gray-500 lg:text-sm">
                                 Menampilkan {meta.from} - {meta.to} dari
                                 <span className="font-bold text-green-600"> {meta.total}</span>
