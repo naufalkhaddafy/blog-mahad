@@ -66,8 +66,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     });
 
     return (
-        <div className="max-w-screen">
-            <div className="flex flex-wrap items-center gap-6 overflow-hidden py-4">
+        <div className="w-full">
+            <div className="flex flex-wrap items-center gap-6 py-4">
                 <Input
                     placeholder="Filter data..."
                     value={globalFilter}
@@ -101,7 +101,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <div className="w-full max-w-screen">
+            <div className="">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
