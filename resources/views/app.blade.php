@@ -7,7 +7,7 @@
 
     <title inertia>{{ config('app.name', 'Kajian Islam Sangatta') }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/kis-icon.ico') }}">
-    {{-- <link rel="icon" href="{{ asset('assets/kis-icon.png') }}" type="image/x-icon"> --}}
+    <link rel="icon" href="{{ asset('assets/kis-icon.png') }}" type="image/png">
     <link rel="apple-touch-icon" href="{{ asset('assets/kis-icon.png') }}">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
