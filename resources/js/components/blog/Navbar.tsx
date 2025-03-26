@@ -67,7 +67,7 @@ export const Navbar = () => {
                     <Link href="/">
                         <div className="flex items-center gap-2 lg:gap-4">
                             <img
-                                src={asset('assets/icon.png')}
+                                src={asset('assets/kis-icon.png')}
                                 alt="Kajian Islam Sangatta Icon"
                                 className="aspect-square size-8 lg:size-14"
                                 loading="lazy"

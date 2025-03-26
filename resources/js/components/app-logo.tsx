@@ -5,7 +5,7 @@ export default function AppLogo() {
         <>
             <div className="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-md bg-white">
                 <img
-                    src={asset('assets/icon.png')}
+                    src={asset('assets/kis-icon.png')}
                     className="size-5 fill-current text-white dark:text-black"
                 />
             </div>

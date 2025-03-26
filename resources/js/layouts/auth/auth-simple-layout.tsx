@@ -24,7 +24,7 @@ export default function AuthSimpleLayout({
                         >
                             <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-md">
                                 <img
-                                    src={asset('assets/icon.png')}
+                                    src={asset('assets/kis-icon.png')}
                                     className="size-9 fill-current text-[var(--foreground)] dark:text-white"
                                 />
                             </div>
