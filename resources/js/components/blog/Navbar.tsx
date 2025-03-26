@@ -55,6 +55,7 @@ export const Navbar = () => {
             <nav className="bg-primary flex flex-wrap items-center justify-between">
                 <div className="flex items-center gap-3">
                     <button
+                        data-slot="button"
                         className="cursor-pointer lg:hidden"
                         onClick={() => {
                             setOpen(!open);
@@ -84,7 +85,7 @@ export const Navbar = () => {
                 <div className="hidden lg:flex">
                     <ul className="flex w-full items-center gap-4">
                         {dataNav.map((data, index) => (
-                            <div
+                            <li
                                 key={index}
                                 className="group text-md relative flex cursor-pointer items-center gap-1 rounded-md px-3 py-2 font-semibold transition-normal duration-500 ease-in-out hover:bg-green-800/50"
                                 onClick={() =>
@@ -128,14 +129,14 @@ export const Navbar = () => {
                                         </div>
                                     </>
                                 )}
-                            </div>
+                            </li>
                         ))}
                     </ul>
                 </div>
 
                 {/* BookMark  */}
                 <div className="flex items-center gap-3 lg:gap-4">
-                    <Link href="/belajar-islam">
+                    <Link href="/belajar-islam" aria-label="Belajar Islam - kajiansangatta.com">
                         <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6" />
                     </Link>
                     <div className="relative">
@@ -196,7 +197,10 @@ export const Navbar = () => {
                                                                 </p>
                                                             </div>
                                                         </Link>
-                                                        <button className="-translate-x-3 md:-translate-x-5">
+                                                        <button
+                                                            data-slot="button"
+                                                            className="-translate-x-3 md:-translate-x-5"
+                                                        >
                                                             <Trash
                                                                 className="size-4 cursor-pointer text-red-800 hover:text-red-500 active:text-red-500 md:size-6"
                                                                 onClick={() =>

@@ -77,6 +77,7 @@ export const Footer = () => {
                                             href="https://www.instagram.com/galeripostersangatta"
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            aria-label="Instagram - kajiansangatta.com"
                                         >
                                             <Instagram className="size-5 transition hover:text-green-600 active:text-green-500 md:size-6" />
                                         </a>
@@ -86,6 +87,7 @@ export const Footer = () => {
                                             href="https://t.me/kajianislamsangatta"
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            aria-label="Channe Telegram - kajiansangatta.com"
                                         >
                                             <Send className="size-5 transition hover:text-green-600 active:text-green-500 md:size-6" />
                                         </a>
