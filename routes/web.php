@@ -3,12 +3,12 @@
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
-use App\Models\Banner;
-use App\Models\Post;
+
 use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,11 +19,7 @@ Route::get('/belajar-islam', [BlogController::class, 'list'])->name('blog.list')
 Route::get('/sitemap.xml', [SitemapController::class, 'generate']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return inertia('dashboard', [
-            'posts' => count(Post::all()),
-        ]);
-    })->name('dashboard');
+    Route::get('dashboard',DashboardController::class)->name('dashboard');
 
     Route::resource('category', CategoryController::class)->except('show', 'edit', 'create');
     Route::resource('posts', PostController::class);

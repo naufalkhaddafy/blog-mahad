@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { FolderTree, MessageCircleQuestion, Send, Tag } from 'lucide-react';
+import { Airplay, FolderTree, MessageCircleQuestion, Send } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -10,11 +10,21 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard({ posts }: { posts: number }) {
+export default function Dashboard({
+    posts,
+    banner,
+    categories,
+    qna,
+}: {
+    posts: number;
+    banner: number;
+    categories: number;
+    qna: number;
+}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="grid grid-cols-2 gap-4 rounded-xl p-4 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 rounded-xl p-4 lg:grid-cols-4">
                 <div className="border-xl w-full rounded-lg border px-7 py-6 shadow">
                     <div className="flex items-center justify-between py-2">
                         <h6 className="text-sm font-semibold">Total Postingan</h6>
@@ -26,11 +36,11 @@ export default function Dashboard({ posts }: { posts: number }) {
                 </div>
                 <div className="border-xl w-full rounded-lg border px-7 py-6 shadow">
                     <div className="flex items-center justify-between py-2">
-                        <h6 className="text-sm font-semibold">Total Tag</h6>
-                        <Tag className="size-4" />
+                        <h6 className="text-sm font-semibold">Total Banner</h6>
+                        <Airplay className="size-4" />
                     </div>
                     <div className="block py-2">
-                        <h3 className="text-4xl font-extrabold">78</h3>
+                        <h3 className="text-4xl font-extrabold">{banner}</h3>
                     </div>
                 </div>
                 <div className="border-xl w-full rounded-lg border px-7 py-6 shadow">
@@ -39,7 +49,7 @@ export default function Dashboard({ posts }: { posts: number }) {
                         <FolderTree className="size-4" />
                     </div>
                     <div className="block py-2">
-                        <h3 className="text-4xl font-extrabold">80</h3>
+                        <h3 className="text-4xl font-extrabold">{categories}</h3>
                     </div>
                 </div>
                 <div className="border-xl w-full rounded-lg border px-7 py-6 shadow">
@@ -48,7 +58,7 @@ export default function Dashboard({ posts }: { posts: number }) {
                         <MessageCircleQuestion className="size-4" />
                     </div>
                     <div className="block py-2">
-                        <h3 className="text-4xl font-extrabold">100</h3>
+                        <h3 className="text-4xl font-extrabold">{qna}</h3>
                     </div>
                 </div>
             </div>
