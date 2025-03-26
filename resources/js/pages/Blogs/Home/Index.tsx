@@ -37,10 +37,10 @@ const Index = ({ posts, qna, poster, banner }: IndexProps) => {
                 <meta name="robots" content="index, follow"></meta>
                 <meta
                     name="description"
-                    content="Kajian Islam Sangatta, Kajian Islam, Belajar Islam, Al Quran, Hadits, Sesuai dengan Pemahaman Salaf"
+                    content="Kajian Islam Sangatta, Kajian Islam Ilmiah, Belajar Islam, Al Quran, Hadits, Sesuai dengan Pemahaman Salaf"
                 ></meta>
             </Head>
-            <h1 className="sr-only">Kajian Islam Sangatta</h1>
+            <h1 className="sr-only">Kajian Islam Sangatta - kajianislamsangatta.com</h1>
             {banner.length > 0 && <Banner bannerData={banner} />}
             {/* Top Rencent */}
             <Container>

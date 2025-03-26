@@ -19,6 +19,7 @@ export const Footer = () => {
                                 width="auto"
                                 height="300"
                                 loading="lazy"
+                                title="Lokasi Ma'had Ibnu Katsir di Google Maps"
                             ></iframe>
                         </div>
                     </div>
