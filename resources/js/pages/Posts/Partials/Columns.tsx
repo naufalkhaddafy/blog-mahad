@@ -140,7 +140,7 @@ export const columns: ColumnDef<PostProps>[] = [
 
             const copyLink = () => {
                 const url = new URL(window.location.href);
-                const shareUrl = `${url.protocol}//${url.hostname}:${url.port}/${post.slug}`;
+                const shareUrl = `${url.protocol}//${url.hostname}${url.port ? `:${url.port}` : ''}/${post.slug}`;
                 navigator.clipboard.writeText(shareUrl);
             };
             return (
