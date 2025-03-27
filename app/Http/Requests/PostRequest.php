@@ -27,7 +27,7 @@ class PostRequest extends FormRequest
         $image = $this->route('post')?->image === $this->image ? '' : ['image', 'mimes:jpeg,png,jpg,gif,svg'];
         return [
             'category_id' => ['required', 'exists:categories,id'],
-            'title' => ['required', 'string', 'max:255', 'unique:posts,title'],
+            'title' => ['required', 'string', 'max:255', $this->route('post') ? Rule::unique('posts', 'title')->ignore($this->route('post')->id) : Rule::unique('posts', 'title')],
             'description' => ['required', 'string'],
             'image' => ['nullable', 'max:2048', $image],
             'status' => ['required', Rule::in(PostStatus::cases())],
