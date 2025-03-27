@@ -47,6 +47,10 @@ class BlogController extends Controller
 
     public function show(Post $post)
     {
+        if ($post->status->value !== 'publish') {
+            return abort(404, 'Afwan Postingan tidak ditemukan');
+        }
+
         $post->increment('views');
 
         $previousPost = Post::whereRaw('created_at = (SELECT MAX(created_at) FROM posts WHERE created_at < ? AND category_id = ? AND status = "publish")', [$post->created_at, $post->category_id])
