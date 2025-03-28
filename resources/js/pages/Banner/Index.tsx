@@ -125,9 +125,9 @@ const Index = ({ banner }: { banner: BannerProps[] }) => {
                                     </div>
                                     <div className="col-span-4 lg:col-span-2">
                                         <div>
-                                            <Label htmlFor="title">Url (optional)</Label>
+                                            <Label htmlFor="url">Url (optional)</Label>
                                             <Input
-                                                id="title"
+                                                id="url"
                                                 type="text"
                                                 className="w-full"
                                                 value={data.url}
