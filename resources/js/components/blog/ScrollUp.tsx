@@ -9,15 +9,13 @@ export const ScrollUp = () => {
 
     useEffect(() => {
         if (!scrollRef.current) return;
-        scrollRef.current.classList.toggle('bottom-5', completion > 10);
-        scrollRef.current.classList.toggle('lg:bottom-8', completion > 10);
-        scrollRef.current.classList.toggle('-bottom-15', completion <= 10);
+        scrollRef.current.classList.toggle('hidden', completion <= 10);
     }, [completion]);
 
     return (
         <Button
             ref={scrollRef}
-            className="fixed right-1.5 z-10 cursor-pointer bg-green-600 p-1 shadow-2xl transition-all duration-500 lg:right-7 lg:p-5 dark:text-white"
+            className="absolute -top-15 right-3 flex cursor-pointer items-center bg-green-600 p-1 py-2 opacity-100 shadow-2xl transition-all duration-900 lg:right-6 lg:p-5 dark:text-white starting:opacity-0"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
             <ChevronUp className="size-5 lg:size-6" />

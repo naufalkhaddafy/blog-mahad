@@ -58,7 +58,7 @@ const Blog: NavItem[] = [
 const radioMenu: NavItem[] = [
     {
         title: 'Channel',
-        url: '',
+        url: '/channels',
         icon: Radio,
     },
     {

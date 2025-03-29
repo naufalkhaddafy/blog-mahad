@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Airplay, FolderTree, MessageCircleQuestion, Send } from 'lucide-react';
+import { Airplay, AudioLines, MessageCircleQuestion, Send } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,12 +13,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Dashboard({
     posts,
     banner,
-    categories,
+    channel,
     qna,
 }: {
     posts: number;
     banner: number;
-    categories: number;
+    channel: number;
     qna: number;
 }) {
     return (
@@ -45,11 +45,11 @@ export default function Dashboard({
                 </div>
                 <div className="border-xl w-full rounded-lg border px-7 py-6 shadow">
                     <div className="flex items-center justify-between py-2">
-                        <h6 className="text-sm font-semibold">Total Kategori</h6>
-                        <FolderTree className="size-4" />
+                        <h6 className="text-sm font-semibold">Total Radio Aktif</h6>
+                        <AudioLines className="size-4" />
                     </div>
                     <div className="block py-2">
-                        <h3 className="text-4xl font-extrabold">{categories}</h3>
+                        <h3 className="text-4xl font-extrabold">{channel}</h3>
                     </div>
                 </div>
                 <div className="border-xl w-full rounded-lg border px-7 py-6 shadow">

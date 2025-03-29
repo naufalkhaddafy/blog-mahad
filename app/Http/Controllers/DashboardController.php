@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ChannelStatus;
 use App\Models\Banner;
 use App\Models\Category;
+use App\Models\Channel;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -18,7 +20,7 @@ class DashboardController extends Controller
         return inertia('dashboard', [
             'posts' => count(Post::all()),
             'banner' => count(Banner::all()),
-            'categories' => count(Category::all()),
+            'channel' => count(Channel::whereNotIn('status', [ChannelStatus::Unactive])->get()),
             'qna' => count(Post::where('category_id', $qna->id)->where('status', 'pending')->get())
         ]);
     }
