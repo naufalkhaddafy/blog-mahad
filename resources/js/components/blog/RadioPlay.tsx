@@ -31,6 +31,7 @@ export const RadioPlay = () => {
 
     const handleLoadingFalse = () => {
         setIsLoading(false);
+        setPause(true);
     };
 
     const handlePause = () => {
@@ -44,7 +45,6 @@ export const RadioPlay = () => {
             setIsLoading(false);
         });
         setErrors(false);
-        setPause(true);
     }, [channel]);
 
     return (
