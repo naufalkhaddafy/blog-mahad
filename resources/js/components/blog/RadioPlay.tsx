@@ -10,7 +10,6 @@ export const RadioPlay = () => {
     const [pause, setPause] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [errors, setErrors] = useState(false);
-
     const togglePlayPause = (value: string) => {
         if (audioRef.current && value == 'stop') {
             if (audioRef.current.played) {
@@ -30,17 +29,10 @@ export const RadioPlay = () => {
         }
     };
 
-    const handleLoading = () => {
+    const handleLoadingFalse = () => {
         setIsLoading(false);
     };
 
-    const handleBuffering = () => {
-        setIsLoading(true);
-    };
-
-    const handleError = () => {
-        setErrors(true);
-    };
     const handlePause = () => {
         togglePlayPause('stop');
         router.visit('/radio-online');
@@ -48,8 +40,11 @@ export const RadioPlay = () => {
     };
 
     useEffect(() => {
-        setIsLoading(true);
+        audioRef.current?.play().then(() => {
+            setIsLoading(false);
+        });
         setErrors(false);
+        setPause(true);
     }, [channel]);
 
     return (
@@ -101,9 +96,11 @@ export const RadioPlay = () => {
                                         ref={audioRef}
                                         src={`${channel.url}/stream`}
                                         autoPlay
-                                        onPlay={handleLoading}
-                                        onWaiting={handleBuffering}
-                                        onError={handleError}
+                                        onPlay={handleLoadingFalse}
+                                        onPause={() => setPause(false)}
+                                        onWaiting={() => setIsLoading(true)}
+                                        onCanPlayThrough={handleLoadingFalse}
+                                        onError={() => setErrors(true)}
                                     />
                                     <div>{errors && 'errror eg'}</div>
                                     {isLoading ? (
