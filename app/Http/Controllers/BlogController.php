@@ -10,9 +10,10 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
-use function PHPUnit\Framework\isNull;
 
 class BlogController extends Controller
 {
@@ -41,7 +42,7 @@ class BlogController extends Controller
             'posts' => PostResource::collection($post),
             'qna' => PostResource::collection($qna),
             'poster' => PostResource::collection($poster),
-            "banner" => BannerResource::collection(Banner::query()->where('status', true)->orderBy('order')->get())
+            "banner" => BannerResource::collection(Banner::query()->where('status', true)->orderBy('order')->get()),
         ]);
     }
 
@@ -92,6 +93,14 @@ class BlogController extends Controller
             'previousPost' => $previousPost ? PostResource::make($previousPost) : null,
             'nextPost' => $nextPost ? PostResource::make($nextPost) : null,
             'relevantPosts' => $relevantPosts->isNotEmpty() ? PostResource::collection($relevantPosts) : [],
+            'meta' => (object)[
+                'title' => $post->title,
+                'description' => Str::limit(strip_tags($post->description), 160),
+                'image' => url(Storage::url($post->image)),
+                'url' => url()->current(),
+                'type' => 'article',
+            ],
+
         ]);
     }
 
