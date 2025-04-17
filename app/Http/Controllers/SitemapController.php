@@ -7,41 +7,17 @@ use Spatie\Sitemap\SitemapGenerator;
 use Spatie\Sitemap\Tags\Url;
 use App\Models\Post;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\View;
 
 class SitemapController extends Controller
 {
     public function generate()
     {
-        $sitemap = SitemapGenerator::create(config('app.url'))
-            ->getSitemap();
-
-        $sitemap->add(Url::create('/')
-            ->setPriority(1.0)
-            ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
-
-        $sitemap->add(Url::create('/belajar-islam?category=info-taklim')
-            ->setPriority(0.9)
-            ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
-
-        $sitemap->add(Url::create('/belajar-islam')
-            ->setPriority(0.9)
-            ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
-
-        $sitemap->add(Url::create('/belajar-islam?category=audio')
-            ->setPriority(0.9)
-            ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY));
-
-        $posts = Post::all();
-
-        foreach ($posts as $post) {
-            $sitemap->add(Url::create("/{$post->slug}")
-                ->setLastModificationDate(Carbon::parse($post->updated_at))
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
-                ->setPriority(0.8));
-        }
-
-        $sitemap->writeToFile(public_path('sitemap.xml'));
-
-        return response()->file(public_path('sitemap.xml'));
+        $posts = Post::query()->select('title', 'slug', 'updated_at', 'image', 'views')->orderBy('views', 'desc')->get();
+        
+        return response()
+            ->view('sitemap', compact('posts'))
+            ->header('Content-Type', 'text/xml');
     }
 }
