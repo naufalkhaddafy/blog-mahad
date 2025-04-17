@@ -6,6 +6,7 @@ use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\PostSingleResource;
 use App\Http\Resources\TagListResource;
 use App\Models\Category;
 use App\Models\Tag;
@@ -78,7 +79,7 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         return inertia('Posts/Form', [
-            'posts' => PostResource::make($post->load('tags', 'category')),
+            'posts' => PostSingleResource::make($post->load('tags', 'category')),
             'page_settings' => [
                 'title' => 'Edit Postingan',
                 'description' => 'Mengubah postingan blog',

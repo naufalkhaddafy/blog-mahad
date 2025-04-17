@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BannerResource;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\PostSingleResource;
 use App\Http\Resources\TagListResource;
 use App\Models\Banner;
 use App\Models\Category;
@@ -12,7 +13,6 @@ use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 
 class BlogController extends Controller
@@ -89,13 +89,13 @@ class BlogController extends Controller
             ->get();
 
         return Inertia('Blogs/Posts/Show', [
-            'post' => PostResource::make($post->load('user', 'category', 'tags')),
+            'post' => PostSingleResource::make($post->load('user', 'category', 'tags')),
             'previousPost' => $previousPost ? PostResource::make($previousPost) : null,
             'nextPost' => $nextPost ? PostResource::make($nextPost) : null,
             'relevantPosts' => $relevantPosts->isNotEmpty() ? PostResource::collection($relevantPosts) : [],
             'meta' => (object)[
                 'title' => $post->title,
-                'description' => Str::limit(strip_tags($post->description), 160),
+                'description' => limitText($post->description, 160),
                 'image' => url(Storage::url($post->image)),
                 'url' => url()->current(),
                 'type' => 'article',

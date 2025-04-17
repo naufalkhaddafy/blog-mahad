@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-class PostResource extends JsonResource
+class PostSingleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -27,7 +27,7 @@ class PostResource extends JsonResource
                 'slug' => $this->category->slug,
             ] : null,
             "title" => $this->title,
-            "description" => limitText($this->description, 160),
+            "description" => $this->description,
             "image" =>  $this->image,
             "imageSrc" =>  $this->image ? asset(Storage::url($this->image))  : 'https://placehold.co/1280x720/000000/FFFFFF/?font=source-sans-pro&text=' . $this->title,
             "slug" => $this->slug,
