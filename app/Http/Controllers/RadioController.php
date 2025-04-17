@@ -41,7 +41,12 @@ class RadioController extends Controller
         });
 
         return Inertia('Blogs/Radio/Index', [
-            "channels" => ChannelResource::collection($includeStats)
+            "channels" => ChannelResource::collection($includeStats),
+            'meta' => (object) [
+                'title' => 'Radio Online - kajianislamsangatta.com',
+                'description' => 'Simak Kajian Islam Ilmiah di Radio Islam Sangatta - kajianislamsangatta.com',
+                'url' => url()->current(),
+            ],
         ]);
     }
 }
