@@ -135,7 +135,7 @@ export default function Show({ post, previousPost, nextPost, relevantPosts }: Sh
                         <img
                             src={post.imageSrc}
                             alt={post.title}
-                            className={`${post.category?.name == 'Poster' ? 'aspect-square' : 'aspect-video'} w-full rounded-lg`}
+                            className={`aspect-auto w-full rounded-lg object-cover`}
                             loading="lazy"
                         />
                     </figure>

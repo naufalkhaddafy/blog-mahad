@@ -14,7 +14,7 @@ export const CardGrid = ({ dataPost }: { dataPost: PostProps }) => {
             <img
                 src={dataPost.imageSrc}
                 alt={dataPost.title}
-                className="aspect-video object-fill brightness-100 transition-transform duration-300 group-hover:scale-110"
+                className="aspect-video object-cover brightness-100 transition-transform duration-300 group-hover:scale-110"
                 loading="lazy"
             />
             <div className="flex h-full w-full flex-col justify-center rounded-t-lg p-5 text-left backdrop-blur-md lg:px-10 lg:py-6">
