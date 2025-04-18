@@ -24,7 +24,7 @@ const NotifLive = () => {
                                 </p>
                                 <Button
                                     asChild
-                                    className="border border-green-800 bg-transparent text-xs"
+                                    className="animate-shake border border-green-800 bg-transparent text-xs"
                                 >
                                     <Link href="/radio-online">
                                         <Headphones />
