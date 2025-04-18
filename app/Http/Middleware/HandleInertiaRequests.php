@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Channel;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -45,7 +46,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'flash_message' => session('flash_message')
+            'flash_message' => session('flash_message'),
+            'radio_live' => Channel::where('status', 'live')->exists(),
         ];
     }
 }

@@ -36,7 +36,6 @@ export const RadioPlay = () => {
 
     const handlePause = () => {
         togglePlayPause('stop');
-        router.visit('/radio-online');
         setChannelPlay();
     };
 
