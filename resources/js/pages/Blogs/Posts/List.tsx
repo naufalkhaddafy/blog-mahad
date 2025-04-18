@@ -266,26 +266,30 @@ const List = ({
                     <div className="w-full py-10 text-center">
                         <Pagination>
                             <PaginationContent className="flex-wrap justify-center">
-                                <PaginationPrevious
-                                    href={links.prev}
-                                    className={!links.prev ? 'cursor-no-drop' : ''}
-                                />
+                                <Link href={links.prev ?? ''}>
+                                    <PaginationPrevious
+                                        className={!links.prev ? 'cursor-no-drop' : ''}
+                                    />
+                                </Link>
                                 {meta.links.slice(1, -1).map((link, index) => (
                                     <PaginationItem key={index}>
                                         {link.url ? (
-                                            <PaginationLink href={link.url} isActive={link.active}>
-                                                {link.label}
-                                            </PaginationLink>
+                                            <Link href={link.url}>
+                                                <PaginationLink isActive={link.active}>
+                                                    {link.label}
+                                                </PaginationLink>
+                                            </Link>
                                         ) : (
                                             <PaginationEllipsis />
                                         )}
                                     </PaginationItem>
                                 ))}
 
-                                <PaginationNext
-                                    href={links.next}
-                                    className={!links.next ? 'cursor-no-drop' : ''}
-                                />
+                                <Link href={links.next ?? ''}>
+                                    <PaginationNext
+                                        className={!links.next ? 'cursor-no-drop' : ''}
+                                    />
+                                </Link>
                             </PaginationContent>
                         </Pagination>
                     </div>
