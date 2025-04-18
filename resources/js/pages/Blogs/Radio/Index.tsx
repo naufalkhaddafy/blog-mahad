@@ -4,8 +4,8 @@ import useRadio, { channelParams } from '@/hooks/useRadio';
 import BlogLayout from '@/layouts/BlogLayout';
 import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Bookmark, Dot, Headphones, Share2 } from 'lucide-react';
-import React from 'react';
+import { CheckCheck, Dot, Headphones, Share2 } from 'lucide-react';
+import React, { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,6 +20,17 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const Index = ({ channels }: { channels: channelParams[] }) => {
     const { setChannelPlay } = useRadio();
+    const [copy, setCopy] = useState<{ [key: string]: boolean }>({});
+
+    const copyToClipboard = (channelId: number) => {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url);
+        setCopy({ ...copy, [channelId]: true });
+        setTimeout(() => {
+            setCopy({ ...copy, [channelId]: false });
+        }, 2000);
+    };
+
     return (
         <>
             <Head title="Radio Islam Sangatta">
@@ -81,8 +92,21 @@ const Index = ({ channels }: { channels: channelParams[] }) => {
                                     </div>
                                     <p className="py-4">{channel.stats?.description}</p>
                                     <div className="flex items-center gap-4">
-                                        <Bookmark className="size-4 lg:size-5" />
-                                        <Share2 className="size-4 lg:size-5" />
+                                        {/* <Bookmark className="size-4 lg:size-5" /> */}
+                                        {copy[channel.id] ? (
+                                            <span className="flex items-center gap-1 text-xs font-semibold text-green-700 antialiased dark:text-green-400">
+                                                <CheckCheck className="size-4" />
+                                                copied on clipboard
+                                            </span>
+                                        ) : (
+                                            <Share2
+                                                className="size-4 cursor-pointer transition-all duration-300 hover:scale-125 lg:size-5"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    copyToClipboard(channel.id);
+                                                }}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </Card>
