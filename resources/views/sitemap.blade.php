@@ -25,6 +25,13 @@
     </url>
 
     <url>
+        <loc>{{ url('/radio-online') }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
         <loc>{{ url('/belajar-islam?category=audio') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
@@ -32,7 +39,7 @@
     </url>
 
     <url>
-        <loc>{{ url('/radio-online') }}</loc>
+        <loc>{{ url('/belajar-islam?category=e-book') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>

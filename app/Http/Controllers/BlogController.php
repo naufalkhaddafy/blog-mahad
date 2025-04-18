@@ -122,10 +122,35 @@ class BlogController extends Controller
             ->paginate(10)
             ->appends($filters);
 
+
+        $meta = match ($filters['category'] ?? null) {
+            'info-taklim' => (object)[
+                'title' => 'Info Taklim',
+                'description' => 'Dapatkan informasi Jadwal Kajian Islam Ilmiah di Kota Sangatta disini.'
+            ],
+            'audio' => (object)[
+                'title' => 'Audio',
+                'description' => 'Dengarkan dan Download audio kajian dari berbagai tema dan pembicara.',
+            ],
+            'e-book' => (object)[
+                'title' => 'E-Book',
+                'description' => 'Download dan baca buku/kitab seputar Islam secara gratis disini.',
+            ],
+            default => (object)[
+                'title' => 'Belajar Islam',
+                'description' => 'Kunjungi dan baca artikel seputar dunia Islam disini.',
+            ]
+        };
+
         return Inertia('Blogs/Posts/List', [
             'posts' => PostResource::collection($posts),
             'categories' => Category::all(),
             'tags' => TagListResource::collection(Tag::all()),
+            'meta' => (object)[
+                'title' => $meta->title . ' - Kajian Islam Sangatta',
+                'description' => $meta->description,
+                'url' => url()->current(),
+            ],
         ]);
     }
 }
