@@ -27,7 +27,7 @@ const Index = ({ channels }: { channels: channelParams[] }) => {
         navigator.clipboard.writeText(url);
         setCopy({ ...copy, [channelId]: true });
         setTimeout(() => {
-            setCopy({ ...copy, [channelId]: false });
+            setCopy({ [channelId]: false });
         }, 2000);
     };
 
