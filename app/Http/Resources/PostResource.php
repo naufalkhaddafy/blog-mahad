@@ -5,9 +5,11 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class PostResource extends JsonResource
 {
+
     /**
      * Transform the resource into an array.
      *
@@ -15,6 +17,7 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        Carbon::setLocale('id');
         return [
             "id" => $this->id,
             "user" => $this->user ? (object) [
@@ -33,7 +36,7 @@ class PostResource extends JsonResource
             "slug" => $this->slug,
             "views" => $this->views,
             "status" => $this->status,
-            "created_at" =>  $this->created_at->diffForHumans(),
+            "created_at" => $this->created_at->diffInMonths() < 1 ? $this->created_at->diffForHumans() : $this->created_at->translatedFormat('d F Y'),
             "tags" => $this->tags ? collect($this->tags)->map(function ($tag) {
                 return [
                     'value' => $tag->id,
