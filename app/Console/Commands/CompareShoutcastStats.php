@@ -37,7 +37,7 @@ class CompareShoutcastStats extends Command
                 $key = "shoutcast:channel:{$slug}:last_data";
 
                 $cached = Redis::get($key);
-                $old = $cached ? json_decode($cached, true) : null;
+                $old = $cached ? json_decode($cached, true) : '';
 
                 $resp = Http::get($channel->url . '/stats?sid=1&json=1');
                 if (!$resp->successful()) return;
@@ -53,7 +53,7 @@ class CompareShoutcastStats extends Command
                     'songtitle' => $new['songtitle'] ?? null,
                 ];
 
-                if ($old['songtitle'] !== $new['songtitle']) {
+                if ($old['songtitle'] !== $new['songtitle'] ?? null) {
                     Redis::set($key, json_encode($dataSource));
                     $titleNow =  Str::contains(Str::upper($new['songtitle'] ?? ''), ['LIVE', 'ONAIR']);
                     if ($channel->status === ChannelStatus::Unactive) {
