@@ -58,25 +58,25 @@ class CompareShoutcastStats extends Command
                     'songtitle' => $new['songtitle'] ?? null,
                 ];
 
-                // Simpan data baru ke Redis (sekali saja)
+                // set new data to Redis
                 Redis::set($key, json_encode($dataSource));
 
                 // Cek perubahan title
                 $oldTitle = $old['songtitle'] ?? null;
                 $newTitle = $new['songtitle'] ?? null;
                 $titleChanged = ($oldTitle !== $newTitle);
-
                 $titleNow = Str::contains(Str::upper($newTitle ?? ''), ['LIVE', 'ONAIR']);
 
-                if ($channel->status === ChannelStatus::Unactive) {
-                    // Jika status channel unactive, langsung return
-                    return;
-                }
-
                 if ($titleNow) {
-                    $channel->update(['status' => ChannelStatus::Live]);
+                    if ($channel->status !== ChannelStatus::Live) {
+                        Log::info("Update status channel {$channel->name} dari {$channel->status} ke " . ChannelStatus::Live);
+                        $channel->update(['status' => ChannelStatus::Live]);
+                    }
                 } else {
-                    $channel->update(['status' => ChannelStatus::Record]);
+                    if ($channel->status !== ChannelStatus::Record) {
+                        Log::info("Update status channel {$channel->name} dari {$channel->status} ke " . ChannelStatus::Record);
+                        $channel->update(['status' => ChannelStatus::Record]);
+                    }
                 }
 
                 if ($titleChanged) {
