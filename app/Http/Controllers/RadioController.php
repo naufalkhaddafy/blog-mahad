@@ -26,7 +26,7 @@ class RadioController extends Controller
             }
 
             return [
-                ...$data
+                ...$data ?? [],
             ];
         });
 
