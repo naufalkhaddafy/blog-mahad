@@ -29,9 +29,9 @@ class ChannelResource extends JsonResource
                     ? Storage::url($this['image'])
                     : $this['image']),
             "stats" => (object)[
-                'listeners' => $this->listeners ?? $this['listeners'],
-                'name' => $this->nameServer ?? $this['nameServer'],
-                'description' => $this->descriptionServer ?? $this['descriptionServer'],
+                'listeners' => $this->currentlisteners ?? $this['currentlisteners'],
+                'name' => $this->servertitle ?? $this['servertitle'],
+                'description' => $this->songtitle ?? $this['songtitle'],
             ],
         ];
     }

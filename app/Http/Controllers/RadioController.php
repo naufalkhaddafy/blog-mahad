@@ -7,6 +7,8 @@ use App\Http\Resources\ChannelResource;
 use App\Models\Channel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 
 class RadioController extends Controller
 {
@@ -15,29 +17,17 @@ class RadioController extends Controller
         $dataChannel = Channel::whereNotIn('status', [ChannelStatus::Unactive])->get();
 
         $includeStats = $dataChannel->map(function ($channel) {
-            try {
-                $response = Http::get($channel->url . '/stats');
-                $xmlString = $response->body();
-                $xml = simplexml_load_string($xmlString);
-                $currentListeners = (string) $xml->CURRENTLISTENERS;
-                $serverTitle = (string) $xml->SERVERTITLE;
-                $songTitle = (string) $xml->SONGTITLE;
-                return [
-                    ...$channel->toArray(),
-                    'listeners' => $currentListeners,
-                    'nameServer' => $serverTitle,
-                    'descriptionServer' => $songTitle,
+            $keyName = Str::slug($channel->name);
+            $keyRedisChannel = "shoutcast:channel:{$keyName}:last_data";
+            $cachedData = Redis::get($keyRedisChannel);
 
-                ];
-            } catch (\Exception $e) {
-                return [
-                    ...$channel->toArray(),
-                    'listeners' => 0,
-                    'nameServer' => null,
-                    'descriptionServer' => null,
-
-                ];
+            if ($cachedData) {
+                $data = json_decode($cachedData, true);
             }
+
+            return [
+                ...$data
+            ];
         });
 
         return Inertia('Blogs/Radio/Index', [

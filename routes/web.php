@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
@@ -10,10 +11,7 @@ use App\Http\Controllers\RadioController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
-
-use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 
 Route::get('/', [BlogController::class, 'home'])->name('home');
@@ -32,7 +30,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('channels', ChannelController::class)->except('create', 'show', 'edit');
     Route::post('/channels/change-status', [ChannelController::class, 'status'])->name('channel.change.status');
 });
-
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
