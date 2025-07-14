@@ -37,15 +37,20 @@ class CompareShoutcastStats extends Command
                 $key = "shoutcast:channel:{$slug}:last_data";
 
                 $cached = Redis::get($key);
-                $old = $cached ? json_decode($cached, true) : '';
+                $old = $cached ? json_decode($cached, true) : [];
 
                 $resp = Http::get($channel->url . '/stats?sid=1&json=1');
-                if (!$resp->successful()) return;
-                $new = $resp->json();
-                if (!$new) {
-                    Log::error("Failed to fetch data for channel: {$channel->name}");
+                if (!$resp->successful()) {
+                    Log::error("HTTP request failed for channel: {$channel->name}");
                     return;
                 }
+
+                $new = $resp->json();
+                if (!$new) {
+                    Log::error("Failed to decode JSON for channel: {$channel->name}");
+                    return;
+                }
+
                 $dataSource = [
                     ...$channel->toArray(),
                     'currentlisteners' => $new['currentlisteners'] ?? 0,
@@ -53,32 +58,31 @@ class CompareShoutcastStats extends Command
                     'songtitle' => $new['songtitle'] ?? null,
                 ];
 
-                if ($old['songtitle'] !== $new['songtitle'] ?? null) {
-                    Redis::set($key, json_encode($dataSource));
-                    $titleNow =  Str::contains(Str::upper($new['songtitle'] ?? ''), ['LIVE', 'ONAIR']);
-                    if ($channel->status === ChannelStatus::Unactive) {
-                        return;
-                    } elseif ($titleNow) {
-                        $channel->update(['status' => ChannelStatus::Live]);
-                    } else {
-                        $channel->update(['status' => ChannelStatus::Record]);
-                    }
-                    Log::info(
-                        'Perubahan data pada channel'
-                    );
+                // Simpan data baru ke Redis (sekali saja)
+                Redis::set($key, json_encode($dataSource));
+
+                // Cek perubahan title
+                $oldTitle = $old['songtitle'] ?? null;
+                $newTitle = $new['songtitle'] ?? null;
+                $titleChanged = ($oldTitle !== $newTitle);
+
+                $titleNow = Str::contains(Str::upper($newTitle ?? ''), ['LIVE', 'ONAIR']);
+
+                if ($channel->status === ChannelStatus::Unactive) {
+                    // Jika status channel unactive, langsung return
+                    return;
+                }
+
+                if ($titleNow) {
+                    $channel->update(['status' => ChannelStatus::Live]);
                 } else {
-                    Redis::set($key, json_encode($dataSource));
-                    $titleNow =  Str::contains(Str::upper($new['songtitle'] ?? ''), ['LIVE', 'ONAIR']);
-                    if ($channel->status === ChannelStatus::Unactive) {
-                        return;
-                    } elseif ($titleNow) {
-                        $channel->update(['status' => ChannelStatus::Live]);
-                    } else {
-                        $channel->update(['status' => ChannelStatus::Record]);
-                    }
-                    Log::info(
-                        'Tidak ada perubahan data pada channel'
-                    );
+                    $channel->update(['status' => ChannelStatus::Record]);
+                }
+
+                if ($titleChanged) {
+                    Log::info("Perubahan data pada channel: {$channel->name}");
+                } else {
+                    Log::info("Tidak ada perubahan data pada channel: {$channel->name}");
                 }
             });
 
