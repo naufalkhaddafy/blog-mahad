@@ -53,7 +53,7 @@ class CompareShoutcastStats extends Command
 
                 $dataSource = [
                     ...$channel->toArray(),
-                    'currentlisteners' => $new['currentlisteners'] ?? 0,
+                    'currentlisteners' => $new['uniquelisteners'] ?? 0,
                     'servertitle' => $new['servertitle'] ?? null,
                     'songtitle' => $new['songtitle'] ?? null,
                 ];
