@@ -69,13 +69,13 @@ class CompareShoutcastStats extends Command
 
                 if ($titleNow) {
                     if ($channel->status->value !== 'live') {
-                        Log::info("Update status channel {$channel->name} Live");
                         $channel->update(['status' => 'live']);
+                        Log::info("Update status channel {$channel->name} Live");
                     }
                 } else {
                     if ($channel->status->value !== 'record') {
-                        Log::info("Update status channel {$channel->name} Record");
                         $channel->update(['status' => 'record']);
+                        Log::info("Update status channel {$channel->name} Record");
                     }
                 }
 
