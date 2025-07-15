@@ -68,14 +68,14 @@ class CompareShoutcastStats extends Command
                 $titleNow = Str::contains(Str::upper($newTitle ?? ''), ['LIVE', 'ONAIR']);
 
                 if ($titleNow) {
-                    if ($channel->status !== ChannelStatus::Live) {
-                        Log::info("Update status channel {$channel->name} dari {$channel->status} ke " . ChannelStatus::Live);
-                        $channel->update(['status' => ChannelStatus::Live]);
+                    if ($channel->status->value !== 'live') {
+                        Log::info("Update status channel {$channel->name} dari {$channel->status} ke " . ChannelStatus::Live->name);
+                        $channel->update(['status' => 'live']);
                     }
                 } else {
-                    if ($channel->status !== ChannelStatus::Record) {
-                        Log::info("Update status channel {$channel->name} dari {$channel->status} ke " . ChannelStatus::Record);
-                        $channel->update(['status' => ChannelStatus::Record]);
+                    if ($channel->status->value !== 'record') {
+                        Log::info("Update status channel {$channel->name} dari {$channel->status} ke " . ChannelStatus::Record->name);
+                        $channel->update(['status' => 'record']);
                     }
                 }
 
