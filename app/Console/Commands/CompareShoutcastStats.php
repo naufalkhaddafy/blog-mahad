@@ -70,11 +70,15 @@ class CompareShoutcastStats extends Command
                 if ($titleNow) {
                     if ($channel->status->value !== 'live') {
                         $channel->update(['status' => 'live']);
+                        $channel['status'] = 'live';
+                        Redis::set($key, json_encode($dataSource));
                         Log::info("Update status channel {$channel->name} Live");
                     }
                 } else {
                     if ($channel->status->value !== 'record') {
                         $channel->update(['status' => 'record']);
+                        $channel['status'] = 'record';
+                        Redis::set($key, json_encode($dataSource));
                         Log::info("Update status channel {$channel->name} Record");
                     }
                 }
