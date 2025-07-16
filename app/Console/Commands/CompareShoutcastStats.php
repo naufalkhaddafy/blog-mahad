@@ -51,37 +51,29 @@ class CompareShoutcastStats extends Command
                     return;
                 }
 
-                $dataSource = [
-                    ...$channel->toArray(),
-                    'currentlisteners' => $new['uniquelisteners'] ?? 0,
-                    'servertitle' => $new['servertitle'] ?? null,
-                    'songtitle' => $new['songtitle'] ?? null,
-                ];
-
-                // set new data to Redis
-                Redis::set($key, json_encode($dataSource));
-
                 // Cek perubahan title
                 $oldTitle = $old['songtitle'] ?? null;
                 $newTitle = $new['songtitle'] ?? null;
                 $titleChanged = ($oldTitle !== $newTitle);
                 $titleNow = Str::contains(Str::upper($newTitle ?? ''), ['LIVE', 'ONAIR']);
+                $newStatus = $titleNow ? 'live' : 'record';
 
-                if ($titleNow) {
-                    if ($channel->status->value !== 'live') {
-                        $channel->update(['status' => 'live']);
-                        $channel['status'] = 'live';
-                        Redis::set($key, json_encode($dataSource));
-                        Log::info("Update status channel {$channel->name} Live");
-                    }
-                } else {
-                    if ($channel->status->value !== 'record') {
-                        $channel->update(['status' => 'record']);
-                        $channel['status'] = 'record';
-                        Redis::set($key, json_encode($dataSource));
-                        Log::info("Update status channel {$channel->name} Record");
-                    }
+                // Update hanya jika status berubah
+                if ($channel->status->value !== $newStatus) {
+                    $channel->update(['status' => $newStatus]);
+                    Log::info("Update status channel {$channel->name} dari {$channel->status->value} ke {$newStatus}");
                 }
+
+                $dataSource = [
+                    ...$channel->toArray(),
+                    'currentlisteners' => $new['uniquelisteners'] ?? 0,
+                    'servertitle' => $new['servertitle'] ?? null,
+                    'songtitle' => $new['songtitle'] ?? null,
+                    'status' => $newStatus,
+                ];
+
+                // set new data to Redis
+                Redis::set($key, json_encode($dataSource));
 
                 if ($titleChanged) {
                     Log::info("Perubahan data pada channel: {$channel->name}");
