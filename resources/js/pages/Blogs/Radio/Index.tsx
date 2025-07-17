@@ -5,7 +5,7 @@ import BlogLayout from '@/layouts/BlogLayout';
 import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { CheckCheck, Dot, Headphones, Share2 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,9 +18,27 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const Index = ({ channels }: { channels: channelParams[] }) => {
+const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) => {
     const { setChannelPlay } = useRadio();
     const [copy, setCopy] = useState<{ [key: string]: boolean }>({});
+    const [channels, setChannels] = useState<channelParams[]>(initiateChannels);
+    // Initialize Laravel Echo for real-time updates
+    useEffect(() => {
+        window.Echo.channel('radio-update').listen('.RadioUpdate', (e: any) => {
+            setChannels((prevChannels) => {
+                return prevChannels.map((channel) => {
+                    if (channel.id === e.data.id) {
+                        // Kalau id sama, update dengan data baru
+                        return { ...channel, ...e.data };
+                    }
+                    return channel; // kalau id beda, kembalikan channel asli
+                });
+            });
+        });
+        return () => {
+            window.Echo.leave('radio-update');
+        };
+    }, []);
 
     const copyToClipboard = (channelId: number) => {
         const url = window.location.href;

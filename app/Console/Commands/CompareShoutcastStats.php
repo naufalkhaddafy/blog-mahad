@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Enums\ChannelStatus;
+use App\Events\RadioUpdate;
+use App\Http\Resources\ChannelResource;
 use App\Models\Channel;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -53,8 +55,11 @@ class CompareShoutcastStats extends Command
 
                 // Cek perubahan title
                 $oldTitle = $old['songtitle'] ?? null;
+                $oldListeners = $old['currentlisteners'] ?? null;
                 $newTitle = $new['songtitle'] ?? null;
+                $newListeners = $new['uniquelisteners'] ?? null;
                 $titleChanged = ($oldTitle !== $newTitle);
+                $listenersChanged = ($oldListeners !== $newListeners);
                 $titleNow = Str::contains(Str::upper($newTitle ?? ''), ['LIVE', 'ONAIR']);
                 $newStatus = $titleNow ? 'live' : 'record';
 
@@ -75,8 +80,9 @@ class CompareShoutcastStats extends Command
                 // set new data to Redis
                 Redis::set($key, json_encode($dataSource));
 
-                if ($titleChanged) {
-                    Log::info("Perubahan data pada channel: {$channel->name}");
+                if ($titleChanged || $listenersChanged) {
+                    event(new RadioUpdate(ChannelResource::make($dataSource)->resolve()));
+                    Log::info("Perubahan data  pada channel: {$channel->name} - Title: {$newTitle}, Listeners: {$newListeners}");
                 } else {
                     Log::info("Tidak ada perubahan data pada channel: {$channel->name}");
                 }

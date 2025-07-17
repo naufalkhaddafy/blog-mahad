@@ -1,9 +1,9 @@
-import '../css/app.css';
-
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { route as routeFn } from 'ziggy-js';
+import '../css/app.css';
+import './echo';
 import { initializeTheme } from './hooks/use-appearance';
 
 declare global {
