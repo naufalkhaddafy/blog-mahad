@@ -67,6 +67,7 @@ class CompareShoutcastStats extends Command
                 if ($channel->status->value !== $newStatus) {
                     if ($newStatus == 'live') {
                         Http::post(env('N8N_WEBHOOK_URL'), [
+                            'channel' => $channel->name,
                             'description' => $newTitle,
                         ]);
                     }
