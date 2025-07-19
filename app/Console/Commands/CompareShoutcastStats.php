@@ -65,6 +65,11 @@ class CompareShoutcastStats extends Command
 
                 // Update hanya jika status berubah
                 if ($channel->status->value !== $newStatus) {
+                    if ($newStatus == 'live') {
+                        Http::post(env('N8N_WEBHOOK_URL'), [
+                            'description' => $newTitle,
+                        ]);
+                    }
                     $channel->update(['status' => $newStatus]);
                     Log::info("Update status channel {$channel->name} dari {$channel->status->value} ke {$newStatus}");
                 }
@@ -81,7 +86,7 @@ class CompareShoutcastStats extends Command
                 Redis::set($key, json_encode($dataSource));
 
                 if ($titleChanged || $listenersChanged) {
-                    event(new RadioUpdate(ChannelResource::make($dataSource)->resolve()));
+                    // event(new RadioUpdate(ChannelResource::make($dataSource)->resolve()));
                     Log::info("Perubahan data  pada channel: {$channel->name} - Title: {$newTitle}, Listeners: {$newListeners}");
                 } else {
                     Log::info("Tidak ada perubahan data pada channel: {$channel->name}");
