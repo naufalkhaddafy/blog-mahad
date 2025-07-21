@@ -67,10 +67,14 @@ class CompareShoutcastStats extends Command
                 if ($channel->status->value !== $newStatus) {
                     if ($newStatus == 'live') {
                         Log::info('Webhook URL:', ['url' => config('services.n8n.webhook_url')]);
-                        // Http::post(config('services.n8n.webhook_url'), [
-                        //     'channel' => $channel->name,
-                        //     'description' => $newTitle,
-                        // ]);
+                        if (config('services.n8n.webhook_url')) {
+                            Http::post(config('services.n8n.webhook_url'), [
+                                'channel' => $channel->name,
+                                'description' => str_ireplace(['live', 'onair'], '', $newTitle),
+                            ]);
+                        } else {
+                            Log::warning('N8N webhook URL is not set.');
+                        }
                     }
                     $channel->update(['status' => $newStatus]);
                     Log::info("Update status channel {$channel->name} dari {$channel->status->value} ke {$newStatus}");
@@ -88,7 +92,6 @@ class CompareShoutcastStats extends Command
                 Redis::set($key, json_encode($dataSource));
 
                 if ($titleChanged || $listenersChanged) {
-                    Log::info('Webhook URL:', ['url' => config('services.n8n.webhook_url')]);
                     // event(new RadioUpdate(ChannelResource::make($dataSource)->resolve()));
                     Log::info("Perubahan data  pada channel: {$channel->name} - Title: {$newTitle}, Listeners: {$newListeners}");
                 } else {
