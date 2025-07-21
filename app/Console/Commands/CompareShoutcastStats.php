@@ -90,8 +90,12 @@ class CompareShoutcastStats extends Command
 
                 // set new data to Redis
                 Redis::set($key, json_encode($dataSource));
-
                 if ($titleChanged || $listenersChanged) {
+                    Http::post(config('services.n8n.webhook_url'), [
+                        'channel' => $channel->name,
+                        'description' => str_ireplace(['live', 'onair'], '', $newTitle),
+                    ]);
+                    Log::info('Webhook URL:', ['url' => config('services.n8n.webhook_url')]);
                     // event(new RadioUpdate(ChannelResource::make($dataSource)->resolve()));
                     Log::info("Perubahan data  pada channel: {$channel->name} - Title: {$newTitle}, Listeners: {$newListeners}");
                 } else {
