@@ -59,7 +59,7 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                     content="Kajian Islam Sangatta, Media belajar untuk memperdalam pemahaman tentang Al-Qur'an, Hadits, dan ajaran Islam sesuai dengan pemahaman Salaf! - kajianislamsangatta.com"
                 ></meta>
             </Head>
-            <Container className="min-h-screen max-w-5xl">
+            <Container className="max-w-5xl">
                 <header className="border-b-2 py-10">
                     <h1 className="sr-only">{'Radio Islam Sangatta'}</h1>
                     <div className="flex flex-wrap items-center justify-between gap-5">
@@ -76,7 +76,7 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                         </div>
                     </div>
                 </header>
-                <section className="py-10">
+                <section className="relative min-h-screen py-10">
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                         {channels.map((channel, index) => (
                             <Card
@@ -129,6 +129,22 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                                 </div>
                             </Card>
                         ))}
+                    </div>
+                    <div className="absolute right-0 bottom-0 left-0 flex justify-center">
+                        <div className="mx-auto flex w-full flex-col items-center gap-4 rounded-t-2xl bg-green-700 p-6 lg:flex-row lg:justify-between lg:p-10 dark:bg-gray-800">
+                            <h2 className="text-md text-center font-semibold text-white lg:text-xl dark:text-white">
+                                Dapatkan informasi siaran langsung
+                            </h2>
+                            <a
+                                href="https://whatsapp.com/channel/0029Vb6el0O6WaKuf6lIDo32"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-md relative flex cursor-pointer items-center gap-2 rounded-full bg-red-600 px-4 py-2 font-medium text-white shadow-xl transition duration-300 hover:-translate-y-2 hover:bg-red-700 lg:px-6 lg:py-3"
+                            >
+                                <span className="absolute top-3.5 left-5.5 h-3 w-3 animate-ping rounded-full bg-red-100 lg:top-5 lg:left-7"></span>
+                                🔴 Gabung disini
+                            </a>
+                        </div>
                     </div>
                 </section>
             </Container>
