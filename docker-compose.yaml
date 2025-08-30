@@ -1,0 +1,73 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile
+        container_name: blog-mahad
+        volumes:
+            - .:/var/www/html
+            - ./storage:/var/www/html/storage
+        restart: unless-stopped
+        env_file:
+            - .env.production
+        depends_on:
+            - mariadb
+    scheduler:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile
+        container_name: blog-mahad-scheduler
+        command: php artisan schedule:work
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - mariadb
+            - app
+
+    nginx:
+        image: nginx:1.27-alpine
+        container_name: nginx
+        restart: unless-stopped
+        ports:
+            - '8081:80' # debug akses langsung kalau perlu
+        volumes:
+            - .:/var/www/html
+            - ./storage:/var/www/html/storage
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+        depends_on:
+            - app
+
+    mariadb:
+        image: mariadb:latest
+        container_name: mariadb
+        volumes:
+            - db_data:/var/lib/mysql
+        command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=mahad_db
+            - MYSQL_USER=user
+            - MYSQL_PASSWORD=password
+        restart: unless-stopped
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin
+        environment:
+            - PMA_HOST=mariadb
+            - PMA_PORT=3306
+            - PMA_PASSWORD=root
+        ports:
+            - '8080:80'
+        restart: unless-stopped
+        depends_on:
+            - mariadb
+
+    redis:
+        image: redis:alpine
+        container_name: redis
+        ports:
+            - '6379:6379'
+        restart: unless-stopped
+
+volumes:
+    db_data:
