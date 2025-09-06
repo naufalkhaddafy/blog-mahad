@@ -13,11 +13,6 @@ services:
             - ./storage:/var/www/html/storage
         networks:
             - private-net
-        healthcheck:
-            test: ['CMD', 'php', '-v']
-            interval: 30s
-            timeout: 5s
-            retries: 5
 
     scheduler:
         image: blog-mahad:php
