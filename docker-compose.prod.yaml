@@ -3,7 +3,7 @@ services:
         build:
             context: .
             dockerfile: docker/production/Dockerfile
-            target: php-fpm
+            target: app
         image: blog-mahad:php
         container_name: blog-mahad
         env_file:
