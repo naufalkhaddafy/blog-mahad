@@ -1,16 +1,8 @@
 #!/bin/sh
 set -e
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Clear and rebuild caches every container start (uses env inside container)
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
-
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+# Kalau storage di-mount volume, pastikan permission benar
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
 
 exec "$@"
