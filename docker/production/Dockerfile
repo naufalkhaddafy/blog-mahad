@@ -26,8 +26,8 @@ RUN npm run build
 FROM composer:2 AS backend
 WORKDIR /app
 COPY composer.json composer.lock ./
-# Install deps without dev and optimize autoloader
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
+# Install deps without dev and optimize autoloader, and NO SCRIPTS (because code isn't copied yet)
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs --no-scripts
 
 # 3. Final Production Image
 FROM dunglas/frankenphp:php8.3-alpine
