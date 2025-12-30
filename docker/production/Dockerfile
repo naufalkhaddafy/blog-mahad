@@ -1,53 +1,81 @@
-# --- 1) Build FE (Vite) ---
-FROM node:20-alpine AS node_builder
+FROM dunglas/frankenphp:php8.3-alpine AS builder
+
+# 1. Build Assets (Node.js)
+FROM node:20-alpine AS frontend
 WORKDIR /app
-COPY package.json package-lock.json ./
+# Build Args for Vite (Must be passed during docker build)
+ARG VITE_REVERB_APP_KEY
+ARG VITE_REVERB_HOST
+ARG VITE_REVERB_PORT
+ARG VITE_REVERB_SCHEME
+
+# Make them available as ENV for the build command
+ENV VITE_REVERB_APP_KEY=$VITE_REVERB_APP_KEY \
+    VITE_REVERB_HOST=$VITE_REVERB_HOST \
+    VITE_REVERB_PORT=$VITE_REVERB_PORT \
+    VITE_REVERB_SCHEME=$VITE_REVERB_SCHEME
+
+COPY package*.json vite.config.js ./
 RUN npm ci
-COPY resources ./resources
-COPY vite.config.* ./
-COPY public ./public
+COPY resources/ resources/
+# Copy public if exists or needed, but usually public is output destination or static files
+COPY public/ public/ 
 RUN npm run build
 
-# --- 2) Install PHP vendor (match runtime) ---
-FROM php:8.3-cli-alpine AS composer_deps
-ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_MEMORY_LIMIT=-1
-RUN apk add --no-cache git zip unzip icu-dev libzip-dev oniguruma-dev \
- && docker-php-ext-install mbstring pcntl bcmath intl
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# 2. Build Backend (Composer)
+FROM composer:2 AS backend
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --no-interaction \
-    --optimize-autoloader --no-ansi --no-progress --no-scripts
+# Install deps without dev and optimize autoloader
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
-# --- 3) FINAL: PHP-FPM runtime (tanpa Node/Composer) ---
-FROM php:8.3-fpm-alpine AS app
-RUN apk add --no-cache git curl bash libpng-dev oniguruma-dev libxml2-dev zip unzip icu-dev \
- && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd intl opcache
-WORKDIR /var/www/html
-# source (hormati .dockerignore)
+# 3. Final Production Image
+FROM dunglas/frankenphp:php8.3-alpine
+
+# Environment variables for Production
+ENV COMPOSER_MEMORY_LIMIT=-1 \
+    SERVER_NAME=:80 \
+    SERVER_ROOT=/app/public \
+    APP_ENV=production \
+    APP_DEBUG=false
+
+# Install System Dependencies (Minimal)
+# pcntl is required for Octane/Reverb
+RUN apk add --no-cache \
+    icu-dev \
+    libzip-dev \
+    libpng-dev \
+    oniguruma-dev \
+    bash \
+    && install-php-extensions \
+    pcntl \
+    bcmath \
+    gd \
+    intl \
+    opcache \
+    zip \
+    pdo_mysql \
+    redis
+
+WORKDIR /app
+
+# Copy Backend Dependencies
+COPY --from=backend /app/vendor/ /app/vendor/
+
+# Copy Frontend Assets (Vite Build)
+COPY --from=frontend /app/public/build/ /app/public/build/
+
+# Copy Application Code
 COPY . .
-# artefak dari builder
-COPY --from=composer_deps /app/vendor ./vendor
-COPY --from=node_builder /app/public/build ./public/build
-# izin + php-fpm boleh baca ENV dari docker-compose
-RUN adduser -D -H -u 1000 www \
- && chown -R www:www /var/www/html \
- && find storage -type d -exec chmod 775 {} \; \
- && chmod -R 775 bootstrap/cache \
- && sed -i 's~^;*clear_env\s*=.*~clear_env = no~' /usr/local/etc/php-fpm.d/www.conf \
- && { echo 'opcache.enable=1'; echo 'opcache.validate_timestamps=0'; echo 'opcache.jit_buffer_size=64M'; } \
-    > /usr/local/etc/php/conf.d/opcache.ini
-# symlink storage (abaikan bila sudah)
-RUN php artisan storage:link || true
-# entrypoint: re-cache pakai ENV runtime
-COPY docker/production/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-CMD ["php-fpm", "-F"]
 
-# --- (Opsional) Nginx image yang bawa kode + public/build ---
-FROM nginx:alpine AS nginx
-WORKDIR /var/www/html
-COPY docker/production/nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY --from=app /var/www/html .
-# USER 101  # optional
+# Permissions (Ensure www-data owns the app)
+RUN chown -R www-data:www-data /app \
+    && chmod -R 775 /app/storage /app/bootstrap/cache
+
+# Switch to non-root user for security (Optional but best practice if possible, usually 1000)
+# FrankenPHP runs as root by default to bind port 80/443, but we can drop privileges in config if needed.
+# For now, we stay default but ensure storage is writable.
+
+# Entrypoint: Install Octane & Start Server
+# We use a custom entrypoint or CMD to ensure caching happens on boot
+CMD ["sh", "-c", "php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=80 --admin-port=2019"]

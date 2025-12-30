@@ -1,0 +1,56 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=,suffix=,format=short
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/production/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VITE_REVERB_APP_KEY=${{ secrets.VITE_REVERB_APP_KEY }}
+            VITE_REVERB_HOST=${{ vars.VITE_REVERB_HOST }}
+            VITE_REVERB_PORT=${{ vars.VITE_REVERB_PORT }}
+            VITE_REVERB_SCHEME=${{ vars.VITE_REVERB_SCHEME }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Optional: Deploy trigger step
+  # You can use appleboy/ssh-action here to SSH into your VPS and run `docker compose pull && docker compose up -d`
