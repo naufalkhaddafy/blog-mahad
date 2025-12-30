@@ -77,5 +77,5 @@ RUN chown -R www-data:www-data /app \
 # For now, we stay default but ensure storage is writable.
 
 # Entrypoint: Install Octane & Start Server
-# We use a custom entrypoint or CMD to ensure caching happens on boot
+# Ensure config is cached (reads .env) before anything else runs
 CMD ["sh", "-c", "php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=80 --admin-port=2019"]
