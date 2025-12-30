@@ -1,46 +1,54 @@
-# ==============================
-# Stage 1: Build frontend assets
-# ==============================
-FROM node:20-alpine as node_builder
+FROM dunglas/frankenphp:php8.3-alpine
 
+# Environment variables
+ENV COMPOSER_MEMORY_LIMIT=-1
+ENV SERVER_NAME=:80
+ENV SERVER_ROOT=/app/public
 
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-
-# ==============================
-# Stage 2: Laravel PHP-FPM
-# ==============================
-FROM php:8.3-fpm-alpine
-
-# Install dependencies
+# Install system dependencies and Node.js (for Vite/Dev)
+# FrankenPHP is based on Alpine, so apk works.
 RUN apk add --no-cache \
-    git curl bash libpng-dev oniguruma-dev libxml2-dev zip unzip shadow dcron
+    git \
+    curl \
+    bash \
+    libpng-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    shadow \
+    dcron \
+    icu-dev \
+    nodejs \
+    npm \
+    linux-headers
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+# FrankenPHP includes some by default, but we ensure our required ones are there.
+# pcntl is crucial for Reverb/Octane.
+RUN install-php-extensions \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    intl \
+    opcache \
+    zip
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
+# Configure User (match host user mostly typically 1000)
+# We use shadow package to modify www-data
+RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 
-# Copy project files
-COPY . .
-COPY --from=node_builder /app/public/build ./public/build
+WORKDIR /app
 
-# Install PHP dependencies & cache config
-RUN composer install --no-dev --optimize-autoloader && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# In dev, we bind mount everything.
+# Expose FrankenPHP (80), Vite (5173), Reverb (8080)
+EXPOSE 80 5173 8080
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 storage bootstrap/cache
-
-# Default: run php-fpm
-CMD ["php-fpm"]
+# Default command (can be overridden in compose)
+CMD ["frankenphp", "php-server"]

@@ -24,3 +24,7 @@ yarn-error.log
 /.zed
 !/.github/workflows/deploy.yml
 
+
+**/caddy
+frankenphp
+frankenphp-worker.php

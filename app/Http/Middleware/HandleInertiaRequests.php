@@ -47,7 +47,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'flash_message' => session('flash_message'),
-            'radio_live' => Channel::where('status', 'live')->exists(),
+            'radio_live' => Channel::where('status', 'live')->exists() ?? false,
         ];
     }
 }
