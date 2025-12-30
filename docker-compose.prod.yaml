@@ -26,7 +26,8 @@ services:
         image: ghcr.io/naufalkhaddafy/blog-mahad:latest
         container_name: blog-mahad-reverb
         restart: always
-        command: php artisan reverb:start --host=0.0.0.0 --port=8080
+        # Fix: Ensure config is cached so it reads ENV vars correctly before starting
+        command: sh -c "php artisan config:cache && php artisan reverb:start --host=0.0.0.0 --port=8080"
         ports:
              - "8080:8080"
         env_file:
@@ -39,7 +40,8 @@ services:
         image: ghcr.io/naufalkhaddafy/blog-mahad:latest
         container_name: blog-mahad-scheduler
         restart: always
-        command: php artisan schedule:work
+        # Fix: Ensure config is cached
+        command: sh -c "php artisan config:cache && php artisan schedule:work"
         env_file:
             - .env
         networks:
@@ -51,7 +53,7 @@ services:
         image: ghcr.io/naufalkhaddafy/blog-mahad:latest
         container_name: blog-mahad-queue
         restart: always
-        command: php artisan queue:work --tries=3
+        command: sh -c "php artisan config:cache && php artisan queue:work --tries=3"
         env_file:
             - .env
         networks:
