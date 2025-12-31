@@ -68,8 +68,12 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: 2221
+          envs: ENV_FILE
           script: |
             cd /home/kadapai/blog-mahad
+            echo "$ENV_FILE" > .env
             git pull origin main
             chmod +x deploy.sh
             ./deploy.sh
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
