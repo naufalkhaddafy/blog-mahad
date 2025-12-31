@@ -48,7 +48,7 @@ services:
         <<: *app-default
         container_name: blog-mahad
         ports:
-            - "8001:80"
+            - "127.0.0.1:8001:80"
         volumes:
             - ./storage:/app/storage
         depends_on:
