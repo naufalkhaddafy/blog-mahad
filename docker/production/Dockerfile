@@ -26,6 +26,7 @@ RUN npm run build
 FROM composer:2 AS backend
 WORKDIR /app
 COPY composer.json composer.lock ./
+COPY app/helper_fn.php app/helper_fn.php
 # Install deps without dev and optimize autoloader, and NO SCRIPTS (because code isn't copied yet)
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs --no-scripts
 
