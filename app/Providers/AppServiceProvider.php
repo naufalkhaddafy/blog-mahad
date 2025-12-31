@@ -23,5 +23,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::unguard();
         JsonResource::withoutWrapping();
+
+        if($this->app->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }
