@@ -1,13 +1,15 @@
 services:
-    app:
+    app: &app-default
         build:
             context: .
             dockerfile: docker/production/Dockerfile
+            args:
+                VITE_REVERB_APP_KEY: "${REVERB_APP_KEY}"
+                VITE_REVERB_HOST: "${REVERB_HOST}"
+                VITE_REVERB_PORT: "${REVERB_PORT}"
+                VITE_REVERB_SCHEME: "${REVERB_SCHEME}"
         image: ghcr.io/naufalkhaddafy/blog-mahad:latest
-        container_name: blog-mahad
         restart: always
-        ports:
-            - "8001:80"
         # We explicitly map variables to ensure they are passed from host .env
         environment:
             APP_ENV: production
@@ -38,94 +40,42 @@ services:
             REVERB_SCHEME: ${REVERB_SCHEME}
 
             OCTANE_SERVER: frankenphp
-        volumes:
-            - ./storage:/app/storage
         networks:
             - public_network
             - database_network
         depends_on:
             - reverb
+            - redis
 
     reverb:
-        image: ghcr.io/naufalkhaddafy/blog-mahad:latest
+        <<: *app-default
         container_name: blog-mahad-reverb
-        restart: always
         command: sh -c "php artisan config:cache && php artisan reverb:start --host=0.0.0.0 --port=8080"
         ports:
              - "8080:8080"
-        environment:
-            APP_ENV: production
-            APP_KEY: ${APP_KEY}
-            APP_URL: ${APP_URL}
-            APP_DEBUG: ${APP_DEBUG:-false}
-            REDIS_HOST: ${REDIS_HOST}
-            REDIS_PASSWORD: ${REDIS_PASSWORD}
-            REVERB_APP_ID: ${REVERB_APP_ID}
-            REVERB_APP_KEY: ${REVERB_APP_KEY}
-            REVERB_APP_SECRET: ${REVERB_APP_SECRET}
-            # Reverb might need DB access for pulse/stats
-            DB_CONNECTION: ${DB_CONNECTION}
-            DB_HOST: ${DB_HOST}
-            DB_PORT: ${DB_PORT}
-            DB_DATABASE: ${DB_DATABASE}
-            DB_USERNAME: ${DB_USERNAME}
-            DB_PASSWORD: ${DB_PASSWORD}
-        networks:
-            - public_network
-            - database_network
+        # Reverb doesn't need to depend on itself
+        depends_on:
+            - redis
 
     scheduler:
-        image: ghcr.io/naufalkhaddafy/blog-mahad:latest
+        <<: *app-default
         container_name: blog-mahad-scheduler
-        restart: always
         command: sh -c "php artisan config:cache && php artisan schedule:work"
-        environment:
-            APP_ENV: production
-            APP_KEY: ${APP_KEY}
-            APP_URL: ${APP_URL}
-            
-            DB_CONNECTION: ${DB_CONNECTION}
-            DB_HOST: ${DB_HOST}
-            DB_PORT: ${DB_PORT}
-            DB_DATABASE: ${DB_DATABASE}
-            DB_USERNAME: ${DB_USERNAME}
-            DB_PASSWORD: ${DB_PASSWORD}
-
-            REDIS_HOST: ${REDIS_HOST}
-            REDIS_PASSWORD: ${REDIS_PASSWORD}
-            
-            CACHE_STORE: ${CACHE_STORE}
-        networks:
-            - database_network
         volumes:
             - ./storage:/app/storage
+        depends_on:
+            - app
+            - redis
 
     queue:
-        image: ghcr.io/naufalkhaddafy/blog-mahad:latest
+        <<: *app-default
         container_name: blog-mahad-queue
-        restart: always
         command: sh -c "php artisan config:cache && php artisan queue:work --tries=3"
-        environment:
-            APP_ENV: production
-            APP_KEY: ${APP_KEY}
-            APP_URL: ${APP_URL}
-
-            DB_CONNECTION: ${DB_CONNECTION}
-            DB_HOST: ${DB_HOST}
-            DB_PORT: ${DB_PORT}
-            DB_DATABASE: ${DB_DATABASE}
-            DB_USERNAME: ${DB_USERNAME}
-            DB_PASSWORD: ${DB_PASSWORD}
-
-            REDIS_HOST: ${REDIS_HOST}
-            REDIS_PASSWORD: ${REDIS_PASSWORD}
-
-            QUEUE_CONNECTION: ${QUEUE_CONNECTION}
-            CACHE_STORE: ${CACHE_STORE}
-        networks:
-            - database_network
         volumes:
             - ./storage:/app/storage
+        depends_on:
+            - app
+            - redis
 
 networks:
     public_network:
