@@ -45,7 +45,6 @@ services:
             - database_network
         depends_on:
             - reverb
-            - redis
 
     reverb:
         <<: *app-default
@@ -54,8 +53,8 @@ services:
         ports:
              - "8080:8080"
         # Reverb doesn't need to depend on itself
-        depends_on:
-            - redis
+        # depends_on:
+        #     - redis
 
     scheduler:
         <<: *app-default
@@ -65,7 +64,6 @@ services:
             - ./storage:/app/storage
         depends_on:
             - app
-            - redis
 
     queue:
         <<: *app-default
@@ -75,7 +73,6 @@ services:
             - ./storage:/app/storage
         depends_on:
             - app
-            - redis
 
 networks:
     public_network:
