@@ -67,6 +67,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
+          port: 2221
           script: |
             cd /home/kadapai/blog-mahad
             git pull origin main
