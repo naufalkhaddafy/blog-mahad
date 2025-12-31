@@ -75,7 +75,11 @@ echo -e "${YELLOW}Running database migrations...${NC}"
 sleep 5
 docker compose -f "$COMPOSE_FILE" exec app php artisan migrate --force
 
-# 7. Optimization
+# 7. Storage Link
+echo -e "${YELLOW}Linking storage...${NC}"
+docker compose -f "$COMPOSE_FILE" exec app php artisan storage:link
+
+# 8. Optimization
 echo -e "${YELLOW}Optimizing cache...${NC}"
 docker compose -f "$COMPOSE_FILE" exec app php artisan optimize
 
