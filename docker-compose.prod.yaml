@@ -1,48 +1,54 @@
+x-app-default: &app-default
+    build:
+        context: .
+        dockerfile: docker/production/Dockerfile
+        args:
+            VITE_REVERB_APP_KEY: "${REVERB_APP_KEY}"
+            VITE_REVERB_HOST: "${REVERB_HOST}"
+            VITE_REVERB_PORT: "${REVERB_PORT}"
+            VITE_REVERB_SCHEME: "${REVERB_SCHEME}"
+    image: ghcr.io/naufalkhaddafy/blog-mahad:latest
+    restart: always
+    # We explicitly map variables to ensure they are passed from host .env
+    environment:
+        APP_ENV: production
+        APP_KEY: ${APP_KEY}
+        APP_URL: ${APP_URL}
+        APP_DEBUG: ${APP_DEBUG:-false}
+        
+        DB_CONNECTION: ${DB_CONNECTION}
+        DB_HOST: ${DB_HOST}
+        DB_PORT: ${DB_PORT}
+        DB_DATABASE: ${DB_DATABASE}
+        DB_USERNAME: ${DB_USERNAME}
+        DB_PASSWORD: ${DB_PASSWORD}
+
+        REDIS_HOST: ${REDIS_HOST}
+        REDIS_PASSWORD: ${REDIS_PASSWORD}
+        REDIS_PORT: ${REDIS_PORT}
+
+        CACHE_STORE: ${CACHE_STORE}
+        QUEUE_CONNECTION: ${QUEUE_CONNECTION}
+        SESSION_DRIVER: ${SESSION_DRIVER}
+
+        REVERB_APP_ID: ${REVERB_APP_ID}
+        REVERB_APP_KEY: ${REVERB_APP_KEY}
+        REVERB_APP_SECRET: ${REVERB_APP_SECRET}
+        REVERB_HOST: "0.0.0.0"
+        REVERB_PORT: 8080
+        REVERB_SCHEME: ${REVERB_SCHEME}
+
+        OCTANE_SERVER: frankenphp
+    networks:
+        - public_network
+        - database_network
+
 services:
-    app: &app-default
-        build:
-            context: .
-            dockerfile: docker/production/Dockerfile
-            args:
-                VITE_REVERB_APP_KEY: "${REVERB_APP_KEY}"
-                VITE_REVERB_HOST: "${REVERB_HOST}"
-                VITE_REVERB_PORT: "${REVERB_PORT}"
-                VITE_REVERB_SCHEME: "${REVERB_SCHEME}"
-        image: ghcr.io/naufalkhaddafy/blog-mahad:latest
-        restart: always
-        # We explicitly map variables to ensure they are passed from host .env
-        environment:
-            APP_ENV: production
-            APP_KEY: ${APP_KEY}
-            APP_URL: ${APP_URL}
-            APP_DEBUG: ${APP_DEBUG:-false}
-            
-            DB_CONNECTION: ${DB_CONNECTION}
-            DB_HOST: ${DB_HOST}
-            DB_PORT: ${DB_PORT}
-            DB_DATABASE: ${DB_DATABASE}
-            DB_USERNAME: ${DB_USERNAME}
-            DB_PASSWORD: ${DB_PASSWORD}
-
-            REDIS_HOST: ${REDIS_HOST}
-            REDIS_PASSWORD: ${REDIS_PASSWORD}
-            REDIS_PORT: ${REDIS_PORT}
-
-            CACHE_STORE: ${CACHE_STORE}
-            QUEUE_CONNECTION: ${QUEUE_CONNECTION}
-            SESSION_DRIVER: ${SESSION_DRIVER}
-
-            REVERB_APP_ID: ${REVERB_APP_ID}
-            REVERB_APP_KEY: ${REVERB_APP_KEY}
-            REVERB_APP_SECRET: ${REVERB_APP_SECRET}
-            REVERB_HOST: "0.0.0.0"
-            REVERB_PORT: 8080
-            REVERB_SCHEME: ${REVERB_SCHEME}
-
-            OCTANE_SERVER: frankenphp
-        networks:
-            - public_network
-            - database_network
+    app:
+        <<: *app-default
+        container_name: blog-mahad
+        ports:
+            - "8001:80"
         depends_on:
             - reverb
 
@@ -52,9 +58,6 @@ services:
         command: sh -c "php artisan config:cache && php artisan reverb:start --host=0.0.0.0 --port=8080"
         ports:
              - "8080:8080"
-        # Reverb doesn't need to depend on itself
-        # depends_on:
-        #     - redis
 
     scheduler:
         <<: *app-default
