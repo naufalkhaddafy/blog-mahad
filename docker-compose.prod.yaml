@@ -1,12 +1,4 @@
 x-app-default: &app-default
-    build:
-        context: .
-        dockerfile: docker/production/Dockerfile
-        args:
-            VITE_REVERB_APP_KEY: "${REVERB_APP_KEY}"
-            VITE_REVERB_HOST: "${REVERB_HOST}"
-            VITE_REVERB_PORT: "${REVERB_PORT}"
-            VITE_REVERB_SCHEME: "${REVERB_SCHEME}"
     image: ghcr.io/naufalkhaddafy/blog-mahad:latest
     restart: always
     # We explicitly map variables to ensure they are passed from host .env
@@ -35,7 +27,7 @@ x-app-default: &app-default
         REVERB_APP_KEY: ${REVERB_APP_KEY}
         REVERB_APP_SECRET: ${REVERB_APP_SECRET}
         REVERB_HOST: "0.0.0.0"
-        REVERB_PORT: 8081
+        REVERB_PORT: 8080
         REVERB_SCHEME: ${REVERB_SCHEME}
         N8N_WEBHOOK_URL: ${N8N_WEBHOOK_URL}
 
@@ -52,24 +44,26 @@ services:
             - "127.0.0.1:8001:80"
         volumes:
             - ./storage:/app/storage
+            - ./bootstrap/cache:/app/bootstrap/cache
         depends_on:
             - reverb
 
     reverb:
         <<: *app-default
         container_name: blog-mahad-reverb
-        command: sh -c "php artisan config:cache && php artisan reverb:start --host=0.0.0.0 --port=8080"
-        ports:
-             - "8081:8080"
+        command: ["reverb"]
+        # No host port - access via internal network through Nginx Proxy Manager
+        # NPM should proxy WebSocket to: blog-mahad-reverb:8080
         healthcheck:
             disable: true
 
     scheduler:
         <<: *app-default
         container_name: blog-mahad-scheduler
-        command: sh -c "php artisan config:cache && php artisan schedule:work"
+        command: ["scheduler"]
         volumes:
             - ./storage:/app/storage
+            - ./bootstrap/cache:/app/bootstrap/cache
         healthcheck:
             disable: true
         depends_on:
@@ -78,9 +72,10 @@ services:
     queue:
         <<: *app-default
         container_name: blog-mahad-queue
-        command: sh -c "php artisan config:cache && php artisan queue:work --tries=3"
+        command: ["queue"]
         volumes:
             - ./storage:/app/storage
+            - ./bootstrap/cache:/app/bootstrap/cache
         healthcheck:
             disable: true
         depends_on:
@@ -91,3 +86,4 @@ networks:
         external: true
     database_network:
         external: true
+

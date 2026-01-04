@@ -42,12 +42,15 @@ ENV COMPOSER_MEMORY_LIMIT=-1 \
 
 # Install System Dependencies (Minimal)
 # pcntl is required for Octane/Reverb
+# nodejs/npm required for Inertia SSR
 RUN apk add --no-cache \
     icu-dev \
     libzip-dev \
     libpng-dev \
     oniguruma-dev \
     bash \
+    nodejs \
+    npm \
     && install-php-extensions \
     pcntl \
     bcmath \
@@ -66,8 +69,15 @@ COPY --from=backend /app/vendor/ /app/vendor/
 # Copy Frontend Assets (Vite Build)
 COPY --from=frontend /app/public/build/ /app/public/build/
 
+# Copy SSR Bundle (for Inertia SSR)
+COPY --from=frontend /app/bootstrap/ssr/ /app/bootstrap/ssr/
+
 # Copy Application Code
 COPY . .
+
+# Copy entrypoint script
+COPY docker/production/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Permissions (Ensure www-data owns the app)
 RUN chown -R www-data:www-data /app \
@@ -77,6 +87,6 @@ RUN chown -R www-data:www-data /app \
 # FrankenPHP runs as root by default to bind port 80/443, but we can drop privileges in config if needed.
 # For now, we stay default but ensure storage is writable.
 
-# Entrypoint: Install Octane & Start Server
-# Ensure config is cached (reads .env) before anything else runs
-CMD ["sh", "-c", "php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=80 --admin-port=2019"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["octane"]
+

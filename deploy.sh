@@ -60,27 +60,43 @@ if [ -z "$APP_KEY" ] || [[ "$APP_KEY" == *"GENERATE_YOUR_OWN_KEY_HERE"* ]]; then
     echo -e "${GREEN}Generated APP_KEY: $KEY${NC}"
 fi
 
-# 4. Pull & Build
-echo -e "${YELLOW}Pulling/Building images...${NC}"
-docker compose -f "$COMPOSE_FILE" pull
-# If you build locally: docker compose -f "$COMPOSE_FILE" build
+# 4. Fix Host Permissions (www-data UID 82 in Alpine)
+echo -e "${YELLOW}Fixing host directory permissions...${NC}"
+# Create directories if not exist
+mkdir -p storage/app/public storage/framework/{cache,sessions,views} storage/logs bootstrap/cache
+# Set permissions for www-data (UID 82 in Alpine)
+sudo chown -R 82:82 storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+echo -e "${GREEN}Permissions fixed.${NC}"
 
-# 5. Start Services
+# 5. Pull Images
+echo -e "${YELLOW}Pulling images...${NC}"
+docker compose -f "$COMPOSE_FILE" pull
+
+# 6. Start Services
 echo -e "${YELLOW}Starting services...${NC}"
 docker compose -f "$COMPOSE_FILE" up -d --remove-orphans
 
-# 6. Database Migration
+# 7. Database Migration
 echo -e "${YELLOW}Running database migrations...${NC}"
 # Wait a few seconds for DB connection to be ready (rudimentary check)
 sleep 5
 docker compose -f "$COMPOSE_FILE" exec app php artisan migrate --force
 
-# 7. Storage Link
+# 8. Storage Link
 echo -e "${YELLOW}Linking storage...${NC}"
 docker compose -f "$COMPOSE_FILE" exec app php artisan storage:link
 
-# 8. Optimization
+# 9. Optimization (cache config, routes, views)
 echo -e "${YELLOW}Optimizing cache...${NC}"
 docker compose -f "$COMPOSE_FILE" exec app php artisan optimize
 
+# 10. Start SSR Server (Inertia SSR)
+echo -e "${YELLOW}Starting SSR server...${NC}"
+# Start SSR in background within the app container
+docker compose -f "$COMPOSE_FILE" exec -d app php artisan inertia:start-ssr
+
 echo -e "${GREEN}Deployment Completed Successfully!${NC}"
+echo -e "${YELLOW}Note: Reverb WebSocket is available internally at blog-mahad-reverb:8080${NC}"
+echo -e "${YELLOW}Configure Nginx Proxy Manager to proxy WebSocket connections to this address.${NC}"
+
