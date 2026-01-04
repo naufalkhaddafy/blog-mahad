@@ -69,9 +69,6 @@ COPY --from=backend /app/vendor/ /app/vendor/
 # Copy Frontend Assets (Vite Build)
 COPY --from=frontend /app/public/build/ /app/public/build/
 
-# Copy SSR Bundle (for Inertia SSR)
-COPY --from=frontend /app/bootstrap/ssr/ /app/bootstrap/ssr/
-
 # Copy Application Code
 COPY . .
 
