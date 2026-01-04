@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { Instagram, Send } from 'lucide-react';
+import { Instagram, Send, Share2, Sparkles } from 'lucide-react';
 import { Container } from '../Container';
 
 export const Footer = () => {
@@ -97,10 +97,28 @@ export const Footer = () => {
                         </div>
                     </div>
                 </div>
-                <div className="mt-10 border-t-1 py-4 text-center">
-                    <p className="text-xs font-medium lg:text-sm">
-                        © 2025 Yayasan Ibnu Katsir Kutai Timur, All rights reserved.
-                    </p>
+                {/* Footer Bottom Section */}
+                {/* Footer Bottom Section */}
+                <div className="mt-5 py-6">
+                    {/* Decorative Divider */}
+                    <div className="mb-6 flex items-center justify-center gap-4">
+                        <div className="h-px w-16 bg-gradient-to-r from-transparent to-green-600/40" />
+                        <Sparkles className="size-4 text-green-500/60" />
+                        <div className="h-px w-16 bg-gradient-to-l from-transparent to-green-600/40" />
+                    </div>
+
+                    <div className="flex flex-col items-center gap-3 text-center">
+                        {/* Tagline */}
+                        <p className="text-sm font-light tracking-wide text-gray-400">
+                            Ambil dan sebarkan faedahnya
+                        </p>
+
+                        {/* Copyright */}
+                        <p className="text-[11px] text-gray-500">
+                            © 2025 Yayasan Ibnu Katsir Kutai Timur, Semua konten boleh
+                            disebarluaskan.
+                        </p>
+                    </div>
                 </div>
             </Container>
         </footer>
