@@ -91,11 +91,6 @@ docker compose -f "$COMPOSE_FILE" exec app php artisan storage:link
 echo -e "${YELLOW}Optimizing cache...${NC}"
 docker compose -f "$COMPOSE_FILE" exec app php artisan optimize
 
-# 10. Start SSR Server (Inertia SSR)
-echo -e "${YELLOW}Starting SSR server...${NC}"
-# Start SSR in background within the app container
-docker compose -f "$COMPOSE_FILE" exec -d app php artisan inertia:start-ssr
-
 echo -e "${GREEN}Deployment Completed Successfully!${NC}"
 echo -e "${YELLOW}Note: Reverb WebSocket is available internally at blog-mahad-reverb:8080${NC}"
 echo -e "${YELLOW}Configure Nginx Proxy Manager to proxy WebSocket connections to this address.${NC}"
