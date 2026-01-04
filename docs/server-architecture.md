@@ -16,6 +16,7 @@ Instead of a traditional LAMP stack (Linux, Apache, MySQL, PHP) on a single serv
 2.  **The Application (Your Code)**
     *   **FrankenPHP + Octane**: Unlike normal PHP that dies after every request, this keeps your app loaded in RAM. Super fast.
     *   **Reverb**: WebSocket server for real-time features (Radio/Chat).
+    *   **N8N Webhook**: Integration configured via `N8N_WEBHOOK_URL` for external automation.
 
 ---
 
@@ -48,9 +49,11 @@ File: `.github/workflows/deploy.yml`
 1.  **Push to Main**: You modify code and push.
 2.  **GitHub Works**: GitHub serves spins up a VM.
     *   It builds the Docker Image.
-    *   It authenticates using `GCR_PAT`.
     *   It pushes the image to **GitHub Container Registry (GHCR)**.
-3.  **Server Pulls**: Your server just downloads the "Ready-to-eat" image.
+3.  **Deployment**:
+    *   Connects to VPS via SSH.
+    *   **Injects Secrets**: Takes the `ENV_FILE` secret from GitHub and writes it to `.env` on the server.
+    *   Executes `deploy.sh` to pull the new image and restart services.
 
 ---
 
@@ -62,7 +65,10 @@ File: `.github/workflows/deploy.yml`
 
 ### Secret Management
 *   **Build Secrets**: Stored in GitHub Secrets (injected during build).
-*   **Runtime Secrets**: Stored in `.env` on the VPS. Never committed to Git.
+*   **Runtime Secrets**: 
+    *   Managed in **GitHub Secrets** (Variable: `ENV_FILE`). 
+    *   Injected into `.env` on the server during the deployment workflow.
+    *   **Note**: The `.env` file is NOT committed to Git.
 
 ---
 
@@ -79,13 +85,16 @@ docker compose -f docker-compose.dev.yaml up --build
 ```bash
 # Update Application
 docker compose -f docker-compose.prod.yaml pull
-docker compose -f docker-compose.prod.yaml up -d
+docker compose -f docker-compose.prod.yaml --env-file .env.production up -d
 ```
 
 ### Debugging Production
 ```bash
 # Check Logs
 docker logs -f blog-mahad
+
+# Check Reverb
+docker logs -f blog-mahad-reverb
 
 # Check Network
 docker network inspect database_network

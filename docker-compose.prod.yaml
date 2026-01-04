@@ -37,6 +37,7 @@ x-app-default: &app-default
         REVERB_HOST: "0.0.0.0"
         REVERB_PORT: 8081
         REVERB_SCHEME: ${REVERB_SCHEME}
+        N8N_WEBHOOK_URL: ${N8N_WEBHOOK_URL}
 
         OCTANE_SERVER: frankenphp
     networks:
