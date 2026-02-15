@@ -8,7 +8,7 @@ import BlogLayout from '@/layouts/BlogLayout';
 import { BannerProps } from '@/pages/Banner/Index';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { Head, Link } from '@inertiajs/react';
-import { Send } from 'lucide-react';
+import { CalendarDays, Send } from 'lucide-react';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
@@ -19,12 +19,13 @@ import { Banner } from './Partials/Banner';
 
 interface IndexProps {
     posts: PostProps[];
+    jadwalKajian: PostProps[];
     qna: PostProps[];
     poster: PostProps[];
     banner: BannerProps[];
 }
 
-const Index = ({ posts, qna, poster, banner }: IndexProps) => {
+const Index = ({ posts, jadwalKajian, qna, poster, banner }: IndexProps) => {
     return (
         <>
             <Head title="Beranda">
@@ -103,6 +104,43 @@ const Index = ({ posts, qna, poster, banner }: IndexProps) => {
                 </div>
             </Container>
             {/* Top Rencent End*/}
+            {/* Jadwal Kajian */}
+            <section className="bg-gradient-to-b from-green-50 to-white py-10 lg:py-15 dark:from-green-950/30 dark:to-transparent">
+                <Container>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-primary relative flex items-center gap-3 text-xl font-extrabold after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl dark:text-green-600 dark:after:bg-green-400">
+                            <CalendarDays className="h-6 w-6 text-green-600 lg:h-7 lg:w-7 dark:text-green-400" />
+                            Jadwal Kajian
+                        </h2>
+                        <Button className="bg-primary text-white dark:bg-green-700" asChild>
+                            <Link
+                                href={route('blog.list', {
+                                    category: 'info-taklim',
+                                })}
+                            >
+                                Lihat Lainnya <Send />
+                            </Link>
+                        </Button>
+                    </div>
+                    <div className="grid gap-4 py-10 lg:grid-cols-2">
+                        {jadwalKajian.length > 0 ? (
+                            jadwalKajian.map((item, index) => (
+                                <Link
+                                    key={index}
+                                    href={route('blog.show', {
+                                        post: item.slug,
+                                    })}
+                                >
+                                    <CardList dataPost={item} />
+                                </Link>
+                            ))
+                        ) : (
+                            <EmptyPost>Afwan jadwal kajian belum tersedia</EmptyPost>
+                        )}
+                    </div>
+                </Container>
+            </section>
+            {/* Jadwal Kajian End */}
             {/* Poster */}
             <section className="bg-primary py-15 text-center">
                 <Container>

@@ -22,11 +22,24 @@ class BlogController extends Controller
         $articleCategory = Category::where('name', 'Artikel')->first();
         $qnaCategory = Category::where('name', 'Tanya Jawab')->first();
         $posterCategory = Category::where('name', 'Poster')->first();
+        $taklimCategory = Category::where('name', 'Info Taklim')->first();
+        $daurohCategory = Category::where('name', 'Info Dauroh')->first();
 
         $post = Post::query()->with('user', 'category', 'tags')
             ->when($articleCategory, fn($q) => $q->where('category_id', $articleCategory->id))
             ->where('status', 'publish')
             ->latest()->take(4)->cursor();
+
+        $jadwalKajian = Post::query()->with('user', 'category', 'tags')
+            ->where('status', 'publish')
+            ->where(function ($q) use ($taklimCategory, $daurohCategory) {
+                $categoryIds = collect([$taklimCategory, $daurohCategory])
+                    ->filter()
+                    ->pluck('id')
+                    ->toArray();
+                $q->whereIn('category_id', $categoryIds);
+            })
+            ->latest()->take(6)->cursor();
 
         $qna = Post::query()->with('user', 'category', 'tags')
             ->when($qnaCategory, fn($q) => $q->where('category_id', $qnaCategory->id))
@@ -40,6 +53,7 @@ class BlogController extends Controller
 
         return Inertia('Blogs/Home/Index', [
             'posts' => PostResource::collection($post),
+            'jadwalKajian' => PostResource::collection($jadwalKajian),
             'qna' => PostResource::collection($qna),
             'poster' => PostResource::collection($poster),
             "banner" => BannerResource::collection(Banner::query()->where('status', true)->orderBy('order')->get()),
