@@ -10,4 +10,10 @@ use Illuminate\Support\Facades\Schedule;
 Schedule::command('shoutcast:compare')
     ->everyMinute()
     ->runInBackground()
-    ->withoutOverlapping();
+    ->withoutOverlapping()
+    ->onSuccess(function () {
+        Log::info("Command berhasil jalan!");
+    })
+    ->onFailure(function () {
+        Log::error("Command gagal jalan!");
+    });
