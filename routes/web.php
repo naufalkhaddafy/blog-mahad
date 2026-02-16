@@ -39,6 +39,19 @@ Route::get('/debug/view', function () {
     ]);
 });
 
+Route::get('/debug/blade', function () {
+    return view('app', [
+        'page' => [
+            'component' => 'Blogs/Posts/List',
+            'props' => [
+                'meta' => (object)['title'=>'Debug','description'=>'debug','url'=>'', 'image'=>''],
+            ],
+            'url' => '/debug/blade',
+            'version' => 'debug'
+        ]
+    ]);
+});
+
 Route::get('/', [BlogController::class, 'home'])->name('home');
 Route::get('/belajar-islam', [BlogController::class, 'list'])->name('blog.list');
 Route::get('/sitemap.xml', [SitemapController::class, 'generate']);
