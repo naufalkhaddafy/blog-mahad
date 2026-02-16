@@ -76,6 +76,9 @@ COPY . .
 COPY docker/production/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+# Copy Caddyfile
+COPY docker/production/Caddyfile /app/docker/production/Caddyfile
+
 # Permissions (Ensure www-data owns the app)
 RUN chown -R www-data:www-data /app \
     && chmod -R 775 /app/storage /app/bootstrap/cache

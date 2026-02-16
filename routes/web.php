@@ -24,34 +24,6 @@ use Illuminate\Support\Facades\Route;
 //     dd(str_ireplace(['live', 'onair'], '', $newTitle));
 // })->name('index');
 
-// DEBUG ROUTES
-Route::get('/debug/json', function () {
-    $posts = \App\Models\Post::where('status', 'publish')->latest()->take(5)->get();
-    return \App\Http\Resources\PostResource::collection($posts);
-});
-
-Route::get('/debug/view', function () {
-    return Inertia\Inertia::render('Blogs/Posts/List', [
-        'posts' => [],
-        'categories' => [],
-        'tags' => [],
-        'meta' => (object)['title'=>'Debug','description'=>'debug','url'=>'']
-    ]);
-});
-
-Route::get('/debug/blade', function () {
-    return view('app', [
-        'page' => [
-            'component' => 'Blogs/Posts/List',
-            'props' => [
-                'meta' => (object)['title'=>'Debug','description'=>'debug','url'=>'', 'image'=>''],
-            ],
-            'url' => '/debug/blade',
-            'version' => 'debug'
-        ]
-    ]);
-});
-
 Route::get('/', [BlogController::class, 'home'])->name('home');
 Route::get('/belajar-islam', [BlogController::class, 'list'])->name('blog.list');
 Route::get('/sitemap.xml', [SitemapController::class, 'generate']);

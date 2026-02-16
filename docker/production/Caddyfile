@@ -1,0 +1,24 @@
+{
+	frankenphp {
+		worker {
+			file /app/public/frankenphp-worker.php
+		}
+	}
+}
+
+:80 {
+	root * /app/public
+
+	encode zstd br gzip
+
+	log {
+		output stdout
+		format console
+	}
+
+	php_server {
+		index frankenphp-worker.php
+		try_files {path} /frankenphp-worker.php
+		resolve_root_symlink
+	}
+}
