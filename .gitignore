@@ -26,6 +26,5 @@ yarn-error.log
 !/.github/workflows/deploy.yml
 
 
-**/caddy
-frankenphp
-frankenphp-worker.php
+**/caddy_data
+**/caddy_config
