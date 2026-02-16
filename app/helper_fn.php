@@ -16,6 +16,6 @@ if (!function_exists('flashMessage')) {
 if (!function_exists('limitText')) {
     function limitText($text, $limit = 100)
     {
-        return Str::limit(strip_tags($text), $limit);
+        return Str::limit(strip_tags((string) $text), $limit);
     }
 }

@@ -11,8 +11,33 @@ use App\Http\Controllers\RadioController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
+// route::get('/test-n8n', function () {
+
+//     Http::post(env('N8N_WEBHOOK_URL'), [
+//         'channel' => "Radio Islam Sangatta",
+//         'description' => 'Al Ustadz Abu Nasim Mukhtar Hafidazahullah - Di Tepi Shubuh Merangkai Doa Harap Nyata Sesi 3',
+//     ]);
+//     // dd(env('N8N_WEBHOOK_URL'));
+//     dd(str_ireplace(['live', 'onair'], '', $newTitle));
+// })->name('index');
+
+// DEBUG ROUTES
+Route::get('/debug/json', function () {
+    $posts = \App\Models\Post::where('status', 'publish')->latest()->take(5)->get();
+    return \App\Http\Resources\PostResource::collection($posts);
+});
+
+Route::get('/debug/view', function () {
+    return Inertia\Inertia::render('Blogs/Posts/List', [
+        'posts' => [],
+        'categories' => [],
+        'tags' => [],
+        'meta' => (object)['title'=>'Debug','description'=>'debug','url'=>'']
+    ]);
+});
 
 Route::get('/', [BlogController::class, 'home'])->name('home');
 Route::get('/belajar-islam', [BlogController::class, 'list'])->name('blog.list');
