@@ -1,7 +1,9 @@
 import { CardGrid } from '@/components/blog/CardGrid';
 import { CardList } from '@/components/blog/CardList';
 import { EmptyPost } from '@/components/blog/EmptyPost';
+import { SkeletonCardGrid, SkeletonCardList } from '@/components/blog/SkeletonCards';
 import { Container } from '@/components/Container';
+import { ScrollReveal } from '@/components/ScrollReveal';
 import { MultiSelect } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,7 +30,7 @@ import { TagPropsSelect } from '@/pages/Tags/Partials/Type';
 import { BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Dot, Grid2x2, RotateCcw, Rows3 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface PaginationMeta {
     current_page: number;
@@ -86,7 +88,17 @@ const List = ({
     });
 
     const [listStyle, setListStyle] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState(false);
     const { data: posts, meta, links } = usePage<{ posts: PaginatedPosts }>().props.posts;
+
+    useEffect(() => {
+        const removeStart = router.on('start', () => setIsLoading(true));
+        const removeFinish = router.on('finish', () => setIsLoading(false));
+        return () => {
+            removeStart();
+            removeFinish();
+        };
+    }, []);
 
     const search = async (type: string, data: string | string[]) => {
         if (type === 'tags') {
@@ -131,29 +143,31 @@ const List = ({
                 <header className="border-b-2 pb-10">
                     <h1 className="sr-only">{convertToTitle() || 'Belajar Islam'}</h1>
 
-                    <div className="flex flex-wrap items-center justify-between gap-5 pb-5 lg:pb-10">
-                        <div>
-                            <h2 className="text-primary text-3xl font-bold dark:text-green-600">
-                                Belajar Islam
-                            </h2>
-                            <p className="flex items-center text-sm text-gray-500 lg:text-lg">
-                                Media Belajar Islam Sesuai Al-Qur'an & Sunnah
-                                <span aria-hidden="true">
-                                    <Dot className="size-8 animate-pulse text-green-700 dark:text-green-400" />
-                                </span>
-                            </p>
+                    <ScrollReveal variant="fade-up">
+                        <div className="flex flex-wrap items-center justify-between gap-5 pb-5 lg:pb-10">
+                            <div>
+                                <h2 className="text-primary text-3xl font-bold dark:text-green-600">
+                                    Belajar Islam
+                                </h2>
+                                <p className="flex items-center text-sm text-gray-500 lg:text-lg">
+                                    Media Belajar Islam Sesuai Al-Qur'an & Sunnah
+                                    <span aria-hidden="true">
+                                        <Dot className="size-8 animate-pulse text-green-700 dark:text-green-400" />
+                                    </span>
+                                </p>
+                            </div>
+                            <div className="w-full lg:w-2/5">
+                                <Input
+                                    name="search"
+                                    placeholder="Cari di sini..."
+                                    type="search"
+                                    className="lg:text-md w-full lg:py-5"
+                                    value={filter.search}
+                                    onChange={(e) => search('search', e.target.value)}
+                                ></Input>
+                            </div>
                         </div>
-                        <div className="w-full lg:w-2/5">
-                            <Input
-                                name="search"
-                                placeholder="Cari di sini..."
-                                type="search"
-                                className="lg:text-md w-full lg:py-5"
-                                value={filter.search}
-                                onChange={(e) => search('search', e.target.value)}
-                            ></Input>
-                        </div>
-                    </div>
+                    </ScrollReveal>
                     <div className="grid grid-cols-2 gap-5 lg:grid-cols-3">
                         <div className="w-full">
                             <Select
@@ -228,26 +242,36 @@ const List = ({
                     <div
                         className={`grid auto-rows-min gap-4 py-5 ${listStyle ? 'lg:grid-cols-2' : 'lg:grid-cols-1'}`}
                     >
-                        {posts.length > 0 ? (
+                        {isLoading ? (
+                            Array.from({ length: 6 }).map((_, i) =>
+                                listStyle ? (
+                                    <SkeletonCardGrid key={i} />
+                                ) : (
+                                    <SkeletonCardList key={i} />
+                                ),
+                            )
+                        ) : posts.length > 0 ? (
                             posts.map((post, index: number) =>
                                 listStyle ? (
-                                    <Link
-                                        key={index}
-                                        href={route('blog.show', {
-                                            post: post.slug,
-                                        })}
-                                    >
-                                        <CardGrid dataPost={post} />
-                                    </Link>
+                                    <ScrollReveal key={index} variant="fade-up" delay={index * 80}>
+                                        <Link
+                                            href={route('blog.show', {
+                                                post: post.slug,
+                                            })}
+                                        >
+                                            <CardGrid dataPost={post} />
+                                        </Link>
+                                    </ScrollReveal>
                                 ) : (
-                                    <Link
-                                        key={index}
-                                        href={route('blog.show', {
-                                            post: post.slug,
-                                        })}
-                                    >
-                                        <CardList dataPost={post} />
-                                    </Link>
+                                    <ScrollReveal key={index} variant="fade-up" delay={index * 80}>
+                                        <Link
+                                            href={route('blog.show', {
+                                                post: post.slug,
+                                            })}
+                                        >
+                                            <CardList dataPost={post} />
+                                        </Link>
+                                    </ScrollReveal>
                                 ),
                             )
                         ) : (
