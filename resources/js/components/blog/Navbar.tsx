@@ -4,6 +4,7 @@ import { asset, getLimitTextContent } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { Bookmark, BookOpenText, ChevronDown, Menu, Moon, Search, Sun, Trash } from 'lucide-react';
 import { useState } from 'react';
+import { SearchModal } from './SearchModal';
 import { Container } from '../Container';
 import { Button } from '../ui/button';
 import { EmptyPost } from './EmptyPost';
@@ -58,6 +59,7 @@ export const Navbar = () => {
     const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
     const { appearance, updateAppearance } = useAppearance();
     const [openBookmark, setOpenBookmark] = useState<boolean>(false);
+    const [searchOpen, setSearchOpen] = useState(false);
 
     const { bookmarks, removeBoomark } = useBookmark();
 
@@ -156,9 +158,10 @@ export const Navbar = () => {
 
                 {/* BookMark  */}
                 <div className="flex items-center gap-3 lg:gap-4">
-                    <Link href="/belajar-islam" aria-label="Belajar Islam - kajiansangatta.com">
+                    <button onClick={() => setSearchOpen(true)} aria-label="Pencarian">
                         <Search className="size-5 cursor-pointer transition duration-300 hover:text-green-500 active:text-green-500 lg:size-6" />
-                    </Link>
+                    </button>
+                    <SearchModal open={searchOpen} onOpenChange={setSearchOpen} />
                     <div className="relative">
                         <div
                             onClick={() => setOpenBookmark(!openBookmark)}

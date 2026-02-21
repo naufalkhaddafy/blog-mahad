@@ -172,4 +172,31 @@ class BlogController extends Controller
     {
         return Inertia('Blogs/Quran/Index');
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('q', '');
+
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+
+        $posts = Post::where('status', 'publish')
+            ->with(['category'])
+            ->where('title', 'like', "%{$query}%")
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn($post) => [
+                'title' => $post->title,
+                'slug' => $post->slug,
+                'imageSrc' => $post->image ? asset(Storage::url($post->image)) : null,
+                'category' => $post->category?->name,
+                'created_at' => $post->created_at->diffInMonths() < 1
+                    ? $post->created_at->diffForHumans()
+                    : $post->created_at->translatedFormat('d F Y'),
+            ]);
+
+        return response()->json($posts);
+    }
 }
