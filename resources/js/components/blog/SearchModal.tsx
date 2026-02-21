@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Link, router } from '@inertiajs/react';
+import axios from 'axios';
 import { BookOpen, Loader2, Radio, Search, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -41,9 +42,9 @@ export const SearchModal = ({
         }
 
         setIsLoading(true);
-        fetch(`/api/search?q=${encodeURIComponent(q)}`)
-            .then((res) => res.json())
-            .then((data) => setResults(data))
+        axios
+            .get('/api/search', { params: { q } })
+            .then((res: any) => setResults(res.data))
             .catch(() => setResults([]))
             .finally(() => setIsLoading(false));
     }, []);
@@ -64,7 +65,7 @@ export const SearchModal = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-lg [&>button]:hidden">
+            <DialogContent className="top-[15%] translate-y-0 gap-0 overflow-hidden p-0 sm:top-[50%] sm:translate-y-[-50%] sm:max-w-lg [&>button]:hidden">
                 <DialogTitle className="sr-only">Pencarian</DialogTitle>
 
                 {/* Search Input */}
