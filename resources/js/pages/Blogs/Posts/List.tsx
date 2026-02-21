@@ -1,3 +1,4 @@
+import { QuranPromoModal } from '@/components/blog/QuranPromoModal';
 import { CardGrid } from '@/components/blog/CardGrid';
 import { CardList } from '@/components/blog/CardList';
 import { EmptyPost } from '@/components/blog/EmptyPost';
@@ -131,6 +132,7 @@ const List = ({
 
     return (
         <>
+            <QuranPromoModal />
             <Head title={convertToTitle() || 'Belajar Islam'}>
                 <meta name="author" content="Kajian Islam Sangatta"></meta>
                 <meta name="robots" content="index, follow"></meta>

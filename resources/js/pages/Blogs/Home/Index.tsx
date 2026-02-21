@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import BlogLayout from '@/layouts/BlogLayout';
 import { BannerProps } from '@/pages/Banner/Index';
 import { PostProps } from '@/pages/Posts/Partials/Type';
+import { QuranPromoModal } from '@/components/blog/QuranPromoModal';
 import { Head, Link } from '@inertiajs/react';
 import { CalendarDays, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -58,6 +59,10 @@ const Index = ({ posts, jadwalKajian, qna, poster, banner }: IndexProps) => {
             </Head>
             <h1 className="sr-only">Kajian Islam Sangatta - kajianislamsangatta.com</h1>
             {banner.length > 0 && <Banner bannerData={banner} />}
+
+            {/* Al-Quran Promo Modal */}
+            <QuranPromoModal />
+
             {/* Top Rencent */}
             <Container>
                 <div className="py-10 lg:py-15">

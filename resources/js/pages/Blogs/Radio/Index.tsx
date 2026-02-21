@@ -1,3 +1,4 @@
+import { QuranPromoModal } from '@/components/blog/QuranPromoModal';
 import { Container } from '@/components/Container';
 import { ScrollReveal } from '@/components/ScrollReveal';
 import { SkeletonRadioCard } from '@/components/blog/SkeletonCards';
@@ -59,6 +60,7 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
 
     return (
         <>
+            <QuranPromoModal />
             <Head title="Radio Islam Sangatta">
                 <meta name="author" content="Kajian Islam Sangatta"></meta>
                 <meta name="robots" content="index, follow"></meta>
