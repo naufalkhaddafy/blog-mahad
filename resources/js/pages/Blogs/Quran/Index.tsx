@@ -4,7 +4,8 @@ import { QuranWidget } from '@/components/blog/QuranWidget';
 import BlogLayout from '@/layouts/BlogLayout';
 import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Chrome, EllipsisVertical, MonitorSmartphone, PlusSquare, Share, Smartphone } from 'lucide-react';
+import { Apple, Chrome, EllipsisVertical, MonitorSmartphone, PlusSquare, Share, Smartphone } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -55,6 +56,8 @@ const steps = {
 };
 
 const Index = () => {
+    const [activeTab, setActiveTab] = useState<'android' | 'ios'>('android');
+
     return (
         <>
             <Head title="Al-Quran Digital - Sangatta">
@@ -80,13 +83,13 @@ const Index = () => {
                 <section className="mb-20">
                     <ScrollReveal variant="fade-up" delay={300}>
                         <div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-green-50 to-emerald-50 p-6 shadow-sm sm:p-8 dark:border-gray-700 dark:from-gray-800 dark:to-gray-900">
-                            <div className="mb-6 flex items-center gap-3">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-600 text-white shadow-lg shadow-green-600/30">
+                            <div className="mb-6 flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-600 text-white shadow-lg shadow-green-600/30">
                                     <MonitorSmartphone className="h-6 w-6" />
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
-                                        Install di HP Kamu
+                                        Install Sekarang di HP Antum
                                     </h2>
                                     <p className="text-sm text-gray-500 dark:text-gray-400">
                                         Akses Al-Quran lebih cepat langsung dari layar utama tanpa gangguan iklan
@@ -94,7 +97,63 @@ const Index = () => {
                                 </div>
                             </div>
 
-                            <div className="grid gap-6 md:grid-cols-2">
+                            {/* Mobile Tabs */}
+                            <div className="mb-4 flex gap-2 md:hidden">
+                                <button
+                                    onClick={() => setActiveTab('android')}
+                                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                                        activeTab === 'android'
+                                            ? 'bg-green-600 text-white shadow-md shadow-green-600/30'
+                                            : 'bg-white/60 text-gray-600 hover:bg-white dark:bg-gray-700/60 dark:text-gray-300 dark:hover:bg-gray-700'
+                                    }`}
+                                >
+                                    <Chrome className="h-4 w-4" />
+                                    Android
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('ios')}
+                                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                                        activeTab === 'ios'
+                                            ? 'bg-green-600 text-white shadow-md shadow-green-600/30'
+                                            : 'bg-white/60 text-gray-600 hover:bg-white dark:bg-gray-700/60 dark:text-gray-300 dark:hover:bg-gray-700'
+                                    }`}
+                                >
+                                    <Apple className="h-4 w-4" />
+                                    iPhone / iPad
+                                </button>
+                            </div>
+
+                            {/* Mobile Tab Content */}
+                            <div className="md:hidden">
+                                <div className="rounded-xl border border-green-200 bg-white/80 p-5 backdrop-blur-sm dark:border-gray-600 dark:bg-gray-800/80">
+                                    <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-200">
+                                        <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/40">
+                                            <Smartphone className="h-4 w-4 text-green-700 dark:text-green-400" />
+                                        </span>
+                                        {activeTab === 'android' ? 'Android (Chrome)' : 'iPhone / iPad (Safari)'}
+                                    </h3>
+                                    <ol className="space-y-3">
+                                        {steps[activeTab].map((step, i) => (
+                                            <li key={i} className="flex items-start gap-3">
+                                                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-600 text-xs font-bold text-white">
+                                                    {i + 1}
+                                                </span>
+                                                <div>
+                                                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                        {step.title}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                        {step.desc}
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </div>
+                            </div>
+
+                            {/* Desktop Grid (side by side) */}
+                            <div className="hidden gap-6 md:grid md:grid-cols-2">
                                 {/* Android */}
                                 <div className="rounded-xl border border-green-200 bg-white/80 p-5 backdrop-blur-sm dark:border-gray-600 dark:bg-gray-800/80">
                                     <h3 className="mb-4 flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-200">
@@ -151,7 +210,7 @@ const Index = () => {
                             </div>
 
                             <p className="mt-5 text-center text-xs text-gray-400 dark:text-gray-500">
-                                Setelah di-install, kamu bisa membuka Al-Quran Digital langsung dari ikon di layar utama HP — tanpa perlu buka browser lagi ✨
+                                Setelah di-install, antum bisa membuka Al-Quran Digital langsung dari ikon di layar utama HP — tanpa perlu buka browser lagi ✨
                             </p>
                         </div>
                     </ScrollReveal>
