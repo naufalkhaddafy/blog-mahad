@@ -32,6 +32,13 @@
     </url>
 
     <url>
+        <loc>{{ url('/al-quran') }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
         <loc>{{ url('/belajar-islam?category=audio') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
