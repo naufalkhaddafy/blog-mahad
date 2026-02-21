@@ -290,30 +290,41 @@ const List = ({
                     <div className="w-full py-10 text-center">
                         <Pagination>
                             <PaginationContent className="flex-wrap justify-center">
-                                <Link href={links.prev ?? ''}>
-                                    <PaginationPrevious
-                                        className={!links.prev ? 'cursor-no-drop' : ''}
-                                    />
-                                </Link>
+                                <PaginationPrevious
+                                    href={links.prev ?? '#'}
+                                    className={!links.prev ? 'cursor-no-drop' : ''}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (links.prev) router.visit(links.prev, { preserveState: true, preserveScroll: true });
+                                    }}
+                                />
                                 {meta.links.slice(1, -1).map((link, index) => (
                                     <PaginationItem key={index}>
                                         {link.url ? (
-                                            <Link href={link.url}>
-                                                <PaginationLink isActive={link.active}>
-                                                    {link.label}
-                                                </PaginationLink>
-                                            </Link>
+                                            <PaginationLink
+                                                href={link.url}
+                                                isActive={link.active}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    router.visit(link.url, { preserveState: true, preserveScroll: true });
+                                                }}
+                                            >
+                                                {link.label}
+                                            </PaginationLink>
                                         ) : (
                                             <PaginationEllipsis />
                                         )}
                                     </PaginationItem>
                                 ))}
 
-                                <Link href={links.next ?? ''}>
-                                    <PaginationNext
-                                        className={!links.next ? 'cursor-no-drop' : ''}
-                                    />
-                                </Link>
+                                <PaginationNext
+                                    href={links.next ?? '#'}
+                                    className={!links.next ? 'cursor-no-drop' : ''}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (links.next) router.visit(links.next, { preserveState: true, preserveScroll: true });
+                                    }}
+                                />
                             </PaginationContent>
                         </Pagination>
                     </div>

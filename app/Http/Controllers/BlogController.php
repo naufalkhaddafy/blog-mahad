@@ -167,4 +167,9 @@ class BlogController extends Controller
             ],
         ]);
     }
+
+    public function quran()
+    {
+        return Inertia('Blogs/Quran/Index');
+    }
 }

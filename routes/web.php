@@ -28,6 +28,7 @@ Route::get('/', [BlogController::class, 'home'])->name('home');
 Route::get('/belajar-islam', [BlogController::class, 'list'])->name('blog.list');
 Route::get('/sitemap.xml', [SitemapController::class, 'generate']);
 Route::get('/radio-online', [RadioController::class, 'index']);
+Route::get('/al-quran', [BlogController::class, 'quran'])->name('quran');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');

@@ -13,6 +13,7 @@ const dataNav = [
         name: 'Beranda',
         url: '/',
         submenu: [],
+        isNew: false,
     },
     {
         name: 'Info Mahad',
@@ -21,6 +22,7 @@ const dataNav = [
             { name: 'Info Mahad', url: route('blog.list', { category: 'info-mahad' }) },
             { name: 'Kontak', url: '' },
         ],
+        isNew: false,
     },
     {
         name: 'Info Kajian',
@@ -29,16 +31,25 @@ const dataNav = [
             { name: 'Info Taklim', url: route('blog.list', { category: 'info-taklim' }) },
             { name: 'Info Dauroh', url: route('blog.list', { category: 'info-dauroh' }) },
         ],
+        isNew: false,
     },
     {
         name: 'Belajar Islam',
         url: '/belajar-islam',
         submenu: [],
+        isNew: false,
     },
     {
         name: 'Radio Online',
         url: '/radio-online',
         submenu: [],
+        isNew: false,
+    },
+    {
+        name: 'Al-Quran',
+        url: '/al-quran',
+        submenu: [],
+        isNew: true,
     },
 ];
 
@@ -83,11 +94,11 @@ export const Navbar = () => {
 
                 {/* Desktop Navigation */}
                 <div className="hidden lg:flex">
-                    <ul className="flex w-full items-center gap-4">
+                    <ul className="flex w-full items-center gap-2">
                         {dataNav.map((data, index) => (
                             <li
                                 key={index}
-                                className="group text-md relative flex cursor-pointer items-center gap-1 rounded-md px-3 py-2 font-semibold transition-normal duration-500 ease-in-out hover:bg-green-800/50"
+                                className="group relative flex cursor-pointer items-center gap-1 rounded-md px-2 py-2 text-sm font-semibold transition-normal duration-500 ease-in-out hover:bg-green-800/50"
                                 onClick={() =>
                                     setActiveDropdown(activeDropdown === index ? null : index)
                                 }
@@ -99,8 +110,17 @@ export const Navbar = () => {
                                     onClick={(e) => {
                                         if (!data.url) e.preventDefault();
                                     }}
+                                    className="flex items-center gap-1.5"
                                 >
                                     {data.name}
+                                    {data.isNew && (
+                                        <span className="relative flex items-center">
+                                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">
+                                                NEW
+                                            </span>
+                                        </span>
+                                    )}
                                 </Link>
 
                                 {data.submenu.length > 0 && (
@@ -267,7 +287,17 @@ export const Navbar = () => {
                                     }}
                                     className="flex w-full cursor-pointer items-center justify-between rounded-lg p-2 font-semibold hover:bg-green-800/50"
                                 >
-                                    {data.name}
+                                    <span className="flex items-center gap-1.5">
+                                        {data.name}
+                                        {data.isNew && (
+                                            <span className="relative flex items-center">
+                                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full bg-green-500 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">
+                                                    NEW
+                                                </span>
+                                            </span>
+                                        )}
+                                    </span>
                                     {data.submenu.length > 0 && (
                                         <ChevronDown
                                             size={20}
