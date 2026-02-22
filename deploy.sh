@@ -89,6 +89,9 @@ docker compose -f "$COMPOSE_FILE" exec app php artisan storage:link
 
 # 9. Optimization (cache config, routes, views)
 echo -e "${YELLOW}Optimizing cache...${NC}"
+docker compose -f "$COMPOSE_FILE" exec app php artisan route:clear
+docker compose -f "$COMPOSE_FILE" exec app php artisan config:clear
+docker compose -f "$COMPOSE_FILE" exec app php artisan view:clear
 docker compose -f "$COMPOSE_FILE" exec app php artisan optimize
 
 # 10. Reload Octane Workers (pick up new cached routes/config)
