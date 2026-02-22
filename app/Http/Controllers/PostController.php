@@ -10,6 +10,7 @@ use App\Http\Resources\PostSingleResource;
 use App\Http\Resources\TagListResource;
 use App\Models\Category;
 use App\Models\Tag;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -17,10 +18,20 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query = Post::with('tags', 'category', 'user')->latest();
+
+        $query->when($request->status, fn($q, $status) => $q->where('status', $status));
+
+        $query->when($request->date_from, fn($q, $from) => $q->whereDate('created_at', '>=', $from));
+        $query->when($request->date_to, fn($q, $to) => $q->whereDate('created_at', '<=', $to));
+
+        $perPage = $request->input('per_page', 10);
+
         return inertia('Posts/Index', [
-            'posts' => PostResource::collection(Post::with('tags', 'category', 'user')->latest()->get()),
+            'posts' => PostResource::collection($query->paginate($perPage)->withQueryString()),
+            'filters' => $request->only(['status', 'date_from', 'date_to', 'per_page']),
         ]);
     }
 
