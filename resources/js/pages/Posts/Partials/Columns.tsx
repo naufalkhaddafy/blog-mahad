@@ -54,8 +54,9 @@ export const columns: ColumnDef<PostProps>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => {
-            return <div className="pl-6">{row.index + 1}</div>;
+        cell: ({ row, table }) => {
+            const from = (table.options.meta as any)?.from ?? 1;
+            return <div className="pl-6">{from + row.index}</div>;
         },
     },
     {

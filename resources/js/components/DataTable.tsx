@@ -37,6 +37,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[];
     hidePagination?: boolean;
     hideSearch?: boolean;
+    meta?: any;
 }
 
 export function DataTable<TData, TValue>({
@@ -44,6 +45,7 @@ export function DataTable<TData, TValue>({
     data = [],
     hidePagination = false,
     hideSearch = false,
+    meta,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -69,6 +71,12 @@ export function DataTable<TData, TValue>({
             rowSelection,
             globalFilter,
         },
+        initialState: {
+            pagination: {
+                pageSize: hidePagination ? 1000 : 10,
+            },
+        },
+        meta,
         onGlobalFilterChange: setGlobalFilter,
     });
 

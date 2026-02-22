@@ -226,7 +226,13 @@ export default function Index({ posts, filters = {} }: IndexProps) {
                         </div>
 
                         {/* Table */}
-                        <DataTable columns={columns} data={tableData} hidePagination hideSearch />
+                        <DataTable
+                            columns={columns}
+                            data={tableData}
+                            hidePagination
+                            hideSearch
+                            meta={{ from: paginationData?.from }}
+                        />
 
                         {/* Pagination */}
                         {paginationData && paginationData.last_page > 1 && (
