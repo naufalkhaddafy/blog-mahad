@@ -12,12 +12,36 @@ use Illuminate\Support\Facades\View;
 
 class SitemapController extends Controller
 {
-    public function generate()
+    public function index()
     {
-        $posts = Post::query()->select('title', 'slug', 'updated_at', 'image', 'views')->orderBy('views', 'desc')->get();
+        $fixedDate = Carbon::parse('2026-02-22');
+
+        return response()
+            ->view('sitemap-index', [
+                'latestUpdate' => $fixedDate
+            ])
+            ->header('Content-Type', 'text/xml');
+    }
+
+    public function pages()
+    {
+        // Fixed date to today to ensure stability for Google crawler
+        $fixedDate = Carbon::parse('2026-02-22');
+
+        return response()
+            ->view('sitemap-pages', compact('fixedDate'))
+            ->header('Content-Type', 'text/xml');
+    }
+
+    public function posts()
+    {
+        $posts = Post::query()
+            ->select('title', 'slug', 'updated_at', 'image', 'views')
+            ->orderBy('updated_at', 'desc')
+            ->get();
         
         return response()
-            ->view('sitemap', compact('posts'))
+            ->view('sitemap-posts', compact('posts'))
             ->header('Content-Type', 'text/xml');
     }
 }
