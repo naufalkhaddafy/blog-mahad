@@ -29,6 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Index({ categories }: { categories: Array<CategoryProps> }) {
     const { data, setData, post, processing, errors, reset } = useForm<CategoryProps>({
         name: '',
+        slug: '',
     });
 
     const submit: FormEventHandler = (e) => {

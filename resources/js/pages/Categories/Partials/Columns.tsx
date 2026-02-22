@@ -5,9 +5,20 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { ModalDeleteCategory, ModalEditCategory } from './ModalCategory';
-import { Category } from './Type';
+import { CategoryProps } from './Type';
 
-export const columns: ColumnDef<Category>[] = [
+const PROTECTED_CATEGORIES = [
+    'Artikel',
+    'Tanya Jawab',
+    'Info Taklim',
+    'Info Dauroh',
+    'Poster',
+    'Info Mahad',
+    'Audio',
+    'E-Book',
+];
+
+export const columns: ColumnDef<CategoryProps>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -55,6 +66,11 @@ export const columns: ColumnDef<Category>[] = [
         enableHiding: false,
         cell: ({ row }) => {
             const category = row.original;
+            const isProtected = PROTECTED_CATEGORIES.includes(category.name);
+
+            if (isProtected) {
+                return null;
+            }
 
             return (
                 <div className="flex items-center justify-start gap-2">
