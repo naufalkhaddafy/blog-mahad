@@ -29,12 +29,21 @@ interface PaginationLink {
 interface PaginatedPosts {
     data: PostProps[];
     links: PaginationLink[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    from: number | null;
-    to: number | null;
+    current_page?: number;
+    last_page?: number;
+    per_page?: number;
+    total?: number;
+    from?: number | null;
+    to?: number | null;
+    meta?: {
+        current_page: number;
+        last_page: number;
+        from: number | null;
+        to: number | null;
+        per_page: number;
+        total: number;
+        links: PaginationLink[];
+    };
 }
 
 interface Filters {
@@ -58,28 +67,40 @@ const STATUS_OPTIONS = [
 const PER_PAGE_OPTIONS = ['10', '25', '50', '100'];
 
 export default function Index({ posts, filters = {} }: IndexProps) {
+    const isValidDate = (date: any): date is Date => date instanceof Date && !isNaN(date.getTime());
+
     const dateRange = useMemo<DateRange | undefined>(() => {
         if (!filters.date_from) return undefined;
-        return {
-            from: new Date(filters.date_from),
-            to: filters.date_to ? new Date(filters.date_to) : undefined,
-        };
+        
+        // Use a safe way to parse YYYY-MM-DD to local Date
+        const fromArr = filters.date_from.split('-').map(Number);
+        const from = new Date(fromArr[0], fromArr[1] - 1, fromArr[2]);
+        
+        let to: Date | undefined = undefined;
+        if (filters.date_to) {
+            const toArr = filters.date_to.split('-').map(Number);
+            to = new Date(toArr[0], toArr[1] - 1, toArr[2]);
+        }
+
+        return isValidDate(from) ? { from, to } : undefined;
     }, [filters.date_from, filters.date_to]);
 
     const applyFilters = useCallback(
         (newFilters: Partial<Filters>) => {
             const merged = { ...filters, ...newFilters };
-
-            // Reset page when changing filters (but not per_page alone)
             const params: Record<string, string> = {};
-            if (merged.status) params.status = merged.status;
+
+            if (merged.status && merged.status !== 'all') params.status = merged.status;
             if (merged.date_from) params.date_from = merged.date_from;
             if (merged.date_to) params.date_to = merged.date_to;
-            if (merged.per_page) params.per_page = merged.per_page;
+            if (merged.per_page) params.per_page = String(merged.per_page);
+
+            console.log('Applying filters:', params);
 
             router.get('/posts', params, {
                 preserveState: true,
                 preserveScroll: true,
+                replace: true,
             });
         },
         [filters],
@@ -90,9 +111,10 @@ export default function Index({ posts, filters = {} }: IndexProps) {
     };
 
     const handleDateChange = (range: DateRange | undefined) => {
+        console.log('Date range changed:', range);
         applyFilters({
-            date_from: range?.from ? format(range.from, 'yyyy-MM-dd') : undefined,
-            date_to: range?.to ? format(range.to, 'yyyy-MM-dd') : undefined,
+            date_from: range?.from && isValidDate(range.from) ? format(range.from, 'yyyy-MM-dd') : undefined,
+            date_to: range?.to && isValidDate(range.to) ? format(range.to, 'yyyy-MM-dd') : undefined,
         });
     };
 
@@ -119,9 +141,21 @@ export default function Index({ posts, filters = {} }: IndexProps) {
     }, [posts]);
 
     const pagination = useMemo(() => {
-        if (posts && !Array.isArray(posts)) return posts;
+        if (posts && !Array.isArray(posts)) return posts as PaginatedPosts;
         return null;
     }, [posts]);
+
+    const paginationData = useMemo(() => {
+        if (!pagination) return null;
+        return {
+            last_page: pagination.last_page ?? pagination.meta?.last_page ?? 1,
+            from: pagination.from ?? pagination.meta?.from ?? 0,
+            to: pagination.to ?? pagination.meta?.to ?? 0,
+            total: pagination.total ?? pagination.meta?.total ?? 0,
+            per_page: pagination.per_page ?? pagination.meta?.per_page ?? 10,
+            links: (Array.isArray(pagination.links) ? pagination.links : (pagination.meta?.links ?? [])) as PaginationLink[],
+        };
+    }, [pagination]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -166,7 +200,10 @@ export default function Index({ posts, filters = {} }: IndexProps) {
                                 />
 
                                 {/* Per Page */}
-                                <Select value={String(filters.per_page ?? '10')} onValueChange={handlePerPageChange}>
+                                <Select
+                                    value={String(filters.per_page ?? paginationData?.per_page ?? '10')}
+                                    onValueChange={handlePerPageChange}
+                                >
                                     <SelectTrigger className="w-[100px]">
                                         <SelectValue />
                                     </SelectTrigger>
@@ -192,14 +229,14 @@ export default function Index({ posts, filters = {} }: IndexProps) {
                         <DataTable columns={columns} data={tableData} hidePagination hideSearch />
 
                         {/* Pagination */}
-                        {pagination && pagination.last_page > 1 && (
+                        {paginationData && paginationData.last_page > 1 && (
                             <div className="flex flex-wrap items-center justify-between gap-4 pt-4">
                                 <p className="text-muted-foreground text-sm">
-                                    Menampilkan {pagination.from ?? 0} – {pagination.to ?? 0} dari {pagination.total} data
+                                    Menampilkan {paginationData.from} – {paginationData.to} dari {paginationData.total} data
                                 </p>
                                 <div className="flex items-center gap-1">
-                                    {pagination.links && pagination.links.map((link, idx) => {
-                                        const isNav = idx === 0 || idx === pagination.links.length - 1;
+                                    {paginationData.links.map((link, idx) => {
+                                        const isNav = idx === 0 || idx === paginationData.links.length - 1;
                                         const label = link.label
                                             .replace('&laquo;', '«')
                                             .replace('&raquo;', '»')

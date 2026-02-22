@@ -16,6 +16,8 @@ interface DateRangePickerProps {
     className?: string;
 }
 
+const isValidDate = (date: any): date is Date => date instanceof Date && !isNaN(date.getTime());
+
 export function DateRangePicker({
     value,
     onChange,
@@ -29,6 +31,23 @@ export function DateRangePicker({
         onChange?.(undefined);
     };
 
+    const displayValue = React.useMemo(() => {
+        if (!value?.from || !isValidDate(value.from)) return <span>{placeholder}</span>;
+
+        const fromStr = format(value.from, 'dd MMM yyyy', { locale: idLocale });
+
+        if (value.to && isValidDate(value.to)) {
+            const toStr = format(value.to, 'dd MMM yyyy', { locale: idLocale });
+            return (
+                <>
+                    {fromStr} – {toStr}
+                </>
+            );
+        }
+
+        return fromStr;
+    }, [value, placeholder]);
+
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -36,23 +55,12 @@ export function DateRangePicker({
                     variant="outline"
                     className={cn(
                         'h-9 justify-start text-left font-normal',
-                        !value && 'text-muted-foreground',
+                        !value?.from && 'text-muted-foreground',
                         className,
                     )}
                 >
                     <CalendarIcon className="mr-2 size-4" />
-                    {value?.from ? (
-                        value.to ? (
-                            <>
-                                {format(value.from, 'dd MMM yyyy', { locale: idLocale })} –{' '}
-                                {format(value.to, 'dd MMM yyyy', { locale: idLocale })}
-                            </>
-                        ) : (
-                            format(value.from, 'dd MMM yyyy', { locale: idLocale })
-                        )
-                    ) : (
-                        <span>{placeholder}</span>
-                    )}
+                    {displayValue}
                     {value?.from && (
                         <XIcon
                             className="ml-auto size-4 opacity-50 hover:opacity-100"
@@ -65,7 +73,7 @@ export function DateRangePicker({
                 <Calendar
                     initialFocus
                     mode="range"
-                    defaultMonth={value?.from}
+                    defaultMonth={isValidDate(value?.from) ? value?.from : undefined}
                     selected={value}
                     onSelect={onChange}
                     numberOfMonths={2}

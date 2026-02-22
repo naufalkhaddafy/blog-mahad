@@ -20,17 +20,27 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Post::with('tags', 'category', 'user')->latest();
+        $query = Post::with(['tags', 'category', 'user'])->latest();
 
-        $query->when($request->status, fn($q, $status) => $q->where('status', $status));
+        if ($request->filled('status')) {
+            $query->where('status', '=', $request->status);
+        }
 
-        $query->when($request->date_from, fn($q, $from) => $q->whereDate('created_at', '>=', $from));
-        $query->when($request->date_to, fn($q, $to) => $q->whereDate('created_at', '<=', $to));
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
 
-        $perPage = $request->input('per_page', 10);
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $perPage = $request->integer('per_page', 10);
+        if ($perPage <= 0) $perPage = 10;
+
+        $posts = $query->paginate($perPage)->withQueryString();
 
         return inertia('Posts/Index', [
-            'posts' => PostResource::collection($query->paginate($perPage)->withQueryString()),
+            'posts' => PostResource::collection($posts),
             'filters' => $request->only(['status', 'date_from', 'date_to', 'per_page']),
         ]);
     }
