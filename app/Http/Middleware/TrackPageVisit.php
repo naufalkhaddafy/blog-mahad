@@ -20,8 +20,12 @@ class TrackPageVisit
     {
         $response = $next($request);
 
-        // Hanya track request GET dan response sukses (misal halaman web yang valid)
-        if ($request->isMethod('GET') && $response->getStatusCode() === 200 && !$request->ajax()) {
+        // Hanya track request GET dan response sukses
+        // Izinkan request Inertia (navigasi SPA) tapi blokir AJAX biasa (misal API search)
+        $isInertia = $request->header('X-Inertia') === 'true';
+        $isRegularAjax = $request->ajax() && !$isInertia;
+
+        if ($request->isMethod('GET') && $response->getStatusCode() === 200 && !$isRegularAjax) {
             
             // Jangan track request ke aset/file
             if (preg_match('/\.(css|js|jpg|jpeg|png|gif|svg|ico|woff|woff2|ttf|eot)$/i', $request->path())) {
