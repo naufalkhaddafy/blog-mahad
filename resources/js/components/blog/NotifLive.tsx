@@ -20,7 +20,7 @@ const NotifLive = () => {
                             </span>
                             <div className="flex w-full items-center justify-between">
                                 <p className="text-xs font-semibold text-white lg:text-sm">
-                                    Sedang ada kajian Live Streaming
+                                    Sedang ada siaran Live Streaming
                                 </p>
                                 <Button
                                     asChild
