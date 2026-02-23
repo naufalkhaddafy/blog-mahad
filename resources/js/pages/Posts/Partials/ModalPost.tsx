@@ -9,6 +9,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { useForm } from '@inertiajs/react';
+import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { PostProps } from './Type';
 
@@ -28,7 +29,8 @@ export const ModalDeletePost = ({ post }: { post: PostProps }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <button className="hover:bg-secondary w-full rounded-sm px-2 py-1 text-start text-sm text-red-500">
+                <button className="hover:bg-secondary flex w-full items-center gap-2 rounded-sm px-2 py-1 text-start text-sm text-red-500">
+                    <Trash2 className="size-4" />
                     Hapus
                 </button>
             </DialogTrigger>

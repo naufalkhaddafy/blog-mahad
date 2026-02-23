@@ -14,9 +14,10 @@ import {
 import { getLimitTextContent } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Archive, ArrowUpDown, ClockArrowUp, Eye, FileEdit, MoreHorizontal, Rss } from 'lucide-react';
+import { Archive, ArrowUpDown, ClockArrowUp, Copy, Eye, FileEdit, MoreHorizontal, Pencil, Rss, Trash2 } from 'lucide-react';
 import { ModalDeletePost } from './ModalPost';
 import { PostProps } from './Type';
+import { toast } from 'sonner';
 
 export const columns: ColumnDef<PostProps>[] = [
     {
@@ -145,7 +146,9 @@ export const columns: ColumnDef<PostProps>[] = [
             const copyLink = () => {
                 const url = new URL(window.location.href);
                 const shareUrl = `${url.protocol}//${url.hostname}${url.port ? `:${url.port}` : ''}/${post.slug}`;
-                navigator.clipboard.writeText(shareUrl);
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    toast.success('Link berhasil disalin!');
+                });
             };
             return (
                 <DropdownMenu>
@@ -158,16 +161,22 @@ export const columns: ColumnDef<PostProps>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={copyLink}>Salin link</DropdownMenuItem>
+                        <DropdownMenuItem onClick={copyLink}>
+                            <Copy className="mr-2 size-4" />
+                            Salin link
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onPreview?.(post)}>
                             <Eye className="mr-2 size-4" />
                             Preview
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            <Link href={`/posts/${post.id}/edit`}>Edit</Link>
+                            <Link href={`/posts/${post.id}/edit`}>
+                                <Pencil className="mr-2 size-4" />
+                                Edit
+                            </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
+                        <DropdownMenuItem asChild className="text-red-600 focus:text-red-600">
                             <ModalDeletePost post={post} />
                         </DropdownMenuItem>
                     </DropdownMenuContent>
