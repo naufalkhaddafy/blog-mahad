@@ -8,9 +8,10 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { CirclePlus, RotateCcw } from 'lucide-react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { type DateRange } from 'react-day-picker';
 import { columns } from './Partials/Columns';
+import PreviewModal from './Partials/PreviewModal';
 import { PostProps } from './Partials/Type';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -62,11 +63,13 @@ const STATUS_OPTIONS = [
     { value: 'publish', label: 'Publish' },
     { value: 'pending', label: 'Pending' },
     { value: 'archived', label: 'Archived' },
+    { value: 'draft', label: 'Draft' },
 ];
 
 const PER_PAGE_OPTIONS = ['10', '25', '50', '100'];
 
 export default function Index({ posts, filters = {} }: IndexProps) {
+    const [previewPost, setPreviewPost] = useState<PostProps | null>(null);
     const isValidDate = (date: any): date is Date => date instanceof Date && !isNaN(date.getTime());
 
     const dateRange = useMemo<DateRange | undefined>(() => {
@@ -231,7 +234,7 @@ export default function Index({ posts, filters = {} }: IndexProps) {
                             data={tableData}
                             hidePagination
                             hideSearch
-                            meta={{ from: paginationData?.from }}
+                            meta={{ from: paginationData?.from, onPreview: (post: PostProps) => setPreviewPost(post) }}
                         />
 
                         {/* Pagination */}
@@ -266,6 +269,17 @@ export default function Index({ posts, filters = {} }: IndexProps) {
                     </div>
                 </div>
             </div>
+
+            {previewPost && (
+                <PreviewModal
+                    open={!!previewPost}
+                    onClose={() => setPreviewPost(null)}
+                    title={previewPost.title}
+                    description={previewPost.description}
+                    imageSrc={previewPost.imageSrc}
+                    tags={previewPost.tags}
+                />
+            )}
         </AppLayout>
     );
 }

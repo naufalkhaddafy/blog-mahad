@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import {
 import { getLimitTextContent } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Archive, ArrowUpDown, ClockArrowUp, MoreHorizontal, Rss } from 'lucide-react';
+import { Archive, ArrowUpDown, ClockArrowUp, Eye, FileEdit, MoreHorizontal, Rss } from 'lucide-react';
 import { ModalDeletePost } from './ModalPost';
 import { PostProps } from './Type';
 
@@ -125,6 +125,8 @@ export const columns: ColumnDef<PostProps>[] = [
                         <ClockArrowUp className="h-4 w-4 text-red-500" />
                     ) : valueStatus === 'publish' ? (
                         <Rss className="h-4 w-4 text-green-500" />
+                    ) : valueStatus === 'draft' ? (
+                        <FileEdit className="h-4 w-4 text-blue-500" />
                     ) : (
                         <Archive className="h-4 w-4 text-yellow-500" />
                     )}
@@ -136,8 +138,9 @@ export const columns: ColumnDef<PostProps>[] = [
     {
         id: 'actions',
         enableHiding: false,
-        cell: ({ row }) => {
+        cell: ({ row, table }) => {
             const post = row.original;
+            const onPreview = (table.options.meta as any)?.onPreview;
 
             const copyLink = () => {
                 const url = new URL(window.location.href);
@@ -156,6 +159,11 @@ export const columns: ColumnDef<PostProps>[] = [
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={copyLink}>Salin link</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onPreview?.(post)}>
+                            <Eye className="mr-2 size-4" />
+                            Preview
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                             <Link href={`/posts/${post.id}/edit`}>Edit</Link>
                         </DropdownMenuItem>
