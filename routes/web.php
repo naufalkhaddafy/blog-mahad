@@ -24,13 +24,16 @@ use Illuminate\Support\Facades\Route;
 //     dd(str_ireplace(['live', 'onair'], '', $newTitle));
 // })->name('index');
 
-Route::get('/', [BlogController::class, 'home'])->name('home');
-Route::get('/belajar-islam', [BlogController::class, 'list'])->name('blog.list');
+Route::middleware([\App\Http\Middleware\TrackPageVisit::class])->group(function () {
+    Route::get('/', [BlogController::class, 'home'])->name('home');
+    Route::get('/belajar-islam', [BlogController::class, 'list'])->name('blog.list');
+    Route::get('/radio-online', [RadioController::class, 'index']);
+    Route::get('/al-quran', [BlogController::class, 'quran'])->name('quran');
+});
+
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::get('/sitemap-pages.xml', [SitemapController::class, 'pages']);
 Route::get('/sitemap-posts.xml', [SitemapController::class, 'posts']);
-Route::get('/radio-online', [RadioController::class, 'index']);
-Route::get('/al-quran', [BlogController::class, 'quran'])->name('quran');
 Route::get('/api/search', [BlogController::class, 'search'])->name('api.search');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -48,4 +51,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
 
-Route::get('/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::middleware([\App\Http\Middleware\TrackPageVisit::class])->group(function () {
+    Route::get('/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+});

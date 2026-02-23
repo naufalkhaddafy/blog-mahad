@@ -4,8 +4,11 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import {
+    Activity,
     Airplay,
     AudioLines,
+    BarChart3,
+    Eye,
     FileText,
     LayoutDashboard,
     MessageCircleQuestion,
@@ -13,6 +16,7 @@ import {
     Radio,
     Send,
     Settings,
+    TrendingUp,
 } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -46,16 +50,37 @@ const StatCard = ({ title, value, icon: Icon, gradient, description }: StatCardP
     </Card>
 );
 
+interface TopPage {
+    url: string;
+    path: string;
+    total_views: number;
+}
+
+interface DailyVisit {
+    visited_date: string;
+    total_views: number;
+}
+
 export default function Dashboard({
     posts,
     banner,
     channel,
     qna,
+    visitsToday,
+    visitsWeek,
+    visitsTotal,
+    topPages,
+    dailyVisits,
 }: {
     posts: number;
     banner: number;
     channel: number;
     qna: number;
+    visitsToday: number;
+    visitsWeek: number;
+    visitsTotal: number;
+    topPages: TopPage[];
+    dailyVisits: DailyVisit[];
 }) {
     const stats = [
         {
@@ -88,6 +113,32 @@ export default function Dashboard({
         },
     ];
 
+    const visitStats = [
+        {
+            title: 'Pengunjung Hari Ini',
+            value: visitsToday,
+            icon: Eye,
+            gradient: 'bg-linear-to-br from-cyan-500 to-blue-600',
+            description: 'Unique Pageviews',
+        },
+        {
+            title: 'Pengunjung Minggu Ini',
+            value: visitsWeek,
+            icon: Activity,
+            gradient: 'bg-linear-to-br from-violet-500 to-purple-600',
+            description: '7 Hari Terakhir',
+        },
+        {
+            title: 'Total Pengunjung',
+            value: visitsTotal,
+            icon: TrendingUp,
+            gradient: 'bg-linear-to-br from-amber-500 to-orange-600',
+            description: 'Sejak Awal',
+        },
+    ];
+
+    const maxDailyViews = dailyVisits.length > 0 ? Math.max(...dailyVisits.map((d) => d.total_views)) : 1;
+
     const quickActions = [
         { label: 'Tulis Artikel', icon: PlusCircle, href: route('posts.create'), color: 'text-blue-500' },
         { label: 'Manage Kategori', icon: LayoutDashboard, href: route('category.index'), color: 'text-purple-500' },
@@ -95,6 +146,11 @@ export default function Dashboard({
         { label: 'Daftar Tanya Jawab', icon: FileText, href: route('posts.index'), color: 'text-emerald-500' },
         { label: 'System Settings', icon: Settings, href: '/settings/profile', color: 'text-gray-500' },
     ];
+
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -125,6 +181,117 @@ export default function Dashboard({
                     </div>
                 </div>
 
+                {/* Traffic / Kunjungan Website Section */}
+                <div className="space-y-6">
+                    <Heading title="Trafik Kunjungan Website" description="Statistik pengunjung halaman publik" />
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {visitStats.map((stat, index) => (
+                            <StatCard key={index} {...stat} />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Chart & Top Pages Section */}
+                <div className="grid gap-8 lg:grid-cols-2">
+                    {/* Daily Visits Bar Chart */}
+                    <div className="space-y-4">
+                        <Card className="overflow-hidden border-none shadow-lg">
+                            <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                                <div className="rounded-lg bg-linear-to-br from-cyan-500 to-blue-600 p-2 text-white shadow-lg">
+                                    <BarChart3 className="size-4" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base font-semibold">Kunjungan 7 Hari Terakhir</CardTitle>
+                                    <p className="text-xs text-muted-foreground">Grafik harian unique pageviews</p>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="pt-4">
+                                {dailyVisits.length > 0 ? (
+                                    <div className="flex items-end gap-2" style={{ minHeight: 180 }}>
+                                        {dailyVisits.map((day, i) => {
+                                            const heightPercent = (day.total_views / maxDailyViews) * 100;
+                                            return (
+                                                <div key={i} className="group relative flex flex-1 flex-col items-center gap-1">
+                                                    {/* Tooltip on hover */}
+                                                    <span className="pointer-events-none absolute -top-8 rounded-md bg-slate-800 px-2 py-1 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                                                        {day.total_views}
+                                                    </span>
+                                                    <div
+                                                        className="w-full rounded-t-lg bg-linear-to-t from-cyan-500 to-blue-500 transition-all duration-300 group-hover:from-cyan-400 group-hover:to-blue-400"
+                                                        style={{
+                                                            height: `${Math.max(heightPercent, 6)}%`,
+                                                            minHeight: 10,
+                                                        }}
+                                                    />
+                                                    <span className="text-[10px] text-muted-foreground">
+                                                        {formatDate(day.visited_date)}
+                                                    </span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground">
+                                        <BarChart3 className="mb-3 size-10 opacity-20" />
+                                        <p className="text-sm">Belum ada data kunjungan.</p>
+                                        <p className="text-xs">Grafik akan muncul setelah website dikunjungi.</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Top 5 Halaman Populer */}
+                    <div className="space-y-4">
+                        <Card className="overflow-hidden border-none shadow-lg">
+                            <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                                <div className="rounded-lg bg-linear-to-br from-violet-500 to-purple-600 p-2 text-white shadow-lg">
+                                    <TrendingUp className="size-4" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base font-semibold">Halaman Populer</CardTitle>
+                                    <p className="text-xs text-muted-foreground">Top 5 halaman paling banyak dikunjungi (7 hari terakhir)</p>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="pt-4">
+                                {topPages.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {topPages.map((page, index) => {
+                                            const widthPercent = topPages[0]?.total_views
+                                                ? (page.total_views / topPages[0].total_views) * 100
+                                                : 0;
+                                            return (
+                                                <div key={index} className="group space-y-1">
+                                                    <div className="flex items-center justify-between text-sm">
+                                                        <span className="max-w-[70%] truncate font-medium" title={page.path}>
+                                                            {page.path === '/' ? 'Beranda' : page.path}
+                                                        </span>
+                                                        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                                                            {page.total_views} views
+                                                        </span>
+                                                    </div>
+                                                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                                        <div
+                                                            className="h-full rounded-full bg-linear-to-r from-violet-500 to-purple-500 transition-all duration-500"
+                                                            style={{ width: `${widthPercent}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground">
+                                        <TrendingUp className="mb-3 size-10 opacity-20" />
+                                        <p className="text-sm">Belum ada data halaman populer.</p>
+                                        <p className="text-xs">Data akan muncul setelah website dikunjungi.</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+
                 <div className="grid gap-8 lg:grid-cols-3">
                     {/* Quick Actions */}
                     <div className="lg:col-span-2 space-y-6">
@@ -145,7 +312,7 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    {/* Additional info or simplified secondary section could go here */}
+                    {/* Additional info */}
                     <div className="space-y-6">
                         <Heading title="Akses Cepat" description="Informasi sistem lainnya" />
                         <Card className="rounded-2xl border-dashed">
@@ -161,3 +328,4 @@ export default function Dashboard({
         </AppLayout>
     );
 }
+
