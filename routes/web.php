@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::resource('category', CategoryController::class)->except('show', 'edit', 'create');
     Route::resource('posts', PostController::class);
+    Route::post('/posts/autosave/{post?}', [PostController::class, 'autosave'])->name('posts.autosave');
     Route::resource('tag', TagController::class)->except('show', 'edit', 'create');
     Route::resource('banner', BannerController::class)->except('show', 'edit', 'create');
     Route::post('/banner/reorder', [BannerController::class, 'reorder'])->name('banner.reorder');

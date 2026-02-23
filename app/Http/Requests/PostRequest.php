@@ -23,8 +23,21 @@ class PostRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isDraft = $this->input('status') === 'draft';
 
         $image = $this->route('post')?->image === $this->image ? '' : ['image', 'mimes:jpeg,png,jpg,gif,svg'];
+
+        if ($isDraft) {
+            return [
+                'title' => ['required', 'string', 'max:255', $this->route('post') ? Rule::unique('posts', 'title')->ignore($this->route('post')->id) : Rule::unique('posts', 'title')],
+                'category_id' => ['nullable', 'exists:categories,id'],
+                'description' => ['nullable', 'string'],
+                'image' => ['nullable', 'max:2048', $image],
+                'status' => ['required', Rule::in(PostStatus::cases())],
+                'tags' => ['nullable', 'array'],
+            ];
+        }
+
         return [
             'category_id' => ['required', 'exists:categories,id'],
             'title' => ['required', 'string', 'max:255', $this->route('post') ? Rule::unique('posts', 'title')->ignore($this->route('post')->id) : Rule::unique('posts', 'title')],

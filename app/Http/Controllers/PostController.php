@@ -154,4 +154,39 @@ class PostController extends Controller
         flashMessage('success', 'Berhasil menghapus postingan ' . $post->title);
         return back();
     }
+
+    /**
+     * Auto-save post as draft.
+     */
+    public function autosave(Request $request, ?Post $post = null)
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'description' => $request->description ?? '',
+            'category_id' => $request->category_id ?: null,
+            'status' => PostStatus::DRAFT,
+        ];
+
+        if ($post) {
+            $post->update($data);
+            if ($request->filled('tags')) {
+                $post->tags()->sync($request->tags);
+            }
+        } else {
+            $post = $request->user()->posts()->create($data);
+            if ($request->filled('tags')) {
+                $post->tags()->attach($request->tags);
+            }
+        }
+
+        return response()->json([
+            'id' => $post->id,
+            'saved_at' => now()->format('H:i'),
+            'url' => route('posts.update', $post),
+        ]);
+    }
 }

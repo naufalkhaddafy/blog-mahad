@@ -16,11 +16,13 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import { useState } from 'react';
+import axios from 'axios';
+import { CheckCircle, Eye, LoaderCircle, Save } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CategoryProps } from '../Categories/Partials/Type';
 import { TagPropsSelect } from '../Tags/Partials/Type';
 import { PageSettingsProps, PostProps } from './Partials/Type';
+import PreviewModal from './Partials/PreviewModal';
 import UploadImage from './Partials/UploadImage';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -42,9 +44,21 @@ type FormAddProps = {
     status: Array<number>;
 };
 
+type DraftStatus = 'idle' | 'saving' | 'saved' | 'error';
+
 export default function Form({ posts, page_settings, categories, tags, status }: FormAddProps) {
     const { errors } = usePage().props;
     const [processing, setProcessing] = useState<boolean>();
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [draftStatus, setDraftStatus] = useState<DraftStatus>('idle');
+    const [savedAt, setSavedAt] = useState<string | null>(null);
+    const [draftPostId, setDraftPostId] = useState<number | null>(posts.id ?? null);
+    const [draftUpdateUrl, setDraftUpdateUrl] = useState<string | null>(
+        posts.id ? page_settings.url : null,
+    );
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isFirstRender = useRef(true);
+
     const { data, setData, reset } = useForm({
         title: posts.title || '',
         category_id: posts.category?.id || '',
@@ -54,12 +68,67 @@ export default function Form({ posts, page_settings, categories, tags, status }:
         tags: posts.tags?.map((tag) => tag.value) || [],
     });
 
+    // Debounced auto-save
+    const performAutosave = useCallback(async () => {
+        if (!data.title || data.title.trim() === '') return;
+
+        setDraftStatus('saving');
+        try {
+            const autosaveUrl = draftPostId
+                ? `/posts/autosave/${draftPostId}`
+                : '/posts/autosave';
+
+            const response = await axios.post(autosaveUrl, {
+                title: data.title,
+                description: data.description,
+                category_id: data.category_id || null,
+                tags: data.tags.length > 0 ? data.tags : null,
+            });
+
+            setDraftPostId(response.data.id);
+            setDraftUpdateUrl(response.data.url);
+            setSavedAt(response.data.saved_at);
+            setDraftStatus('saved');
+        } catch {
+            setDraftStatus('error');
+        }
+    }, [data.title, data.description, data.category_id, data.tags, draftPostId]);
+
+    // Watch form changes and trigger auto-save with debounce
+    useEffect(() => {
+        // Skip first render
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        // Don't auto-save if editing an already published/pending/archived post
+        if (posts.id && posts.status !== 'draft' && posts.status !== '') {
+            return;
+        }
+
+        if (timerRef.current) clearTimeout(timerRef.current);
+
+        timerRef.current = setTimeout(() => {
+            performAutosave();
+        }, 3000);
+
+        return () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
+    }, [data.title, data.description, data.category_id, data.tags]);
+
     function onSubmit(e: React.FormEvent) {
         e.preventDefault();
+
+        // Jika post sudah punya ID dari auto-save, kirim update request
+        const submitUrl = draftUpdateUrl || page_settings.url;
+        const submitMethod = draftUpdateUrl && !posts.id ? 'PATCH' : page_settings.method;
+
         router.post(
-            page_settings.url,
+            submitUrl,
             {
-                _method: page_settings.method == 'POST' ? 'POST' : 'PATCH',
+                _method: submitMethod === 'POST' ? 'POST' : 'PATCH',
                 ...data,
             },
             {
@@ -70,11 +139,44 @@ export default function Form({ posts, page_settings, categories, tags, status }:
             },
         );
     }
+
+    // Image preview URL for PreviewModal
+    const imagePreviewUrl =
+        typeof data.image === 'object' && data.image !== null
+            ? URL.createObjectURL(data.image as unknown as Blob)
+            : posts.imageSrc || undefined;
+
+    // Selected tags for preview
+    const selectedTags = tags.filter((tag) => data.tags.includes(tag.value));
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={page_settings.title} />
             <div className="rounded-xl px-4 py-6">
-                <Heading title={`${page_settings.title}`} description={page_settings.description} />
+                <div className="flex items-center justify-between">
+                    <Heading title={`${page_settings.title}`} description={page_settings.description} />
+
+                    {/* Draft Status Indicator */}
+                    <div className="flex items-center gap-2 text-sm">
+                        {draftStatus === 'saving' && (
+                            <span className="flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-amber-600 dark:bg-amber-900/20">
+                                <LoaderCircle className="size-3.5 animate-spin" />
+                                Menyimpan draft...
+                            </span>
+                        )}
+                        {draftStatus === 'saved' && savedAt && (
+                            <span className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-emerald-600 dark:bg-emerald-900/20">
+                                <CheckCircle className="size-3.5" />
+                                Draft tersimpan {savedAt}
+                            </span>
+                        )}
+                        {draftStatus === 'error' && (
+                            <span className="flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1.5 text-red-600 dark:bg-red-900/20">
+                                Gagal menyimpan draft
+                            </span>
+                        )}
+                    </div>
+                </div>
                 <div className="max-w-screen">
                     <div className="w-full rounded-xl border p-4 shadow xl:col-span-4">
                         <form className="p-2" onSubmit={onSubmit}>
@@ -175,20 +277,42 @@ export default function Form({ posts, page_settings, categories, tags, status }:
                                 </div>
                             </div>
 
-                            <div className="mt-3 py-7">
+                            <div className="mt-3 flex items-center gap-3 py-7">
                                 <Button disabled={processing} asChild className="cursor-pointer">
                                     <button type="submit">
                                         {processing && (
                                             <LoaderCircle className="h-4 w-4 animate-spin" />
                                         )}
+                                        <Save className="size-4" />
                                         Simpan
                                     </button>
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="cursor-pointer"
+                                    onClick={() => setPreviewOpen(true)}
+                                >
+                                    <Eye className="size-4" />
+                                    Preview
                                 </Button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
+
+            <PreviewModal
+                open={previewOpen}
+                onClose={() => setPreviewOpen(false)}
+                title={data.title}
+                description={data.description}
+                imageSrc={imagePreviewUrl}
+                tags={selectedTags}
+                categories={categories}
+                categoryId={data.category_id}
+            />
         </AppLayout>
     );
 }
