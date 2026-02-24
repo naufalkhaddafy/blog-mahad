@@ -1,8 +1,8 @@
 import Heading from '@/components/heading';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { type BreadcrumbItem, type SharedData } from '@/types';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     Activity,
     Airplay,
@@ -364,6 +364,18 @@ export default function Dashboard({
                                 <LayoutDashboard className="mb-4 size-10 opacity-20" />
                                 <p className="text-sm">Monitor sistem berjalan normal.</p>
                                 <p className="text-xs">Versi Platform: 1.2.0</p>
+                                {(() => {
+                                    const lastLogin = usePage<SharedData>().props.auth.user?.last_login_at;
+                                    if (!lastLogin) return null;
+                                    return (
+                                        <p className="mt-3 text-xs">
+                                            Login terakhir:{' '}
+                                            <span className="font-semibold">
+                                                {new Date(String(lastLogin)).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                                            </span>
+                                        </p>
+                                    );
+                                })()}
                             </CardContent>
                         </Card>
                     </div>
