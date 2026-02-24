@@ -27,7 +27,7 @@ class DashboardController extends Controller
         // Period filter (1d, 7d, 30d, 365d)
         $period = $request->input('period', '7d');
         $periodDays = match ($period) {
-            '1d' => 1,
+            '1d' => 0,
             '30d' => 30,
             '365d' => 365,
             default => 7,

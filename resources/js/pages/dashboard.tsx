@@ -178,11 +178,11 @@ export default function Dashboard({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard Admin" />
 
-            <div className="flex flex-col gap-8 p-6 lg:p-10">
+            <div className="flex flex-col gap-8 overflow-hidden p-4 sm:p-6 lg:p-10">
                 {/* Hero / Welcome Section */}
-                <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-slate-900 to-slate-800 p-8 text-white shadow-2xl lg:p-12">
+                <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-slate-900 to-slate-800 p-6 text-white shadow-2xl sm:p-8 lg:p-12">
                     <div className="relative z-10 space-y-4">
-                        <h1 className="text-3xl font-bold tracking-tight lg:text-5xl">
+                        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-5xl">
                             Selamat Datang Kembali, Admin!
                         </h1>
                         <p className="max-w-2xl text-slate-300 text-lg">
@@ -214,7 +214,7 @@ export default function Dashboard({
                 </div>
 
                 {/* Chart & Top Pages Section */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <Heading title="Grafik & Halaman Populer" description="Analisis kunjungan website" />
                     <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
                         {periodOptions.map((opt) => (
@@ -252,7 +252,7 @@ export default function Dashboard({
                             </CardHeader>
                             <CardContent className="pt-4">
                                 {dailyVisits.length > 0 ? (
-                                    <div className="flex items-end gap-2" style={{ height: 200 }}>
+                                    <div className="flex items-end gap-1 overflow-x-auto sm:gap-2" style={{ height: 200 }}>
                                         {dailyVisits.map((day, i) => {
                                             const maxBarHeight = 160;
                                             const barHeight = maxDailyViews > 0
