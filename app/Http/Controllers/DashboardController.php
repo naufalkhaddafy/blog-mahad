@@ -24,26 +24,35 @@ class DashboardController extends Controller
         $today = Carbon::today()->toDateString();
         $weekAgo = Carbon::now()->subDays(7)->toDateString();
 
+        // Period filter (1d, 7d, 30d, 365d)
+        $period = $request->input('period', '7d');
+        $periodDays = match ($period) {
+            '1d' => 1,
+            '30d' => 30,
+            '365d' => 365,
+            default => 7,
+        };
+        $periodStart = Carbon::now()->subDays($periodDays)->toDateString();
+
         $visitsToday = PageVisit::where('visited_date', $today)->count();
         $visitsWeek = PageVisit::where('visited_date', '>=', $weekAgo)->count();
         $visitsTotal = PageVisit::count();
 
-        // Top 5 halaman paling banyak dikunjungi (7 hari terakhir)
-        $topPages = PageVisit::where('visited_date', '>=', $weekAgo)
+        // Top 5 halaman paling banyak dikunjungi (berdasarkan period)
+        $topPages = PageVisit::where('visited_date', '>=', $periodStart)
             ->selectRaw('url, count(*) as total_views')
             ->groupBy('url')
             ->orderByDesc('total_views')
             ->limit(5)
             ->get()
             ->map(function ($item) {
-                // Ambil path saja dari full URL agar lebih ringkas
                 $parsed = parse_url($item->url);
                 $item->path = $parsed['path'] ?? '/';
                 return $item;
             });
 
-        // Data kunjungan 7 hari terakhir untuk chart
-        $dailyVisits = PageVisit::where('visited_date', '>=', $weekAgo)
+        // Data kunjungan untuk chart (berdasarkan period)
+        $dailyVisits = PageVisit::where('visited_date', '>=', $periodStart)
             ->selectRaw('visited_date, count(*) as total_views')
             ->groupBy('visited_date')
             ->orderBy('visited_date')
@@ -59,6 +68,7 @@ class DashboardController extends Controller
             'visitsTotal' => $visitsTotal,
             'topPages' => $topPages,
             'dailyVisits' => $dailyVisits,
+            'period' => $period,
         ]);
     }
 }

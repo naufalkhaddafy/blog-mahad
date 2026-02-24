@@ -2,7 +2,7 @@ import Heading from '@/components/heading';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
     Activity,
     Airplay,
@@ -71,6 +71,7 @@ export default function Dashboard({
     visitsTotal,
     topPages,
     dailyVisits,
+    period = '7d',
 }: {
     posts: number;
     banner: number;
@@ -81,6 +82,7 @@ export default function Dashboard({
     visitsTotal: number;
     topPages: TopPage[];
     dailyVisits: DailyVisit[];
+    period?: string;
 }) {
     const stats = [
         {
@@ -152,6 +154,19 @@ export default function Dashboard({
         return date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
     };
 
+    const periodOptions = [
+        { value: '1d', label: '1D' },
+        { value: '7d', label: '1W' },
+        { value: '30d', label: '1M' },
+        { value: '365d', label: '1Y' },
+    ];
+
+    const periodLabel = periodOptions.find((p) => p.value === period)?.label ?? '1W';
+
+    const handlePeriodChange = (value: string) => {
+        router.get('/dashboard', { period: value }, { preserveState: true, preserveScroll: true });
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard Admin" />
@@ -192,6 +207,24 @@ export default function Dashboard({
                 </div>
 
                 {/* Chart & Top Pages Section */}
+                <div className="flex items-center justify-between">
+                    <Heading title="Grafik & Halaman Populer" description="Analisis kunjungan website" />
+                    <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
+                        {periodOptions.map((opt) => (
+                            <button
+                                key={opt.value}
+                                onClick={() => handlePeriodChange(opt.value)}
+                                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${
+                                    period === opt.value
+                                        ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
+                                        : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+                                }`}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 <div className="grid gap-8 lg:grid-cols-2">
                     {/* Daily Visits Bar Chart */}
                     <div className="space-y-4">
@@ -201,27 +234,26 @@ export default function Dashboard({
                                     <BarChart3 className="size-4" />
                                 </div>
                                 <div>
-                                    <CardTitle className="text-base font-semibold">Kunjungan 7 Hari Terakhir</CardTitle>
-                                    <p className="text-xs text-muted-foreground">Grafik harian unique pageviews</p>
+                                    <CardTitle className="text-base font-semibold">Kunjungan Harian</CardTitle>
+                                    <p className="text-xs text-muted-foreground">Grafik unique pageviews</p>
                                 </div>
                             </CardHeader>
                             <CardContent className="pt-4">
                                 {dailyVisits.length > 0 ? (
-                                    <div className="flex items-end gap-2" style={{ minHeight: 180 }}>
+                                    <div className="flex items-end gap-2" style={{ height: 200 }}>
                                         {dailyVisits.map((day, i) => {
-                                            const heightPercent = (day.total_views / maxDailyViews) * 100;
+                                            const maxBarHeight = 160;
+                                            const barHeight = maxDailyViews > 0
+                                                ? Math.max((day.total_views / maxDailyViews) * maxBarHeight, 8)
+                                                : 8;
                                             return (
-                                                <div key={i} className="group relative flex flex-1 flex-col items-center gap-1">
-                                                    {/* Tooltip on hover */}
-                                                    <span className="pointer-events-none absolute -top-8 rounded-md bg-slate-800 px-2 py-1 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                                                <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1" style={{ height: '100%' }}>
+                                                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                                                         {day.total_views}
                                                     </span>
                                                     <div
                                                         className="w-full rounded-t-lg bg-linear-to-t from-cyan-500 to-blue-500 transition-all duration-300 group-hover:from-cyan-400 group-hover:to-blue-400"
-                                                        style={{
-                                                            height: `${Math.max(heightPercent, 6)}%`,
-                                                            minHeight: 10,
-                                                        }}
+                                                        style={{ height: barHeight }}
                                                     />
                                                     <span className="text-[10px] text-muted-foreground">
                                                         {formatDate(day.visited_date)}
@@ -250,7 +282,7 @@ export default function Dashboard({
                                 </div>
                                 <div>
                                     <CardTitle className="text-base font-semibold">Halaman Populer</CardTitle>
-                                    <p className="text-xs text-muted-foreground">Top 5 halaman paling banyak dikunjungi (7 hari terakhir)</p>
+                                    <p className="text-xs text-muted-foreground">Top 5 halaman paling banyak dikunjungi</p>
                                 </div>
                             </CardHeader>
                             <CardContent className="pt-4">
