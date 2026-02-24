@@ -18,6 +18,7 @@ import {
     Settings,
     TrendingUp,
 } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -161,10 +162,16 @@ export default function Dashboard({
         { value: '365d', label: '1Y' },
     ];
 
-    const periodLabel = periodOptions.find((p) => p.value === period)?.label ?? '1W';
+    const [loading, setLoading] = useState(false);
 
     const handlePeriodChange = (value: string) => {
-        router.get('/dashboard', { period: value }, { preserveState: true, preserveScroll: true });
+        if (value === period) return;
+        setLoading(true);
+        router.get('/dashboard', { period: value }, {
+            preserveScroll: true,
+            only: ['topPages', 'dailyVisits', 'period'],
+            onFinish: () => setLoading(false),
+        });
     };
 
     return (
@@ -225,7 +232,12 @@ export default function Dashboard({
                         ))}
                     </div>
                 </div>
-                <div className="grid gap-8 lg:grid-cols-2">
+                <div className="relative grid gap-8 lg:grid-cols-2">
+                    {loading && (
+                        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/60 backdrop-blur-sm dark:bg-slate-900/60">
+                            <div className="size-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-500" />
+                        </div>
+                    )}
                     {/* Daily Visits Bar Chart */}
                     <div className="space-y-4">
                         <Card className="overflow-hidden border-none shadow-lg">
