@@ -11,20 +11,22 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
 import { CirclePlus, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 import { UserParams } from '../Index';
 
-export const ModalFormUser = ({ user }: { user?: UserParams }) => {
+export const ModalFormUser = ({ user, roles = [] }: { user?: UserParams; roles?: string[] }) => {
     const [open, setOpen] = useState<boolean>(false);
 
-    const { setData, errors, post, patch, processing, reset } = useForm({
+    const { data, setData, errors, post, patch, processing, reset } = useForm({
         name: user?.name || '',
         email: user?.email || '',
         username: user?.username || '',
         password: '',
         password_confirmation: '',
+        role: user?.role || (roles.length > 0 ? roles[0] : ''),
     });
 
     const submit = (e: React.FormEvent) => {
@@ -100,6 +102,26 @@ export const ModalFormUser = ({ user }: { user?: UserParams }) => {
                                 onChange={(e) => setData('email', e.target.value)}
                             />
                             <InputError message={errors.email} className="mt-2" />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="role" className="text-right">
+                            Role
+                        </Label>
+                        <div className="col-span-3">
+                            <Select value={data.role} onValueChange={(value) => setData('role', value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Pilih role" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {roles.map((role) => (
+                                        <SelectItem key={role} value={role}>
+                                            {role}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={errors.role} className="mt-2" />
                         </div>
                     </div>
                     {user && (

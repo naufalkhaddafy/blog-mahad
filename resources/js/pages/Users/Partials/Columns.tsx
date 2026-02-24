@@ -64,6 +64,25 @@ export const columns: ColumnDef<UserParams>[] = [
         cell: ({ row }) => <div>{row.getValue('email')}</div>,
     },
     {
+        accessorKey: 'role',
+        header: 'Role',
+        cell: ({ row }) => {
+            const role = row.getValue('role') as string;
+            const isSuperAdmin = role === 'super-admin';
+            return (
+                <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                        isSuperAdmin
+                            ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
+                            : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                    }`}
+                >
+                    {role}
+                </span>
+            );
+        },
+    },
+    {
         accessorKey: 'posts_count',
         header: 'Postingan',
         cell: ({ row }) => <div>{row.getValue('posts_count')}</div>,
@@ -71,8 +90,9 @@ export const columns: ColumnDef<UserParams>[] = [
     {
         id: 'actions',
         enableHiding: false,
-        cell: ({ row }) => {
+        cell: ({ row, table }) => {
             const user = row.original;
+            const roles = (table.options.meta as any)?.roles ?? [];
 
             return (
                 <DropdownMenu>
@@ -85,7 +105,7 @@ export const columns: ColumnDef<UserParams>[] = [
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            <ModalFormUser user={user} />
+                            <ModalFormUser user={user} roles={roles} />
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <ModalDeleteUser user={user} />

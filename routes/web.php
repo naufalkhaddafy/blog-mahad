@@ -44,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('tag', TagController::class)->except('show', 'edit', 'create');
     Route::resource('banner', BannerController::class)->except('show', 'edit', 'create');
     Route::post('/banner/reorder', [BannerController::class, 'reorder'])->name('banner.reorder');
-    Route::resource('users', UserController::class)->except('create', 'show', 'edit');
+    Route::resource('users', UserController::class)->except('create', 'show', 'edit')->middleware('role:super-admin');
     Route::resource('channels', ChannelController::class)->except('create', 'show', 'edit');
     Route::post('/channels/change-status', [ChannelController::class, 'status'])->name('channel.change.status');
 });

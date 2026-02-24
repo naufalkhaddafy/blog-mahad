@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user(),
+                'roles' => $request->user() ? $request->user()->getRoleNames() : [],
             ],
             'flash_message' => session('flash_message'),
             'radio_live' => Channel::where('status', 'live')->exists() ?? false,

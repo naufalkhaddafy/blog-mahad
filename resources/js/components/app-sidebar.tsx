@@ -9,8 +9,8 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import {
     Airplay,
     AudioLines,
@@ -77,6 +77,9 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage<SharedData>().props;
+    const isSuperAdmin = auth.roles?.includes('super-admin');
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -98,7 +101,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                {isSuperAdmin && <NavFooter items={footerNavItems} className="mt-auto" />}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

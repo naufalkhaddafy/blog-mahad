@@ -14,10 +14,12 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::with('posts')->get();
+        $user = User::with('posts', 'roles')->get();
+        $roles = \Spatie\Permission\Models\Role::all()->pluck('name');
 
         return Inertia('Users/Index', [
             "users" => UserResource::collection($user),
+            "roles" => $roles,
         ]);
     }
 
@@ -38,10 +40,12 @@ class UserController extends Controller
             'name' => "required|max:255",
             'username' => 'filled|required|max:255|unique:users,username,except,id',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|confirmed|min:8'
+            'password' => 'required|confirmed|min:8',
+            'role' => 'required|string|exists:roles,name',
         ]);
 
-        User::create($validate);
+        $user = User::create($validate);
+        $user->assignRole($request->role);
 
         flashMessage("Success", "Berhasil menambahkan pengguna");
 
@@ -73,6 +77,7 @@ class UserController extends Controller
             'name' => "required|max:255",
             'username' => 'filled|required|max:255|unique:users,username,' . $user->id,
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'role' => 'required|string|exists:roles,name',
         ]);
 
         $validatePw = [];
@@ -86,6 +91,7 @@ class UserController extends Controller
         }
 
         $user->update($validate);
+        $user->syncRoles([$request->role]);
 
         flashMessage("Success", "Berhasil merubah data pengguna");
 

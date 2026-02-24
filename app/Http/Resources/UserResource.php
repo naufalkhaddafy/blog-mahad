@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             "username" => $this->username,
             "email" => $this->email,
             "posts_count" => count($this->posts),
+            "role" => $this->roles->first()?->name ?? '-',
         ];
     }
 }

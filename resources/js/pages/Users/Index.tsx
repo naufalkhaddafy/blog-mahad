@@ -11,9 +11,10 @@ export type UserParams = {
     email: string;
     username: string;
     posts_count: number;
+    role: string;
 };
 
-const Index = ({ users }: { users: UserParams[] }) => {
+const Index = ({ users, roles }: { users: UserParams[]; roles: string[] }) => {
     return (
         <AppLayout>
             <Head title="Manajemen User" />
@@ -22,9 +23,9 @@ const Index = ({ users }: { users: UserParams[] }) => {
                 <div className="max-w-5xl">
                     <div className="w-full rounded-xl border p-4 shadow xl:col-span-4">
                         <div className="pb-7">
-                            <ModalFormUser />
+                            <ModalFormUser roles={roles} />
                         </div>
-                        <DataTable columns={columns} data={users} />
+                        <DataTable columns={columns} data={users} meta={{ roles }} />
                     </div>
                 </div>
             </div>
