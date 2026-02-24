@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             "posts_count" => count($this->posts),
             "role" => $this->roles->first()?->name ?? '-',
             "last_login_at" => $this->last_login_at?->diffForHumans(),
+            "is_suspended" => $this->isSuspended(),
         ];
     }
 }

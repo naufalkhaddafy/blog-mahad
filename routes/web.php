@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('banner', BannerController::class)->except('show', 'edit', 'create');
     Route::post('/banner/reorder', [BannerController::class, 'reorder'])->name('banner.reorder');
     Route::resource('users', UserController::class)->except('create', 'show', 'edit')->middleware('role:super-admin');
+    Route::post('/users/{user}/toggle-suspend', [UserController::class, 'toggleSuspend'])->name('users.toggle-suspend')->middleware('role:super-admin');
     Route::resource('channels', ChannelController::class)->except('create', 'show', 'edit');
     Route::post('/channels/change-status', [ChannelController::class, 'status'])->name('channel.change.status');
 });

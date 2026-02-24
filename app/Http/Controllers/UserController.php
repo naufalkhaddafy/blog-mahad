@@ -115,4 +115,24 @@ class UserController extends Controller
 
         return back();
     }
+
+    /**
+     * Toggle suspend/unsuspend user.
+     */
+    public function toggleSuspend(User $user)
+    {
+        if ($user->hasRole('super-admin')) {
+            return back()->withErrors(['error' => 'Super Admin tidak bisa dinonaktifkan']);
+        }
+
+        if ($user->isSuspended()) {
+            $user->update(['suspended_at' => null]);
+            flashMessage("Success", "Pengguna {$user->name} berhasil diaktifkan kembali");
+        } else {
+            $user->update(['suspended_at' => now()]);
+            flashMessage("Success", "Pengguna {$user->name} berhasil dinonaktifkan");
+        }
+
+        return back();
+    }
 }

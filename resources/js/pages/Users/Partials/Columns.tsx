@@ -14,6 +14,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 import { UserParams } from '../Index';
 import { ModalDeleteUser, ModalFormUser } from './ModalUser';
+import { router } from '@inertiajs/react';
+import { Switch } from '@/components/ui/switch';
 
 export const columns: ColumnDef<UserParams>[] = [
     {
@@ -51,7 +53,21 @@ export const columns: ColumnDef<UserParams>[] = [
                 </Button>
             );
         },
-        cell: ({ row }) => <div className="px-2">{row.getValue('name')}</div>,
+        cell: ({ row }) => {
+            const user = row.original;
+            return (
+                <div className="flex items-center gap-2 px-2">
+                    <span className={user.is_suspended ? 'line-through opacity-50' : ''}>
+                        {row.getValue('name')}
+                    </span>
+                    {user.is_suspended && (
+                        <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                            Nonaktif
+                        </span>
+                    )}
+                </div>
+            );
+        },
     },
     {
         accessorKey: 'username',
@@ -113,6 +129,26 @@ export const columns: ColumnDef<UserParams>[] = [
         },
     },
     {
+        id: 'status',
+        header: 'Status',
+        cell: ({ row }) => {
+            const user = row.original;
+            const isSuperAdmin = user.role === 'super-admin';
+            return (
+                <div className="flex items-center gap-2">
+                    <Switch
+                        checked={!user.is_suspended}
+                        disabled={isSuperAdmin}
+                        onCheckedChange={() => router.post(`/users/${user.id}/toggle-suspend`, {}, { preserveScroll: true })}
+                    />
+                    <span className={`text-xs font-medium ${user.is_suspended ? 'text-red-500' : 'text-emerald-600'}`}>
+                        {user.is_suspended ? 'Nonaktif' : 'Aktif'}
+                    </span>
+                </div>
+            );
+        },
+    },
+    {
         id: 'actions',
         enableHiding: false,
         cell: ({ row, table }) => {
@@ -132,6 +168,7 @@ export const columns: ColumnDef<UserParams>[] = [
                         <DropdownMenuItem asChild>
                             <ModalFormUser user={user} roles={roles} />
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                             <ModalDeleteUser user={user} />
                         </DropdownMenuItem>

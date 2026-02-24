@@ -13,6 +13,7 @@ export type UserParams = {
     posts_count: number;
     role: string;
     last_login_at: string | null;
+    is_suspended: boolean;
 };
 
 const Index = ({ users, roles }: { users: UserParams[]; roles: string[] }) => {
