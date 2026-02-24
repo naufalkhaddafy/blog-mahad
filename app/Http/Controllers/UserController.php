@@ -44,8 +44,8 @@ class UserController extends Controller
             'role' => 'required|string|exists:roles,name',
         ]);
 
-        $user = User::create($validate);
-        $user->assignRole($request->role);
+        $user = User::create(collect($validate)->except('role')->toArray());
+        $user->assignRole($validate['role']);
 
         flashMessage("Success", "Berhasil menambahkan pengguna");
 
@@ -90,8 +90,8 @@ class UserController extends Controller
             $validate['password'] = $validatePw['password'];
         }
 
-        $user->update($validate);
-        $user->syncRoles([$request->role]);
+        $user->update(collect($validate)->except('role')->toArray());
+        $user->syncRoles([$validate['role']]);
 
         flashMessage("Success", "Berhasil merubah data pengguna");
 
