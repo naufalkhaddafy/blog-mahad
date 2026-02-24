@@ -26,6 +26,10 @@ class PostController extends Controller
             $query->where('status', '=', $request->status);
         }
 
+        if ($request->filled('user')) {
+            $query->where('user_id', $request->user);
+        }
+
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
@@ -41,7 +45,7 @@ class PostController extends Controller
 
         return inertia('Posts/Index', [
             'posts' => PostResource::collection($posts),
-            'filters' => $request->only(['status', 'date_from', 'date_to', 'per_page']),
+            'filters' => $request->only(['status', 'date_from', 'date_to', 'per_page', 'user']),
         ]);
     }
 

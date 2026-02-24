@@ -85,7 +85,32 @@ export const columns: ColumnDef<UserParams>[] = [
     {
         accessorKey: 'posts_count',
         header: 'Postingan',
-        cell: ({ row }) => <div>{row.getValue('posts_count')}</div>,
+        cell: ({ row }) => {
+            const count = row.getValue('posts_count') as number;
+            const user = row.original;
+            return count > 0 ? (
+                <a
+                    href={`/posts?user=${user.id}`}
+                    className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50"
+                >
+                    {count} post
+                </a>
+            ) : (
+                <span className="text-sm text-muted-foreground">0</span>
+            );
+        },
+    },
+    {
+        accessorKey: 'last_login_at',
+        header: 'Login Terakhir',
+        cell: ({ row }) => {
+            const lastLogin = row.getValue('last_login_at') as string | null;
+            return (
+                <span className="text-sm text-muted-foreground">
+                    {lastLogin ?? 'Belum pernah'}
+                </span>
+            );
+        },
     },
     {
         id: 'actions',

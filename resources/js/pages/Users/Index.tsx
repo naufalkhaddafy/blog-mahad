@@ -12,6 +12,7 @@ export type UserParams = {
     username: string;
     posts_count: number;
     role: string;
+    last_login_at: string | null;
 };
 
 const Index = ({ users, roles }: { users: UserParams[]; roles: string[] }) => {
