@@ -12,12 +12,14 @@ import {
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
+    Activity,
     Airplay,
     AudioLines,
     FolderTree,
     LayoutGrid,
     Newspaper,
     Radio,
+    Server,
     Tags,
     Users,
 } from 'lucide-react';
@@ -68,6 +70,19 @@ const radioMenu: NavItem[] = [
     },
 ];
 
+const systemMenu: NavItem[] = [
+    {
+        title: 'Visitor Stats',
+        url: '/visitors',
+        icon: Activity,
+    },
+    {
+        title: 'System Logs',
+        url: '/log',
+        icon: Server,
+    },
+];
+
 const footerNavItems: NavItem[] = [
     {
         title: 'Manajemen User',
@@ -98,6 +113,7 @@ export function AppSidebar() {
                 <NavMain items={mainNavItems} title="Platform" />
                 <NavMain items={Blog} title="Blog" />
                 <NavMain items={radioMenu} title="Radio" />
+                <NavMain items={systemMenu} title="Sistem" />
             </SidebarContent>
 
             <SidebarFooter>

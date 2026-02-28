@@ -38,6 +38,8 @@ Route::get('/api/search', [BlogController::class, 'search'])->name('api.search')
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+    Route::get('visitors', [\App\Http\Controllers\MonitoringController::class, 'visitors'])->name('monitoring.visitors');
+    Route::get('log', [\App\Http\Controllers\MonitoringController::class, 'logs'])->name('monitoring.logs');
     Route::resource('category', CategoryController::class)->except('show', 'edit', 'create');
     Route::post('/posts/autosave/{post?}', [PostController::class, 'autosave'])->name('posts.autosave');
     Route::resource('posts', PostController::class);
