@@ -489,7 +489,7 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                                             <TableCell>
                                                 {visit.referer ? (
                                                     <div className="max-w-[200px] truncate whitespace-nowrap text-xs text-muted-foreground" title={visit.referer}>
-                                                        {visit.referer.length > 30 ? visit.referer.substring(0, 30) + '...' : visit.referer}
+                                                        {visit.referer.length > 30 ? visit.referer.substring(0, 60) + '...' : visit.referer}
                                                     </div>
                                                 ) : (
                                                     <span className="text-xs text-muted-foreground opacity-50">-</span>

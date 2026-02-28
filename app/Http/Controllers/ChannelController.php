@@ -79,4 +79,30 @@ class ChannelController extends Controller
 
         return back();
     }
+
+    public function liveStream()
+    {
+        $dataChannel = Channel::whereIn('status', [\App\Enums\ChannelStatus::Live])->get();
+
+        $includeStats = $dataChannel->map(function ($channel) {
+            $keyName = \Illuminate\Support\Str::slug($channel->name);
+            $keyRedisChannel = "shoutcast:channel:{$keyName}:last_data";
+            $cachedData = \Illuminate\Support\Facades\Redis::get($keyRedisChannel);
+
+            if ($cachedData) {
+                $data = json_decode($cachedData, true);
+            }
+
+            return [
+                ...$data ?? [],
+                'channel_name' => $channel->name,
+                'channel_url' => $channel->url,
+                'channel_image' => $channel->image,
+            ];
+        });
+
+        return Inertia::render('monitoring/live-stream', [
+            'channels' => $includeStats,
+        ]);
+    }
 }

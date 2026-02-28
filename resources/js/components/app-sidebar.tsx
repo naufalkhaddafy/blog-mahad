@@ -65,7 +65,7 @@ const radioMenu: NavItem[] = [
     },
     {
         title: 'Live Stream',
-        url: '',
+        url: '/radio/live-stream',
         icon: AudioLines,
     },
 ];
