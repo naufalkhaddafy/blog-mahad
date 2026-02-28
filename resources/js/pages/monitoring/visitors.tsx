@@ -286,7 +286,7 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                                                             title={`Views: ${day.total_views}`}
                                                         />
                                                     </div>
-                                                    <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-center mt-2 border-t pt-1 border-transparent group-hover:border-border/50 transition-colors">
+                                                    <span className="text-[10px] text-muted-foreground w-full text-center mt-2 border-t pt-1 border-transparent group-hover:border-border/50 transition-colors">
                                                         {new Date(day.visited_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                                                     </span>
                                                 </div>
@@ -376,7 +376,7 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                                                                     />
                                                                 </div>
                                                             </div>
-                                                            <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-center mt-2 border-t pt-1 border-transparent group-hover:border-border/50 transition-colors">
+                                                            <span className="text-[10px] text-muted-foreground w-full text-center mt-2 border-t pt-1 border-transparent group-hover:border-border/50 transition-colors break-words">
                                                                 {new Date(day.visited_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                                                             </span>
                                                         </div>
