@@ -144,6 +144,7 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
     } : undefined;
 
     const [date, setDate] = useState<DateRange | undefined>(initialDateRange);
+    const [activeTab, setActiveTab] = useState<'device' | 'browser'>('device');
 
     const handleFilter = (range: DateRange | undefined) => {
         setDate(range);
@@ -200,17 +201,69 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                     ))}
                 </div>
 
-                <div className="relative grid gap-8 lg:grid-cols-2">
-                    {/* Daily Visits Bar Chart */}
-                    <div className="space-y-4">
+                <div className="relative grid gap-8 lg:grid-cols-3">
+                    {/* Kolom Kiri: Halaman Populer */}
+                    <div className="space-y-4 lg:col-span-1">
+                        <Card className="overflow-hidden border-none shadow-lg h-full">
+                            <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                                <div className="rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 p-2 text-white shadow-lg">
+                                    <BarChart className="size-4" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base font-semibold">Halaman Populer</CardTitle>
+                                    <p className="text-xs text-muted-foreground">Berdasarkan rentang tanggal</p>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="pt-4">
+                                {topPages.length > 0 ? (
+                                    <div className="space-y-3 flex flex-col justify-between h-full">
+                                        <div className="space-y-4">
+                                            {topPages.map((page, index) => {
+                                                const widthPercent = topPages[0]?.total_views
+                                                    ? (page.total_views / topPages[0].total_views) * 100
+                                                    : 0;
+                                                return (
+                                                    <div key={index} className="group space-y-1.5">
+                                                        <div className="flex items-center justify-between text-sm">
+                                                            <span className="max-w-[70%] truncate font-medium" title={page.path}>
+                                                                {page.path === '/' ? 'Beranda' : page.path}
+                                                            </span>
+                                                            <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                                                                {page.total_views} views
+                                                            </span>
+                                                        </div>
+                                                        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                                            <div
+                                                                className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500"
+                                                                style={{ width: `${widthPercent}%` }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground">
+                                        <Activity className="mb-3 size-10 opacity-20" />
+                                        <p className="text-sm">Belum ada data halaman populer.</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Kolom Kanan: Chart Kunjungan & Grafik Demografi */}
+                    <div className="space-y-8 flex flex-col items-stretch lg:col-span-2">
+                        {/* Chart 1: Kunjungan Halaman (Atas) */}
                         <Card className="overflow-hidden border-none shadow-lg">
                             <CardHeader className="flex flex-row items-center gap-2 pb-2">
-                                <div className="rounded-lg bg-linear-to-br from-cyan-500 to-blue-600 p-2 text-white shadow-lg">
+                                <div className="rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 p-2 text-white shadow-lg">
                                     <Activity className="size-4" />
                                 </div>
                                 <div>
                                     <CardTitle className="text-base font-semibold">Trafik Kunjungan (Filter: {filters.start_date ? `${filters.start_date} s/d ${filters.end_date}` : 'Semua Data'})</CardTitle>
-                                    <p className="text-xs text-muted-foreground">Grafik unique pageviews</p>
+                                    <p className="text-xs text-muted-foreground">Grafik unique pageviews per hari</p>
                                 </div>
                             </CardHeader>
                             <CardContent className="pt-4">
@@ -218,27 +271,19 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                                     <div className="flex items-end gap-1 overflow-x-auto sm:gap-2" style={{ height: 200 }}>
                                         {dailyVisits.map((day, i) => {
                                             const maxBarHeight = 160;
-                                            const mobileHeight = maxDailyViews > 0
-                                                ? Math.max((day.mobile_views / maxDailyViews) * maxBarHeight, 4)
-                                                : 4;
-                                            const desktopHeight = maxDailyViews > 0
-                                                ? Math.max((day.desktop_views / maxDailyViews) * maxBarHeight, 4)
+                                            const height = maxDailyViews > 0
+                                                ? Math.max((day.total_views / maxDailyViews) * maxBarHeight, 4)
                                                 : 4;
                                             return (
-                                                <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1 min-w-[40px]" style={{ height: '100%' }}>
+                                                <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1 min-w-[30px]" style={{ height: '100%' }}>
                                                     <div className="flex gap-1 items-end w-full justify-center">
                                                         <div
-                                                            className="w-1/2 max-w-[12px] rounded-t-sm bg-blue-500 opacity-80 transition-all hover:opacity-100"
-                                                            style={{ height: desktopHeight }}
-                                                            title={`Desktop: ${day.desktop_views}`}
-                                                        />
-                                                        <div
-                                                            className="w-1/2 max-w-[12px] rounded-t-sm bg-emerald-500 opacity-80 transition-all hover:opacity-100"
-                                                            style={{ height: mobileHeight }}
-                                                            title={`Mobile: ${day.mobile_views}`}
+                                                            className="w-full max-w-[30px] rounded-t-sm bg-blue-500 opacity-80 transition-all hover:opacity-100 group-hover:bg-blue-600"
+                                                            style={{ height }}
+                                                            title={`Views: ${day.total_views}`}
                                                         />
                                                     </div>
-                                                    <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
+                                                    <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-center mt-2 border-t pt-1 border-transparent group-hover:border-border/50 transition-colors">
                                                         {new Date(day.visited_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                                                     </span>
                                                 </div>
@@ -254,102 +299,117 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                             </CardContent>
                         </Card>
 
-                        {/* Browser & Device Stats */}
-                        <Card className="overflow-hidden border-none shadow-lg">
-                            <CardHeader className="flex flex-row items-center gap-2 pb-2">
-                                <div className="rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 p-2 text-white shadow-lg">
-                                    <MonitorPlay className="size-4" />
+                        {/* Chart 2: Data Device & Detail Browser (Bawah, Dalam Tab) */}
+                        <Card className="overflow-hidden border-none shadow-lg flex-1 flex flex-col">
+                            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/50">
+                                <div className="flex flex-row items-center gap-2">
+                                    <div className="rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 p-2 text-white shadow-lg">
+                                        <MonitorPlay className="size-4" />
+                                    </div>
+                                    <div>
+                                        <CardTitle className="text-base font-semibold">Demografi Pengunjung</CardTitle>
+                                        <p className="text-xs text-muted-foreground">Statistik Pilihan Pengguna</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <CardTitle className="text-base font-semibold">Statistik Browser & Perangkat</CardTitle>
-                                    <p className="text-xs text-muted-foreground">Berdasarkan data kunjungan terkini</p>
+                                <div className="inline-flex h-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 p-1 text-slate-500 sm:w-auto w-full">
+                                    <button 
+                                        onClick={() => setActiveTab('device')} 
+                                        className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all ${activeTab === 'device' ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-950 dark:text-slate-50' : 'hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+                                    >
+                                        Perangkat
+                                    </button>
+                                    <button 
+                                        onClick={() => setActiveTab('browser')} 
+                                        className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all ${activeTab === 'browser' ? 'bg-white text-slate-950 shadow-sm dark:bg-slate-950 dark:text-slate-50' : 'hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+                                    >
+                                        Browser
+                                    </button>
                                 </div>
                             </CardHeader>
-                            <CardContent className="pt-4 grid sm:grid-cols-2 gap-6">
-                                {/* Device Split */}
-                                <div className="space-y-3">
-                                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Perangkat</h4>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="size-3 rounded-full bg-blue-500" />
-                                            <span className="text-sm font-semibold">Desktop</span>
-                                        </div>
-                                        <span className="text-sm">
-                                            {dailyVisits.reduce((acc, curr) => acc + curr.desktop_views, 0)} views
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="size-3 rounded-full bg-emerald-500" />
-                                            <span className="text-sm font-semibold">Mobile</span>
-                                        </div>
-                                        <span className="text-sm">
-                                            {dailyVisits.reduce((acc, curr) => acc + curr.mobile_views, 0)} views
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Top Browsers */}
-                                <div className="space-y-3">
-                                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Top Browser</h4>
-                                    {browserStats.length > 0 ? (
-                                        browserStats.slice(0, 4).map((b, i) => (
-                                            <div key={i} className="flex items-center justify-between">
-                                                <span className="text-sm font-medium truncate pr-2" title={b.browser}>{b.browser}</span>
-                                                <span className="text-sm text-muted-foreground shrink-0">{b.total}</span>
+                            <CardContent className="pt-6 grow">
+                                {activeTab === 'device' && (
+                                    <div className="space-y-4">
+                                        {/* Legend */}
+                                        <div className="flex items-center justify-end gap-4 mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <div className="size-3 rounded-full bg-blue-500" />
+                                                <span className="text-sm font-medium">Desktop ({dailyVisits.reduce((acc, curr) => acc + curr.desktop_views, 0)})</span>
                                             </div>
-                                        ))
-                                    ) : (
-                                        <span className="text-sm text-muted-foreground">Belum ada data</span>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="size-3 rounded-full bg-emerald-500" />
+                                                <span className="text-sm font-medium">Mobile ({dailyVisits.reduce((acc, curr) => acc + curr.mobile_views, 0)})</span>
+                                            </div>
+                                        </div>
 
-                    {/* Top Halaman Populer */}
-                    <div className="space-y-4">
-                        <Card className="overflow-hidden border-none shadow-lg">
-                            <CardHeader className="flex flex-row items-center gap-2 pb-2">
-                                <div className="rounded-lg bg-linear-to-br from-violet-500 to-purple-600 p-2 text-white shadow-lg">
-                                    <BarChart className="size-4" />
-                                </div>
-                                <div>
-                                    <CardTitle className="text-base font-semibold">Halaman Populer</CardTitle>
-                                    <p className="text-xs text-muted-foreground">Otomatis dihitung berdasarkan rentang tanggal</p>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="pt-4">
-                                {topPages.length > 0 ? (
-                                    <div className="space-y-3">
-                                        {topPages.map((page, index) => {
-                                            const widthPercent = topPages[0]?.total_views
-                                                ? (page.total_views / topPages[0].total_views) * 100
-                                                : 0;
-                                            return (
-                                                <div key={index} className="group space-y-1">
-                                                    <div className="flex items-center justify-between text-sm">
-                                                        <span className="max-w-[70%] truncate font-medium" title={page.path}>
-                                                            {page.path === '/' ? 'Beranda' : page.path}
-                                                        </span>
-                                                        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                                                            {page.total_views} views
-                                                        </span>
-                                                    </div>
-                                                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                                                        <div
-                                                            className="h-full rounded-full bg-linear-to-r from-violet-500 to-purple-500 transition-all duration-500"
-                                                            style={{ width: `${widthPercent}%` }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                                        {/* 2-bar per day chart */}
+                                        {dailyVisits.length > 0 ? (
+                                            <div className="flex items-end gap-1 overflow-x-auto sm:gap-2" style={{ height: 200 }}>
+                                                {dailyVisits.map((day, i) => {
+                                                    const maxBarHeight = 160;
+                                                    const maxDeviceViews = Math.max(...dailyVisits.map(d => Math.max(d.desktop_views, d.mobile_views))) || 1;
+                                                    const mobileHeight = Math.max((day.mobile_views / maxDeviceViews) * maxBarHeight, 4);
+                                                    const desktopHeight = Math.max((day.desktop_views / maxDeviceViews) * maxBarHeight, 4);
+                                                    return (
+                                                        <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1 min-w-[40px]" style={{ height: '100%' }}>
+                                                            <div className="flex gap-[2px] items-end w-full justify-center">
+                                                                <div
+                                                                    className="w-1/2 max-w-[14px] rounded-t-sm bg-blue-500 opacity-80 transition-all hover:opacity-100 group-hover:bg-blue-600 group-hover:opacity-100"
+                                                                    style={{ height: desktopHeight }}
+                                                                    title={`Desktop: ${day.desktop_views}`}
+                                                                />
+                                                                <div
+                                                                    className="w-1/2 max-w-[14px] rounded-t-sm bg-emerald-500 opacity-80 transition-all hover:opacity-100 group-hover:bg-emerald-600 group-hover:opacity-100"
+                                                                    style={{ height: mobileHeight }}
+                                                                    title={`Mobile: ${day.mobile_views}`}
+                                                                />
+                                                            </div>
+                                                            <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-center mt-2 border-t pt-1 border-transparent group-hover:border-border/50 transition-colors">
+                                                                {new Date(day.visited_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                                                            </span>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground">
+                                                <MonitorPlay className="mb-3 size-10 opacity-20" />
+                                                <p className="text-sm">Belum ada data perangkat.</p>
+                                            </div>
+                                        )}
                                     </div>
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground">
-                                        <Activity className="mb-3 size-10 opacity-20" />
-                                        <p className="text-sm">Belum ada data halaman populer.</p>
+                                )}
+                                
+                                {activeTab === 'browser' && (
+                                    <div className="space-y-4 w-full pt-2">
+                                        {browserStats.length > 0 ? (
+                                            <div className="grid gap-6 sm:grid-cols-2">
+                                                {browserStats.map((b, i) => {
+                                                    const maxBrowserTotal = Math.max(...browserStats.map(bs => bs.total));
+                                                    const widthPercent = (b.total / maxBrowserTotal) * 100;
+                                                    return (
+                                                        <div key={i} className="group space-y-1.5">
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <span className="font-medium truncate pr-2" title={b.browser}>{b.browser}</span>
+                                                                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300 shrink-0">
+                                                                    {b.total} kunjungan
+                                                                </span>
+                                                            </div>
+                                                            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                                                <div
+                                                                    className="h-full rounded-full bg-gradient-to-r from-pink-500 to-rose-500 transition-all duration-500"
+                                                                    style={{ width: `${widthPercent}%` }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground">
+                                                <MonitorPlay className="mb-3 size-10 opacity-20" />
+                                                <p className="text-sm">Belum ada data browser.</p>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </CardContent>
