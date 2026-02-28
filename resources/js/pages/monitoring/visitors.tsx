@@ -43,6 +43,13 @@ interface TopPage {
 interface DailyVisit {
     visited_date: string;
     total_views: number;
+    mobile_views: number;
+    desktop_views: number;
+}
+
+interface BrowserStat {
+    browser: string;
+    total: number;
 }
 
 interface Visit {
@@ -50,6 +57,7 @@ interface Visit {
     url: string;
     ip_address: string;
     user_agent: string;
+    referer: string;
     created_at: string;
     user?: {
         name: string;
@@ -76,6 +84,7 @@ interface VisitorsProps {
     stats: Stat;
     dailyVisits: DailyVisit[];
     topPages: TopPage[];
+    browserStats: BrowserStat[];
     recentVisits: PaginatedVisits;
     filters: {
         start_date: string;
@@ -94,7 +103,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Visitors({ stats, dailyVisits, topPages, recentVisits, filters }: VisitorsProps) {
+export default function Visitors({ stats, dailyVisits, topPages, browserStats, recentVisits, filters }: VisitorsProps) {
     const statCards = [
         {
             title: 'Total View',
@@ -209,19 +218,26 @@ export default function Visitors({ stats, dailyVisits, topPages, recentVisits, f
                                     <div className="flex items-end gap-1 overflow-x-auto sm:gap-2" style={{ height: 200 }}>
                                         {dailyVisits.map((day, i) => {
                                             const maxBarHeight = 160;
-                                            const barHeight = maxDailyViews > 0
-                                                ? Math.max((day.total_views / maxDailyViews) * maxBarHeight, 8)
-                                                : 8;
+                                            const mobileHeight = maxDailyViews > 0
+                                                ? Math.max((day.mobile_views / maxDailyViews) * maxBarHeight, 4)
+                                                : 4;
+                                            const desktopHeight = maxDailyViews > 0
+                                                ? Math.max((day.desktop_views / maxDailyViews) * maxBarHeight, 4)
+                                                : 4;
                                             return (
-                                                <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1" style={{ height: '100%' }}>
-                                                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-                                                        {day.total_views}
-                                                    </span>
-                                                    <div
-                                                        className="w-full rounded-t-lg bg-linear-to-t from-cyan-500 to-blue-500 transition-all duration-300 group-hover:from-cyan-400 group-hover:to-blue-400"
-                                                        style={{ height: barHeight }}
-                                                        title={`Views: ${day.total_views}`}
-                                                    />
+                                                <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1 min-w-[40px]" style={{ height: '100%' }}>
+                                                    <div className="flex gap-1 items-end w-full justify-center">
+                                                        <div
+                                                            className="w-1/2 max-w-[12px] rounded-t-sm bg-blue-500 opacity-80 transition-all hover:opacity-100"
+                                                            style={{ height: desktopHeight }}
+                                                            title={`Desktop: ${day.desktop_views}`}
+                                                        />
+                                                        <div
+                                                            className="w-1/2 max-w-[12px] rounded-t-sm bg-emerald-500 opacity-80 transition-all hover:opacity-100"
+                                                            style={{ height: mobileHeight }}
+                                                            title={`Mobile: ${day.mobile_views}`}
+                                                        />
+                                                    </div>
                                                     <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
                                                         {new Date(day.visited_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                                                     </span>
@@ -235,6 +251,58 @@ export default function Visitors({ stats, dailyVisits, topPages, recentVisits, f
                                         <p className="text-sm">Belum ada data kunjungan.</p>
                                     </div>
                                 )}
+                            </CardContent>
+                        </Card>
+
+                        {/* Browser & Device Stats */}
+                        <Card className="overflow-hidden border-none shadow-lg">
+                            <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                                <div className="rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 p-2 text-white shadow-lg">
+                                    <MonitorPlay className="size-4" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base font-semibold">Statistik Browser & Perangkat</CardTitle>
+                                    <p className="text-xs text-muted-foreground">Berdasarkan data kunjungan terkini</p>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="pt-4 grid sm:grid-cols-2 gap-6">
+                                {/* Device Split */}
+                                <div className="space-y-3">
+                                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Perangkat</h4>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="size-3 rounded-full bg-blue-500" />
+                                            <span className="text-sm font-semibold">Desktop</span>
+                                        </div>
+                                        <span className="text-sm">
+                                            {dailyVisits.reduce((acc, curr) => acc + curr.desktop_views, 0)} views
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="size-3 rounded-full bg-emerald-500" />
+                                            <span className="text-sm font-semibold">Mobile</span>
+                                        </div>
+                                        <span className="text-sm">
+                                            {dailyVisits.reduce((acc, curr) => acc + curr.mobile_views, 0)} views
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Top Browsers */}
+                                <div className="space-y-3">
+                                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Top Browser</h4>
+                                    {browserStats.length > 0 ? (
+                                        browserStats.slice(0, 4).map((b, i) => (
+                                            <div key={i} className="flex items-center justify-between">
+                                                <span className="text-sm font-medium truncate pr-2" title={b.browser}>{b.browser}</span>
+                                                <span className="text-sm text-muted-foreground shrink-0">{b.total}</span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <span className="text-sm text-muted-foreground">Belum ada data</span>
+                                    )}
+                                </div>
                             </CardContent>
                         </Card>
                     </div>
@@ -312,6 +380,7 @@ export default function Visitors({ stats, dailyVisits, topPages, recentVisits, f
                                     <TableHead className="w-[180px]">Waktu</TableHead>
                                     <TableHead>Pengunjung</TableHead>
                                     <TableHead>URL</TableHead>
+                                    <TableHead>Referer</TableHead>
                                     <TableHead className="w-[300px]">User Agent</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -343,6 +412,15 @@ export default function Visitors({ stats, dailyVisits, topPages, recentVisits, f
                                                 <div className="max-w-[250px] truncate" title={visit.url}>
                                                     {new URL(visit.url).pathname}
                                                 </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                {visit.referer ? (
+                                                    <div className="max-w-[200px] truncate whitespace-nowrap text-xs text-muted-foreground" title={visit.referer}>
+                                                        {visit.referer.length > 30 ? visit.referer.substring(0, 30) + '...' : visit.referer}
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-xs text-muted-foreground opacity-50">-</span>
+                                                )}
                                             </TableCell>
                                             <TableCell>
                                                 <div className="max-w-[280px] text-xs text-muted-foreground truncate" title={visit.user_agent}>

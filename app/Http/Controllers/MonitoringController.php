@@ -27,7 +27,12 @@ class MonitoringController extends Controller
         $totalUniqueVisitors = PageVisit::distinct('session_id')->count('session_id');
 
         // Stats for chart / Daily Visits
-        $dailyVisitsQuery = PageVisit::selectRaw('visited_date, count(*) as total_views');
+        $dailyVisitsQuery = PageVisit::selectRaw("
+            visited_date, 
+            count(*) as total_views,
+            SUM(CASE WHEN user_agent LIKE '%Mobile%' OR user_agent LIKE '%Android%' OR user_agent LIKE '%iPhone%' OR user_agent LIKE '%iPad%' THEN 1 ELSE 0 END) as mobile_views,
+            SUM(CASE WHEN user_agent NOT LIKE '%Mobile%' AND user_agent NOT LIKE '%Android%' AND user_agent NOT LIKE '%iPhone%' AND user_agent NOT LIKE '%iPad%' THEN 1 ELSE 0 END) as desktop_views
+        ");
         
         if ($startDate) {
             $dailyVisitsQuery->where('visited_date', '>=', $startDate);
@@ -38,6 +43,30 @@ class MonitoringController extends Controller
             
         $dailyVisits = $dailyVisitsQuery->groupBy('visited_date')
             ->orderBy('visited_date', 'asc')
+            ->get();
+
+        // Browser Stats
+        $browserStatsQuery = PageVisit::selectRaw("
+            CASE 
+                WHEN user_agent LIKE '%Chrome%' AND user_agent NOT LIKE '%Edg%' AND user_agent NOT LIKE '%OPR%' THEN 'Chrome'
+                WHEN user_agent LIKE '%Safari%' AND user_agent NOT LIKE '%Chrome%' THEN 'Safari'
+                WHEN user_agent LIKE '%Firefox%' THEN 'Firefox'
+                WHEN user_agent LIKE '%Edg%' THEN 'Edge'
+                WHEN user_agent LIKE '%OPR%' OR user_agent LIKE '%Opera%' THEN 'Opera'
+                ELSE 'Other'
+            END as browser,
+            count(*) as total
+        ");
+        
+        if ($startDate) {
+            $browserStatsQuery->where('visited_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $browserStatsQuery->where('visited_date', '<=', $endDate);
+        }
+
+        $browserStats = $browserStatsQuery->groupBy('browser')
+            ->orderByDesc('total')
             ->get();
 
         // Top 5 halaman paling banyak dikunjungi
@@ -92,6 +121,7 @@ class MonitoringController extends Controller
             ],
             'dailyVisits' => $dailyVisits,
             'topPages' => $topPages,
+            'browserStats' => $browserStats,
             'recentVisits' => $recentVisits,
             'filters' => [
                 'start_date' => $startDate,
