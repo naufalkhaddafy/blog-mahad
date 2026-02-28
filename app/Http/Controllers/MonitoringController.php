@@ -26,7 +26,39 @@ class MonitoringController extends Controller
 
         $totalUniqueVisitors = PageVisit::distinct('session_id')->count('session_id');
 
-        // Stats for chart
+        // Stats for chart / Daily Visits
+        $dailyVisitsQuery = PageVisit::selectRaw('visited_date, count(*) as total_views');
+        
+        if ($startDate) {
+            $dailyVisitsQuery->where('visited_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $dailyVisitsQuery->where('visited_date', '<=', $endDate);
+        }
+            
+        $dailyVisits = $dailyVisitsQuery->groupBy('visited_date')
+            ->orderBy('visited_date', 'asc')
+            ->get();
+
+        // Top 5 halaman paling banyak dikunjungi
+        $topPagesQuery = PageVisit::selectRaw('url, count(*) as total_views');
+        
+        if ($startDate) {
+            $topPagesQuery->where('visited_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $topPagesQuery->where('visited_date', '<=', $endDate);
+        }
+
+        $topPages = $topPagesQuery->groupBy('url')
+            ->orderByDesc('total_views')
+            ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                $parsed = parse_url($item->url);
+                $item->path = $parsed['path'] ?? '/';
+                return $item;
+            });
         $visitorStatsQuery = PageVisit::selectRaw('visited_date, count(DISTINCT session_id) as visitors, count(*) as page_views');
         
         if ($startDate) {
@@ -58,7 +90,8 @@ class MonitoringController extends Controller
                 'totalUniqueVisitors' => $totalUniqueVisitors,
                 'todayUniqueVisitors' => $todayUniqueVisitors,
             ],
-            'chartData' => $visitorStats,
+            'dailyVisits' => $dailyVisits,
+            'topPages' => $topPages,
             'recentVisits' => $recentVisits,
             'filters' => [
                 'start_date' => $startDate,

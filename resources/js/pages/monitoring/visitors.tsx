@@ -34,10 +34,15 @@ interface Stat {
     todayUniqueVisitors: number;
 }
 
-interface ChartData {
+interface TopPage {
+    url: string;
+    path: string;
+    total_views: number;
+}
+
+interface DailyVisit {
     visited_date: string;
-    visitors: number;
-    page_views: number;
+    total_views: number;
 }
 
 interface Visit {
@@ -69,7 +74,8 @@ interface PaginatedVisits {
 
 interface VisitorsProps {
     stats: Stat;
-    chartData: ChartData[];
+    dailyVisits: DailyVisit[];
+    topPages: TopPage[];
     recentVisits: PaginatedVisits;
     filters: {
         start_date: string;
@@ -88,7 +94,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Visitors({ stats, chartData, recentVisits, filters }: VisitorsProps) {
+export default function Visitors({ stats, dailyVisits, topPages, recentVisits, filters }: VisitorsProps) {
     const statCards = [
         {
             title: 'Total View',
@@ -120,7 +126,7 @@ export default function Visitors({ stats, chartData, recentVisits, filters }: Vi
         },
     ];
 
-    const maxViews = chartData.length > 0 ? Math.max(...chartData.map((d) => d.page_views), 1) : 1;
+    const maxDailyViews = dailyVisits.length > 0 ? Math.max(...dailyVisits.map((d) => d.total_views)) : 1;
 
     // Filter Logic
     const initialDateRange: DateRange | undefined = filters.start_date && filters.end_date ? {
@@ -185,53 +191,103 @@ export default function Visitors({ stats, chartData, recentVisits, filters }: Vi
                     ))}
                 </div>
 
-                {/* Visitor Chart */}
-                <Card className="flex flex-col border-none shadow-lg">
-                    <CardHeader className="flex flex-row items-center gap-2 pb-2">
-                        <div className="rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 p-2 text-white">
-                            <Activity className="h-4 w-4" />
-                        </div>
-                        <div>
-                            <CardTitle className="text-base font-semibold">Trafik Kunjungan (Filter: {filters.start_date ? `${filters.start_date} s/d ${filters.end_date}` : '14 Hari Terakhir'})</CardTitle>
-                            <p className="text-xs text-muted-foreground">Views & Unique Visitors</p>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="flex flex-1 items-end pt-4 min-h-[250px] overflow-hidden">
-                        {chartData.length > 0 ? (
-                            <div className="flex w-full items-end gap-2 overflow-x-auto pb-2" style={{ height: 200 }}>
-                                {chartData.map((day, i) => {
-                                    const hViews = Math.max((day.page_views / maxViews) * 160, 8);
-                                    const hVisitors = Math.max((day.visitors / maxViews) * 160, 4);
+                <div className="relative grid gap-8 lg:grid-cols-2">
+                    {/* Daily Visits Bar Chart */}
+                    <div className="space-y-4">
+                        <Card className="overflow-hidden border-none shadow-lg">
+                            <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                                <div className="rounded-lg bg-linear-to-br from-cyan-500 to-blue-600 p-2 text-white shadow-lg">
+                                    <Activity className="size-4" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base font-semibold">Trafik Kunjungan (Filter: {filters.start_date ? `${filters.start_date} s/d ${filters.end_date}` : 'Semua Data'})</CardTitle>
+                                    <p className="text-xs text-muted-foreground">Grafik unique pageviews</p>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="pt-4">
+                                {dailyVisits.length > 0 ? (
+                                    <div className="flex items-end gap-1 overflow-x-auto sm:gap-2" style={{ height: 200 }}>
+                                        {dailyVisits.map((day, i) => {
+                                            const maxBarHeight = 160;
+                                            const barHeight = maxDailyViews > 0
+                                                ? Math.max((day.total_views / maxDailyViews) * maxBarHeight, 8)
+                                                : 8;
+                                            return (
+                                                <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1" style={{ height: '100%' }}>
+                                                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                                        {day.total_views}
+                                                    </span>
+                                                    <div
+                                                        className="w-full rounded-t-lg bg-linear-to-t from-cyan-500 to-blue-500 transition-all duration-300 group-hover:from-cyan-400 group-hover:to-blue-400"
+                                                        style={{ height: barHeight }}
+                                                        title={`Views: ${day.total_views}`}
+                                                    />
+                                                    <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
+                                                        {new Date(day.visited_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                                                    </span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground">
+                                        <Activity className="mb-3 size-10 opacity-20" />
+                                        <p className="text-sm">Belum ada data kunjungan.</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
 
-                                    return (
-                                        <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1 min-w-[40px]" style={{ height: '100%' }}>
-                                            <div className="flex gap-1 items-end w-full justify-center">
-                                                <div
-                                                    className="w-1/2 max-w-[12px] rounded-t-sm bg-blue-500 opacity-80 transition-all hover:opacity-100"
-                                                    style={{ height: hViews }}
-                                                    title={`Views: ${day.page_views}`}
-                                                />
-                                                <div
-                                                    className="w-1/2 max-w-[12px] rounded-t-sm bg-emerald-500 opacity-80 transition-all hover:opacity-100"
-                                                    style={{ height: hVisitors }}
-                                                    title={`Visitors: ${day.visitors}`}
-                                                />
-                                            </div>
-                                            <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
-                                                {new Date(day.visited_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
-                                            </span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <div className="flex w-full h-full flex-col items-center justify-center text-muted-foreground">
-                                <Activity className="h-10 w-10 opacity-20 mb-2" />
-                                <p className="text-sm">Belum ada data grafik di rentang tanggal ini.</p>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                    {/* Top Halaman Populer */}
+                    <div className="space-y-4">
+                        <Card className="overflow-hidden border-none shadow-lg">
+                            <CardHeader className="flex flex-row items-center gap-2 pb-2">
+                                <div className="rounded-lg bg-linear-to-br from-violet-500 to-purple-600 p-2 text-white shadow-lg">
+                                    <BarChart className="size-4" />
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base font-semibold">Halaman Populer</CardTitle>
+                                    <p className="text-xs text-muted-foreground">Otomatis dihitung berdasarkan rentang tanggal</p>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="pt-4">
+                                {topPages.length > 0 ? (
+                                    <div className="space-y-3">
+                                        {topPages.map((page, index) => {
+                                            const widthPercent = topPages[0]?.total_views
+                                                ? (page.total_views / topPages[0].total_views) * 100
+                                                : 0;
+                                            return (
+                                                <div key={index} className="group space-y-1">
+                                                    <div className="flex items-center justify-between text-sm">
+                                                        <span className="max-w-[70%] truncate font-medium" title={page.path}>
+                                                            {page.path === '/' ? 'Beranda' : page.path}
+                                                        </span>
+                                                        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                                                            {page.total_views} views
+                                                        </span>
+                                                    </div>
+                                                    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                                        <div
+                                                            className="h-full rounded-full bg-linear-to-r from-violet-500 to-purple-500 transition-all duration-500"
+                                                            style={{ width: `${widthPercent}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground">
+                                        <Activity className="mb-3 size-10 opacity-20" />
+                                        <p className="text-sm">Belum ada data halaman populer.</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
 
                 {/* Visitor Data Table */}
                 <Card className="border-none shadow-lg flex flex-col">
