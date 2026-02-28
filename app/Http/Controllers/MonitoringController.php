@@ -13,6 +13,8 @@ class MonitoringController extends Controller
     public function visitors(Request $request)
     {
         $today = Carbon::today()->toDateString();
+        $startDate = $request->input('start_date', Carbon::now()->subDays(14)->toDateString());
+        $endDate = $request->input('end_date', $today);
         
         $totalPageVisits = PageVisit::count();
         $todayPageVisits = PageVisit::where('visited_date', $today)->count();
@@ -25,13 +27,29 @@ class MonitoringController extends Controller
         $totalUniqueVisitors = PageVisit::distinct('session_id')->count('session_id');
 
         // Stats for chart
-        $visitorStats = PageVisit::selectRaw('visited_date, count(DISTINCT session_id) as visitors, count(*) as page_views')
-            ->where('visited_date', '>=', Carbon::now()->subDays(14)->toDateString())
-            ->groupBy('visited_date')
+        $visitorStatsQuery = PageVisit::selectRaw('visited_date, count(DISTINCT session_id) as visitors, count(*) as page_views');
+        
+        if ($startDate) {
+            $visitorStatsQuery->where('visited_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $visitorStatsQuery->where('visited_date', '<=', $endDate);
+        }
+            
+        $visitorStats = $visitorStatsQuery->groupBy('visited_date')
             ->orderBy('visited_date', 'asc')
             ->get();
 
-        $recentVisits = PageVisit::with('user:id,name')->orderBy('created_at', 'desc')->take(20)->get();
+        $recentVisitsQuery = PageVisit::with('user:id,name');
+        
+        if ($startDate) {
+            $recentVisitsQuery->where('visited_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $recentVisitsQuery->where('visited_date', '<=', $endDate);
+        }
+
+        $recentVisits = $recentVisitsQuery->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
 
         return Inertia::render('monitoring/visitors', [
             'stats' => [
@@ -42,6 +60,10 @@ class MonitoringController extends Controller
             ],
             'chartData' => $visitorStats,
             'recentVisits' => $recentVisits,
+            'filters' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ]
         ]);
     }
 
