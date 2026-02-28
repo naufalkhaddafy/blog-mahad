@@ -202,8 +202,8 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                 </div>
 
                 <div className="relative grid gap-8 lg:grid-cols-3">
-                    {/* Kolom Kiri: Halaman Populer */}
-                    <div className="space-y-4 lg:col-span-1">
+                    {/* Kolom Kanan: Halaman Populer */}
+                    <div className="space-y-4 lg:col-span-1 order-2">
                         <Card className="overflow-hidden border-none shadow-lg h-full">
                             <CardHeader className="flex flex-row items-center gap-2 pb-2">
                                 <div className="rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 p-2 text-white shadow-lg">
@@ -253,8 +253,8 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                         </Card>
                     </div>
 
-                    {/* Kolom Kanan: Chart Kunjungan & Grafik Demografi */}
-                    <div className="space-y-8 flex flex-col items-stretch lg:col-span-2">
+                    {/* Kolom Kiri: Chart Kunjungan & Grafik Demografi */}
+                    <div className="space-y-8 flex flex-col items-stretch lg:col-span-2 order-1">
                         {/* Chart 1: Kunjungan Halaman (Atas) */}
                         <Card className="overflow-hidden border-none shadow-lg">
                             <CardHeader className="flex flex-row items-center gap-2 pb-2">
@@ -276,6 +276,9 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                                                 : 4;
                                             return (
                                                 <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1 min-w-[30px]" style={{ height: '100%' }}>
+                                                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                                        {day.total_views}
+                                                    </span>
                                                     <div className="flex gap-1 items-end w-full justify-center">
                                                         <div
                                                             className="w-full max-w-[30px] rounded-t-sm bg-blue-500 opacity-80 transition-all hover:opacity-100 group-hover:bg-blue-600"
@@ -352,16 +355,26 @@ export default function Visitors({ stats, dailyVisits, topPages, browserStats, r
                                                     return (
                                                         <div key={i} className="group relative flex flex-1 flex-col items-center justify-end gap-1 min-w-[40px]" style={{ height: '100%' }}>
                                                             <div className="flex gap-[2px] items-end w-full justify-center">
-                                                                <div
-                                                                    className="w-1/2 max-w-[14px] rounded-t-sm bg-blue-500 opacity-80 transition-all hover:opacity-100 group-hover:bg-blue-600 group-hover:opacity-100"
-                                                                    style={{ height: desktopHeight }}
-                                                                    title={`Desktop: ${day.desktop_views}`}
-                                                                />
-                                                                <div
-                                                                    className="w-1/2 max-w-[14px] rounded-t-sm bg-emerald-500 opacity-80 transition-all hover:opacity-100 group-hover:bg-emerald-600 group-hover:opacity-100"
-                                                                    style={{ height: mobileHeight }}
-                                                                    title={`Mobile: ${day.mobile_views}`}
-                                                                />
+                                                                <div className="flex flex-col items-center justify-end w-1/2 max-w-[14px]">
+                                                                    <span className="mb-1 text-[8px] font-semibold text-slate-600 dark:text-slate-400 text-center">
+                                                                        {day.desktop_views}
+                                                                    </span>
+                                                                    <div
+                                                                        className="w-full rounded-t-sm bg-blue-500 opacity-80 transition-all hover:opacity-100 group-hover:bg-blue-600 group-hover:opacity-100"
+                                                                        style={{ height: desktopHeight }}
+                                                                        title={`Desktop: ${day.desktop_views}`}
+                                                                    />
+                                                                </div>
+                                                                <div className="flex flex-col items-center justify-end w-1/2 max-w-[14px]">
+                                                                    <span className="mb-1 text-[8px] font-semibold text-slate-600 dark:text-slate-400 text-center">
+                                                                        {day.mobile_views}
+                                                                    </span>
+                                                                    <div
+                                                                        className="w-full rounded-t-sm bg-emerald-500 opacity-80 transition-all hover:opacity-100 group-hover:bg-emerald-600 group-hover:opacity-100"
+                                                                        style={{ height: mobileHeight }}
+                                                                        title={`Mobile: ${day.mobile_views}`}
+                                                                    />
+                                                                </div>
                                                             </div>
                                                             <span className="text-[10px] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-center mt-2 border-t pt-1 border-transparent group-hover:border-border/50 transition-colors">
                                                                 {new Date(day.visited_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}

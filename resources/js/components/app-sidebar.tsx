@@ -113,7 +113,7 @@ export function AppSidebar() {
                 <NavMain items={mainNavItems} title="Platform" />
                 <NavMain items={Blog} title="Blog" />
                 <NavMain items={radioMenu} title="Radio" />
-                <NavMain items={systemMenu} title="Sistem" />
+                <NavMain items={systemMenu.filter((item) => isSuperAdmin || item.url !== '/log')} title="Sistem" />
             </SidebarContent>
 
             <SidebarFooter>
