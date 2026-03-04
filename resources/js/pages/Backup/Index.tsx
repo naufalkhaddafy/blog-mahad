@@ -12,7 +12,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import {
     AlertTriangle,
     Archive,
@@ -70,12 +70,14 @@ export default function BackupIndex({ backups }: { backups: BackupItem[] }) {
     // Restore states
     const [restoreDbOpen, setRestoreDbOpen] = useState(false);
     const [restoreImgOpen, setRestoreImgOpen] = useState(false);
+    const [restoringDb, setRestoringDb] = useState(false);
+    const [restoringImg, setRestoringImg] = useState(false);
 
     const dbFileRef = useRef<HTMLInputElement>(null);
     const imgFileRef = useRef<HTMLInputElement>(null);
 
-    const dbForm = useForm<{ sql_file: File | null }>({ sql_file: null });
-    const imgForm = useForm<{ zip_file: File | null }>({ zip_file: null });
+    const [dbFile, setDbFile] = useState<File | null>(null);
+    const [imgFile, setImgFile] = useState<File | null>(null);
 
     const handleCreateBackup = () => {
         setCreating(true);
@@ -104,28 +106,38 @@ export default function BackupIndex({ backups }: { backups: BackupItem[] }) {
     };
 
     const handleRestoreDb = () => {
-        if (!dbForm.data.sql_file) return;
-        dbForm.post(route('backup.restore-database'), {
+        if (!dbFile) return;
+        setRestoringDb(true);
+        const formData = new FormData();
+        formData.append('sql_file', dbFile);
+        router.post(route('backup.restore-database'), formData, {
             forceFormData: true,
             onSuccess: () => {
                 toast.success('Database berhasil di-restore!');
                 setRestoreDbOpen(false);
-                dbForm.reset();
+                setDbFile(null);
+                if (dbFileRef.current) dbFileRef.current.value = '';
             },
             onError: () => toast.error('Gagal restore database.'),
+            onFinish: () => setRestoringDb(false),
         });
     };
 
     const handleRestoreImg = () => {
-        if (!imgForm.data.zip_file) return;
-        imgForm.post(route('backup.restore-images'), {
+        if (!imgFile) return;
+        setRestoringImg(true);
+        const formData = new FormData();
+        formData.append('zip_file', imgFile);
+        router.post(route('backup.restore-images'), formData, {
             forceFormData: true,
             onSuccess: () => {
                 toast.success('Images berhasil di-restore!');
                 setRestoreImgOpen(false);
-                imgForm.reset();
+                setImgFile(null);
+                if (imgFileRef.current) imgFileRef.current.value = '';
             },
             onError: () => toast.error('Gagal restore images.'),
+            onFinish: () => setRestoringImg(false),
         });
     };
 
@@ -389,15 +401,15 @@ export default function BackupIndex({ backups }: { backups: BackupItem[] }) {
                                 className="hidden"
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] || null;
-                                    dbForm.setData('sql_file', file);
+                                    setDbFile(file);
                                 }}
                             />
-                            {dbForm.data.sql_file ? (
+                            {dbFile ? (
                                 <div className="flex items-center justify-center gap-2 text-sm">
                                     <Database className="size-5 text-blue-500" />
-                                    <span className="font-medium">{dbForm.data.sql_file.name}</span>
+                                    <span className="font-medium">{dbFile.name}</span>
                                     <span className="text-xs text-muted-foreground">
-                                        ({formatFileSize(dbForm.data.sql_file.size)})
+                                        ({formatFileSize(dbFile.size)})
                                     </span>
                                 </div>
                             ) : (
@@ -414,15 +426,15 @@ export default function BackupIndex({ backups }: { backups: BackupItem[] }) {
                         </div>
                     </div>
                     <DialogFooter className="gap-2 sm:justify-center">
-                        <Button variant="outline" onClick={() => { setRestoreDbOpen(false); dbForm.reset(); }} className="cursor-pointer">
+                        <Button variant="outline" onClick={() => { setRestoreDbOpen(false); setDbFile(null); if (dbFileRef.current) dbFileRef.current.value = ''; }} className="cursor-pointer">
                             Batal
                         </Button>
                         <Button
                             onClick={handleRestoreDb}
-                            disabled={!dbForm.data.sql_file || dbForm.processing}
+                            disabled={!dbFile || restoringDb}
                             className="cursor-pointer gap-2 bg-blue-600 hover:bg-blue-700"
                         >
-                            {dbForm.processing ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
+                            {restoringDb ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
                             Restore Database
                         </Button>
                     </DialogFooter>
@@ -450,15 +462,15 @@ export default function BackupIndex({ backups }: { backups: BackupItem[] }) {
                                 className="hidden"
                                 onChange={(e) => {
                                     const file = e.target.files?.[0] || null;
-                                    imgForm.setData('zip_file', file);
+                                    setImgFile(file);
                                 }}
                             />
-                            {imgForm.data.zip_file ? (
+                            {imgFile ? (
                                 <div className="flex items-center justify-center gap-2 text-sm">
                                     <Image className="size-5 text-purple-500" />
-                                    <span className="font-medium">{imgForm.data.zip_file.name}</span>
+                                    <span className="font-medium">{imgFile.name}</span>
                                     <span className="text-xs text-muted-foreground">
-                                        ({formatFileSize(imgForm.data.zip_file.size)})
+                                        ({formatFileSize(imgFile.size)})
                                     </span>
                                 </div>
                             ) : (
@@ -475,15 +487,15 @@ export default function BackupIndex({ backups }: { backups: BackupItem[] }) {
                         </div>
                     </div>
                     <DialogFooter className="gap-2 sm:justify-center">
-                        <Button variant="outline" onClick={() => { setRestoreImgOpen(false); imgForm.reset(); }} className="cursor-pointer">
+                        <Button variant="outline" onClick={() => { setRestoreImgOpen(false); setImgFile(null); if (imgFileRef.current) imgFileRef.current.value = ''; }} className="cursor-pointer">
                             Batal
                         </Button>
                         <Button
                             onClick={handleRestoreImg}
-                            disabled={!imgForm.data.zip_file || imgForm.processing}
+                            disabled={!imgFile || restoringImg}
                             className="cursor-pointer gap-2 bg-purple-600 hover:bg-purple-700"
                         >
-                            {imgForm.processing ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
+                            {restoringImg ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
                             Restore Images
                         </Button>
                     </DialogFooter>

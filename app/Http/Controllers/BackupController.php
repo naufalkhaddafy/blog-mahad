@@ -37,7 +37,7 @@ class BackupController extends Controller
             'images' => false,
         ];
 
-        // 1. Backup Database using mysqldump
+        // 1. Backup Database using mariadb-dump
         try {
             $dbName = config('database.connections.mysql.database');
             $dbUser = config('database.connections.mysql.username');
@@ -47,9 +47,9 @@ class BackupController extends Controller
 
             $sqlFile = storage_path("app/private/{$backupFolder}/database.sql");
 
-            // Build mysqldump command
+            // Build mariadb-dump command (--skip-ssl for container-to-container connections)
             $command = sprintf(
-                'mysqldump --host=%s --port=%s --user=%s --password=%s %s > %s 2>&1',
+                'mariadb-dump --skip-ssl --host=%s --port=%s --user=%s --password=%s %s > %s 2>&1',
                 escapeshellarg($dbHost),
                 escapeshellarg($dbPort),
                 escapeshellarg($dbUser),
@@ -149,7 +149,7 @@ class BackupController extends Controller
             $dbPort = config('database.connections.mysql.port', 3306);
 
             $command = sprintf(
-                'mysql --host=%s --port=%s --user=%s --password=%s %s < %s 2>&1',
+                'mariadb --skip-ssl --host=%s --port=%s --user=%s --password=%s %s < %s 2>&1',
                 escapeshellarg($dbHost),
                 escapeshellarg($dbPort),
                 escapeshellarg($dbUser),
