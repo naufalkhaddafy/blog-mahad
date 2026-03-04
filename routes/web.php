@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
@@ -51,6 +52,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('channels', ChannelController::class)->except('create', 'show', 'edit');
     Route::post('/channels/change-status', [ChannelController::class, 'status'])->name('channel.change.status');
     Route::get('radio/live-stream', [ChannelController::class, 'liveStream'])->name('radio.live-stream');
+
+    // Backup & Restore (super-admin only)
+    Route::middleware('role:super-admin')->group(function () {
+        Route::get('backup', [BackupController::class, 'index'])->name('backup.index');
+        Route::post('backup/create', [BackupController::class, 'createBackup'])->name('backup.create');
+        Route::get('backup/download/{folder}/{type}', [BackupController::class, 'download'])->name('backup.download');
+        Route::post('backup/restore-database', [BackupController::class, 'restoreDatabase'])->name('backup.restore-database');
+        Route::post('backup/restore-images', [BackupController::class, 'restoreImages'])->name('backup.restore-images');
+        Route::delete('backup/{folder}', [BackupController::class, 'delete'])->name('backup.delete');
+    });
 });
 
 require __DIR__ . '/settings.php';

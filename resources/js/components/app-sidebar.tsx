@@ -15,6 +15,7 @@ import {
     Activity,
     Airplay,
     AudioLines,
+    DatabaseBackup,
     FolderTree,
     LayoutGrid,
     Newspaper,
@@ -81,6 +82,11 @@ const systemMenu: NavItem[] = [
         url: '/log',
         icon: Server,
     },
+    {
+        title: 'Backup & Restore',
+        url: '/backup',
+        icon: DatabaseBackup,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
@@ -113,7 +119,7 @@ export function AppSidebar() {
                 <NavMain items={mainNavItems} title="Platform" />
                 <NavMain items={Blog} title="Blog" />
                 <NavMain items={radioMenu} title="Radio" />
-                <NavMain items={systemMenu.filter((item) => isSuperAdmin || item.url !== '/log')} title="Sistem" />
+                <NavMain items={systemMenu.filter((item) => isSuperAdmin || (item.url !== '/log' && item.url !== '/backup'))} title="Sistem" />
             </SidebarContent>
 
             <SidebarFooter>

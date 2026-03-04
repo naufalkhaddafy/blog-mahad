@@ -21,7 +21,8 @@ RUN apk add --no-cache \
     icu-dev \
     nodejs \
     npm \
-    linux-headers
+    linux-headers \
+    mariadb-client
 
 # Install PHP extensions
 # FrankenPHP includes some by default, but we ensure our required ones are there.
