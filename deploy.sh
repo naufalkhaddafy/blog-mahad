@@ -87,18 +87,11 @@ docker compose -f "$COMPOSE_FILE" exec app php artisan migrate --force
 echo -e "${YELLOW}Linking storage...${NC}"
 docker compose -f "$COMPOSE_FILE" exec app php artisan storage:link
 
-# 9. Optimization (cache config, routes, views)
-echo -e "${YELLOW}Optimizing cache...${NC}"
-docker compose -f "$COMPOSE_FILE" exec app php artisan route:clear
-docker compose -f "$COMPOSE_FILE" exec app php artisan config:clear
-docker compose -f "$COMPOSE_FILE" exec app php artisan view:clear
-docker compose -f "$COMPOSE_FILE" exec app php artisan optimize
-
-# 10. Reload Octane Workers (pick up new cached routes/config)
-echo -e "${YELLOW}Reloading Octane workers...${NC}"
-docker compose -f "$COMPOSE_FILE" exec app php artisan octane:reload
+# 9. Restart containers to trigger entrypoint cache rebuild
+echo -e "${YELLOW}Restarting app containers to apply fresh config...${NC}"
+docker compose -f "$COMPOSE_FILE" restart app scheduler queue
 
 echo -e "${GREEN}Deployment Completed Successfully!${NC}"
+echo -e "${YELLOW}Note: Config/route/view cache is auto-rebuilt by entrypoint on each container start.${NC}"
 echo -e "${YELLOW}Note: Reverb WebSocket is available internally at blog-mahad-reverb:8080${NC}"
 echo -e "${YELLOW}Configure Nginx Proxy Manager to proxy WebSocket connections to this address.${NC}"
-
