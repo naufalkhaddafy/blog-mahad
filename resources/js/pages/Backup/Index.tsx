@@ -293,7 +293,7 @@ export default function BackupIndex({ backups }: { backups: BackupItem[] }) {
                     <div className="grid gap-4 sm:grid-cols-2">
                         {/* Restore Database */}
                         <Card className="group relative overflow-hidden border-none transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 transition-opacity group-hover:from-blue-500/10 group-hover:to-indigo-500/10" />
+                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 transition-opacity group-hover:from-blue-500/10 group-hover:to-indigo-500/10" />
                             <CardHeader className="flex flex-row items-center gap-3 pb-2">
                                 <div className="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 text-white shadow-lg transition-transform group-hover:scale-110">
                                     <Database className="size-5" />
@@ -320,7 +320,7 @@ export default function BackupIndex({ backups }: { backups: BackupItem[] }) {
 
                         {/* Restore Images */}
                         <Card className="group relative overflow-hidden border-none transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
-                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 transition-opacity group-hover:from-purple-500/10 group-hover:to-pink-500/10" />
+                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 transition-opacity group-hover:from-purple-500/10 group-hover:to-pink-500/10" />
                             <CardHeader className="flex flex-row items-center gap-3 pb-2">
                                 <div className="rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 p-2.5 text-white shadow-lg transition-transform group-hover:scale-110">
                                     <Image className="size-5" />
