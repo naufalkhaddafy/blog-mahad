@@ -56,24 +56,63 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # Optional: Deploy trigger step
-  deploy:
+  # Deploy ke VPS Publik (Metode Lama)
+  # deploy-vps:
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-push
+  #   steps:
+  #     - name: Deploy to VPS
+  #       uses: appleboy/ssh-action@v1.0.3
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.SSH_USERNAME }}
+  #         key: ${{ secrets.SSH_KEY }}
+  #         port: 2221
+  #         envs: ENV_FILE
+  #         script: |
+  #           cd /home/kadapai/blog-mahad
+  #           echo "$ENV_FILE" > .env
+  #           git pull origin main
+  #           chmod +x deploy.sh
+  #           ./deploy.sh
+        # env:
+          # ENV_FILE: ${{ secrets.ENV_FILE }}
+
+  # Deploy ke Home Lab via Cloudflare Tunnel
+  deploy-homelab:
     runs-on: ubuntu-latest
     needs: build-and-push
     steps:
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: 2221
-          envs: ENV_FILE
-          script: |
-            cd /home/kadapai/blog-mahad
-            echo "$ENV_FILE" > .env
-            git pull origin main
-            chmod +x deploy.sh
-            ./deploy.sh
+      - name: Install cloudflared
+        run: |
+          wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+          sudo dpkg -i cloudflared-linux-amd64.deb
+
+      - name: Deploy to Home Lab via Cloudflare Tunnel
         env:
+          # Menggunakan secrets yang sudah ada sementara waktu
+          SSH_KEY: ${{ secrets.SSH_HOMELAB_KEY }}
+          SSH_USER: ${{ secrets.SSH_HOMELAB_USERNAME }}
+          SSH_HOST: ${{ secrets.SSH_HOMELAB }}
           ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: |
+          # Setup SSH Key
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          
+          # Konfigurasi SSH untuk menggunakan cloudflared
+          cat >> ~/.ssh/config << EOF
+          Host $SSH_HOST
+            ProxyCommand cloudflared access ssh --hostname %h
+            StrictHostKeyChecking no
+          EOF
+
+          # Buat file .env secara lokal di GitHub Runner
+          echo "$ENV_FILE" > .env.production
+
+          # Copy file .env ke server tujuan
+          scp .env.production $SSH_USER@$SSH_HOST:/home/kadapai/web-deployment/blog-mahad/.env
+
+          # Jalankan command deployment di server
+          ssh $SSH_USER@$SSH_HOST "cd /home/kadapai/web-deployment/blog-mahad && git pull origin main && chmod +x deploy.sh && ./deploy.sh"
