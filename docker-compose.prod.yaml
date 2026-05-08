@@ -107,6 +107,22 @@ services:
         networks:
             - database_network_mahad
 
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: mahad_phpmyadmin
+        restart: always
+        environment:
+            PMA_HOST: mahad_mariadb
+            PMA_PORT: 3306
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - "127.0.0.1:8002:80"
+        networks:
+            - public_network
+            - database_network_mahad
+        depends_on:
+            - mahad_mariadb
+
 networks:
     public_network:
         external: true

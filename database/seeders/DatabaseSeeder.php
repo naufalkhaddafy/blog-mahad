@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::firstOrCreate(
+        $user = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin',
@@ -32,7 +32,9 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $this->call([CategorySeeder::class, TagSeeder::class]);
+        $this->call([RolePermissionSeeder::class, CategorySeeder::class, TagSeeder::class]);
+        
+        $user->assignRole('super-admin');
         //Post::factory(10)->withTags()->create();
     }
 }
