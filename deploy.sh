@@ -83,6 +83,22 @@ echo -e "${YELLOW}Running database migrations...${NC}"
 sleep 5
 docker compose -f "$COMPOSE_FILE" exec app php artisan migrate --force
 
+# 7.5 Run Seeder if Database is Empty
+echo -e "${YELLOW}Checking if admin account exists...${NC}"
+HAS_USERS=$(docker compose -f "$COMPOSE_FILE" exec app php artisan tinker --execute="echo App\Models\User::exists() ? '1' : '0';")
+
+# Clean output to only get 1 or 0 (Tinker sometimes prints extra newlines or warnings)
+HAS_USERS=$(echo "$HAS_USERS" | grep -o '[01]' | tail -n 1)
+
+if [ "$HAS_USERS" = "0" ]; then
+    echo -e "${YELLOW}No users found. Running DatabaseSeeder...${NC}"
+    docker compose -f "$COMPOSE_FILE" exec app php artisan db:seed --force
+    echo -e "${GREEN}Database seeded successfully.${NC}"
+else
+    echo -e "${GREEN}Users already exist. Skipping seeder.${NC}"
+fi
+
+
 # 8. Storage Link
 echo -e "${YELLOW}Linking storage...${NC}"
 docker compose -f "$COMPOSE_FILE" exec app php artisan storage:link
