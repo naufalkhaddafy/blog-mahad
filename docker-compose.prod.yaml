@@ -34,7 +34,7 @@ x-app-default: &app-default
         OCTANE_SERVER: frankenphp
     networks:
         - public_network
-        - database_network
+        - database_network_mahad
 
 services:
     app:
@@ -47,6 +47,8 @@ services:
             - ./bootstrap/cache:/app/bootstrap/cache
         depends_on:
             - reverb
+            - shared_mariadb
+            - shared_redis
 
     reverb:
         <<: *app-default
@@ -81,9 +83,32 @@ services:
         depends_on:
             - app
 
+    shared_mariadb:
+        image: mariadb:10.11
+        container_name: shared_mariadb
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - ./mariadb_data:/var/lib/mysql
+        networks:
+            - database_network_mahad
+
+    shared_redis:
+        image: redis:alpine
+        container_name: shared_redis
+        restart: always
+        command: redis-server --requirepass ${REDIS_PASSWORD}
+        volumes:
+            - ./redis_data:/data
+        networks:
+            - database_network_mahad
+
 networks:
     public_network:
         external: true
-    database_network:
-        external: true
-
+    database_network_mahad:
+        driver: bridge
