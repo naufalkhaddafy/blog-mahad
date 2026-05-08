@@ -62,6 +62,11 @@ RUN apk add --no-cache \
     pdo_mysql \
     redis
 
+# Configure PHP upload limits
+RUN echo "upload_max_filesize = 500M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 500M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/uploads.ini
+
 WORKDIR /app
 
 # Copy Backend Dependencies
