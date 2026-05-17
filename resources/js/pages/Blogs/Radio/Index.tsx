@@ -122,7 +122,7 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                                                   </p>
                                               </div>
                                           </div>
-                                          <p className="py-4">{channel.stats?.description}</p>
+                                          <p className="py-4 break-all">{channel.stats?.description}</p>
                                           <div className="flex items-center gap-4">
                                               {/* <Bookmark className="size-4 lg:size-5" /> */}
                                               {copy[channel.id] ? (
