@@ -107,16 +107,14 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                                                   className="aspect-square w-15"
                                                   alt={channel.name}
                                               />
-                                              <div>
-                                                  <div className="flex items-center gap-4">
-                                                      <h3 className="font-bold">{channel.name}</h3>
+                                              <div className="flex-1 min-w-0">
+                                                  <div className="flex items-start gap-3 sm:gap-4">
+                                                      <h3 className="font-bold break-all">{channel.name}</h3>
                                                       {channel.status === 'live' ? (
-                                                          <span className="flex animate-pulse items-center rounded-2xl bg-red-700 px-2 py-1 text-xs text-white">
+                                                          <span className="mt-0.5 flex shrink-0 animate-pulse items-center rounded-2xl bg-red-700 px-2 py-1 text-xs text-white">
                                                               Live
                                                           </span>
-                                                      ) : (
-                                                          ''
-                                                      )}
+                                                      ) : null}
                                                   </div>
                                                   <p className="flex items-center gap-3">
                                                       <Headphones className="size-4 lg:size-5" />{' '}
