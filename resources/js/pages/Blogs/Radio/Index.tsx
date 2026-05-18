@@ -88,7 +88,7 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                         </div>
                     </ScrollReveal>
                 </header>
-                <section className="relative min-h-screen py-10">
+                <section className="relative py-10">
                     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                         {isLoading
                             ? Array.from({ length: 4 }).map((_, i) => (
@@ -97,10 +97,10 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                             : channels.map((channel, index) => (
                                   <ScrollReveal key={index} variant="fade-up" delay={index * 100}>
                                       <Card
-                                          className="p-5"
+                                          className="flex h-full flex-col p-5"
                                           onClick={() => setChannelPlay(channel)}
                                       >
-                                      <div>
+                                      <div className="flex h-full flex-col">
                                           <div className="flex gap-5">
                                               <img
                                                   src={channel.image}
@@ -122,8 +122,8 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                                                   </p>
                                               </div>
                                           </div>
-                                          <p className="py-4 break-all">{channel.stats?.description}</p>
-                                          <div className="flex items-center gap-4">
+                                          <p className="py-4 break-all line-clamp-2">{channel.stats?.description}</p>
+                                          <div className="mt-auto flex items-center gap-4">
                                               {/* <Bookmark className="size-4 lg:size-5" /> */}
                                               {copy[channel.id] ? (
                                                   <span className="flex items-center gap-1 text-xs font-semibold text-green-700 antialiased dark:text-green-400">
@@ -145,7 +145,7 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                                   </ScrollReveal>
                               ))}
                     </div>
-                    <div className="mt-16 w-full">
+                    <div className="mt-8 lg:mt-12 w-full">
                     <ScrollReveal variant="fade-up">
                         <div className="mx-auto flex w-full flex-col items-center gap-4 rounded-2xl bg-green-700 p-6 lg:flex-row lg:justify-between lg:p-10 dark:bg-gray-800">
                             <h2 className="text-md text-center font-semibold text-white lg:text-xl dark:text-white">
