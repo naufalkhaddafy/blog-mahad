@@ -145,9 +145,9 @@ const Index = ({ channels: initiateChannels }: { channels: channelParams[] }) =>
                                   </ScrollReveal>
                               ))}
                     </div>
-                    <div className="absolute right-0 bottom-0 left-0 flex justify-center">
+                    <div className="mt-16 w-full">
                     <ScrollReveal variant="fade-up">
-                        <div className="mx-auto flex w-full flex-col items-center gap-4 rounded-t-2xl bg-green-700 p-6 lg:flex-row lg:justify-between lg:p-10 dark:bg-gray-800">
+                        <div className="mx-auto flex w-full flex-col items-center gap-4 rounded-2xl bg-green-700 p-6 lg:flex-row lg:justify-between lg:p-10 dark:bg-gray-800">
                             <h2 className="text-md text-center font-semibold text-white lg:text-xl dark:text-white">
                                 Dapatkan informasi siaran langsung
                             </h2>
