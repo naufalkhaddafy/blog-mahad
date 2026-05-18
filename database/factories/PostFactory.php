@@ -25,7 +25,7 @@ class PostFactory extends Factory
             'user_id' => User::inRandomOrder()->first()->id,
             'category_id' => Category::inRandomOrder()->first()->id,
             'title' => fake()->text(50),
-            'description' => fake()->word(),
+            'description' => fake()->paragraphs(rand(1, 5), true),
             'image' => null,
             'status' => fake()->randomElement(PostStatus::cases())->value,
         ];
