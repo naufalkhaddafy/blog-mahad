@@ -23,6 +23,7 @@ import {
     Server,
     Tags,
     Users,
+    Gauge,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavFooter } from './nav-footer';
@@ -87,6 +88,12 @@ const systemMenu: NavItem[] = [
         url: '/backup',
         icon: DatabaseBackup,
     },
+    {
+        title: 'Horizon Queue',
+        url: '/horizon',
+        icon: Gauge,
+        isExternal: true,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
@@ -119,7 +126,7 @@ export function AppSidebar() {
                 <NavMain items={mainNavItems} title="Platform" />
                 <NavMain items={Blog} title="Blog" />
                 <NavMain items={radioMenu} title="Radio" />
-                <NavMain items={systemMenu.filter((item) => isSuperAdmin || (item.url !== '/log' && item.url !== '/backup'))} title="Sistem" />
+                <NavMain items={systemMenu.filter((item) => isSuperAdmin || (item.url !== '/log' && item.url !== '/backup' && item.url !== '/horizon'))} title="Sistem" />
             </SidebarContent>
 
             <SidebarFooter>
