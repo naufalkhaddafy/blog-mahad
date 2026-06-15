@@ -25,7 +25,7 @@ case "$1" in
     # Queue worker juga perlu config fresh
     php artisan config:clear
     php artisan optimize
-    exec php artisan queue:work --tries=3
+    exec php artisan horizon
     ;;
   *)
     exec "$@"
