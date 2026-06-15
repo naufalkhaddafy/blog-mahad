@@ -64,6 +64,19 @@ services:
             - redis
             - app
 
+    queue:
+        image: blog-mahad:dev
+        container_name: blog-mahad-queue
+        command: php artisan horizon
+        volumes:
+            - .:/app
+        env_file:
+            - .env
+        depends_on:
+            - mariadb
+            - redis
+            - app
+
     mariadb:
         image: mariadb:11
         container_name: mariadb

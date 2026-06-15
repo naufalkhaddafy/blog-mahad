@@ -22,7 +22,8 @@ RUN apk add --no-cache \
     nodejs \
     npm \
     linux-headers \
-    mariadb-client
+    mariadb-client \
+    ffmpeg
 
 # Install PHP extensions
 # FrankenPHP includes some by default, but we ensure our required ones are there.

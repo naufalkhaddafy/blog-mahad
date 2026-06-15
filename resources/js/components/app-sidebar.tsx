@@ -70,6 +70,11 @@ const radioMenu: NavItem[] = [
         url: '/radio/live-stream',
         icon: AudioLines,
     },
+    {
+        title: 'Audio Rekaman',
+        url: '/recordings',
+        icon: Airplay,
+    },
 ];
 
 const systemMenu: NavItem[] = [

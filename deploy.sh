@@ -67,6 +67,13 @@ mkdir -p storage/app/public storage/framework/{cache,sessions,views} storage/log
 # Set permissions for www-data (UID 82 in Alpine)
 sudo chown -R 82:82 storage bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
+
+# Setup external HDD for recordings
+echo -e "${YELLOW}Setting up external HDD for recordings...${NC}"
+sudo mkdir -p /mnt/hdd500/blog-mahad-recordings
+sudo chown -R 82:82 /mnt/hdd500/blog-mahad-recordings
+sudo chmod -R 775 /mnt/hdd500/blog-mahad-recordings
+
 echo -e "${GREEN}Permissions fixed.${NC}"
 
 # 5. Pull Images

@@ -7,7 +7,7 @@ x-app-default: &app-default
         APP_KEY: ${APP_KEY}
         APP_URL: ${APP_URL}
         APP_DEBUG: ${APP_DEBUG:-false}
-        
+
         DB_CONNECTION: ${DB_CONNECTION}
         DB_HOST: ${DB_HOST}
         DB_PORT: ${DB_PORT}
@@ -45,6 +45,7 @@ services:
         volumes:
             - ./storage:/app/storage
             - ./bootstrap/cache:/app/bootstrap/cache
+            - /mnt/hdd500/blog-mahad-recordings:/app/storage/app/public/recordings
         depends_on:
             - reverb
             - mahad_mariadb
@@ -53,7 +54,7 @@ services:
     reverb:
         <<: *app-default
         container_name: blog-mahad-reverb
-        command: ["reverb"]
+        command: [ "reverb" ]
         # No host port - access via internal network through Nginx Proxy Manager
         # NPM should proxy WebSocket to: blog-mahad-reverb:8080
         healthcheck:
@@ -62,7 +63,7 @@ services:
     scheduler:
         <<: *app-default
         container_name: blog-mahad-scheduler
-        command: ["scheduler"]
+        command: [ "scheduler" ]
         volumes:
             - ./storage:/app/storage
             - ./bootstrap/cache:/app/bootstrap/cache
@@ -74,10 +75,11 @@ services:
     queue:
         <<: *app-default
         container_name: blog-mahad-queue
-        command: ["queue"]
+        command: [ "queue" ]
         volumes:
             - ./storage:/app/storage
             - ./bootstrap/cache:/app/bootstrap/cache
+            - /mnt/hdd500/blog-mahad-recordings:/app/storage/app/public/recordings
         healthcheck:
             disable: true
         depends_on:

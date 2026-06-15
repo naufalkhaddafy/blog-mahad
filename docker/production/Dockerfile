@@ -52,6 +52,7 @@ RUN apk add --no-cache \
     nodejs \
     npm \
     mariadb-client \
+    ffmpeg \
     && install-php-extensions \
     pcntl \
     bcmath \

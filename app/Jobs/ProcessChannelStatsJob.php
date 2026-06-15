@@ -82,6 +82,8 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
         // Update hanya jika status berubah
         if ($channel->status->value !== $newStatus) {
             if ($newStatus == 'live') {
+                $this->startRecording($channel, $newTitle);
+
                 Log::info('Webhook URL:', ['url' => config('services.n8n.webhook_url')]);
                 if (config('services.n8n.webhook_url')) {
                     Http::timeout(10)->post(config('services.n8n.webhook_url'), [
@@ -91,6 +93,8 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
                 } else {
                     Log::warning('N8N webhook URL is not set.');
                 }
+            } else {
+                $this->stopRecording($channel);
             }
             $channel->update(['status' => $newStatus]);
             Log::info("Update status channel {$channel->name} dari {$channel->status->value} ke {$newStatus}");
@@ -113,6 +117,57 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
             Log::info("Perubahan data pada channel: {$channel->name} - Title: {$newTitle}, Listeners: {$newListeners}");
         } else {
             Log::info("Tidak ada perubahan data pada channel: {$channel->name}");
+        }
+    }
+
+    protected function startRecording(Channel $channel, $title)
+    {
+        $fileName = Str::slug($channel->name . '-' . now()->format('Y-m-d-H-i-s')) . '.mp3';
+        $filePath = 'recordings/' . $fileName;
+        $absolutePath = storage_path('app/public/' . $filePath);
+
+        if (!file_exists(storage_path('app/public/recordings'))) {
+            mkdir(storage_path('app/public/recordings'), 0755, true);
+        }
+
+        // Shoutcast stream usually accessible at /; 
+        $streamUrl = rtrim($channel->url, '/') . '/;';
+        $cmd = "nohup ffmpeg -i " . escapeshellarg($streamUrl) . " -c copy " . escapeshellarg($absolutePath) . " > /dev/null 2>&1 & echo $!";
+        $pid = trim(shell_exec($cmd));
+
+        $finalTitle = $title ? ($title . ' - ' . now()->format('d M Y H:i')) : ('Rekaman ' . $channel->name . ' ' . now()->format('d M Y H:i'));
+
+        \App\Models\Recording::create([
+            'channel_id' => $channel->id,
+            'title' => $finalTitle,
+            'file_path' => $filePath,
+            'status' => 'recording',
+            'ffmpeg_pid' => $pid,
+        ]);
+
+        Log::info("Started recording channel {$channel->name} with PID {$pid}");
+    }
+
+    protected function stopRecording(Channel $channel)
+    {
+        $recordings = \App\Models\Recording::where('channel_id', $channel->id)
+            ->where('status', 'recording')
+            ->get();
+
+        foreach ($recordings as $rec) {
+            if ($rec->ffmpeg_pid) {
+                exec("kill -9 " . escapeshellarg($rec->ffmpeg_pid));
+            }
+            
+            $absolutePath = storage_path('app/public/' . $rec->file_path);
+            $size = file_exists($absolutePath) ? filesize($absolutePath) : 0;
+
+            $rec->update([
+                'status' => 'completed',
+                'file_size' => $size,
+            ]);
+
+            Log::info("Stopped recording for channel {$channel->name}. File size: {$size} bytes");
         }
     }
 }
