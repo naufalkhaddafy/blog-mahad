@@ -4,9 +4,8 @@ set -e
 case "$1" in
   octane)
     echo "Clearing stale cache..."
-    php artisan config:clear
-    php artisan route:clear
-    php artisan view:clear
+    php artisan optimize:clear
+    php artisan package:discover
     echo "Rebuilding optimized cache..."
     php artisan optimize
     echo "Starting Octane..."
@@ -17,13 +16,15 @@ case "$1" in
     ;;
   scheduler)
     # Scheduler juga perlu config fresh
-    php artisan config:clear
+    php artisan optimize:clear
+    php artisan package:discover
     php artisan optimize
     exec php artisan schedule:work
     ;;
   queue)
     # Queue worker juga perlu config fresh
-    php artisan config:clear
+    php artisan optimize:clear
+    php artisan package:discover
     php artisan optimize
     exec php artisan horizon
     ;;
