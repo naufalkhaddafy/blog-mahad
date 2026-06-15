@@ -41,7 +41,7 @@ class CompareShoutcastStats extends Command
                 $cached = Redis::get($key);
                 $old = $cached ? json_decode($cached, true) : [];
 
-                $resp = Http::get($channel->url . '/stats?sid=1&json=1');
+                $resp = Http::timeout(10)->get($channel->url . '/stats?sid=1&json=1');
                 if (!$resp->successful()) {
                     Log::error("HTTP request failed for channel: {$channel->name}");
                     return;
@@ -68,7 +68,7 @@ class CompareShoutcastStats extends Command
                     if ($newStatus == 'live') {
                         Log::info('Webhook URL:', ['url' => config('services.n8n.webhook_url')]);
                         if (config('services.n8n.webhook_url')) {
-                            Http::post(config('services.n8n.webhook_url'), [
+                            Http::timeout(10)->post(config('services.n8n.webhook_url'), [
                                 'channel' => $channel->name,
                                 'description' => str_ireplace(['live', 'onair'], '', $newTitle),
                             ]);

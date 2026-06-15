@@ -91,10 +91,16 @@ class ChannelController extends Controller
 
             if ($cachedData) {
                 $data = json_decode($cachedData, true);
+            } else {
+                $data = array_merge($channel->toArray(), [
+                    'currentlisteners' => 0,
+                    'servertitle' => null,
+                    'songtitle' => null,
+                ]);
             }
 
             return [
-                ...$data ?? [],
+                ...$data,
                 'channel_name' => $channel->name,
                 'channel_url' => $channel->url,
                 'channel_image' => $channel->image,

@@ -23,11 +23,15 @@ class RadioController extends Controller
 
             if ($cachedData) {
                 $data = json_decode($cachedData, true);
+            } else {
+                $data = array_merge($channel->toArray(), [
+                    'currentlisteners' => 0,
+                    'servertitle' => null,
+                    'songtitle' => null,
+                ]);
             }
 
-            return [
-                ...$data ?? [],
-            ];
+            return $data;
         });
 
         return Inertia('Blogs/Radio/Index', [
