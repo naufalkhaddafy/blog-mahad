@@ -12,13 +12,7 @@ class Channel extends Model
         'status' => ChannelStatus::class,
     ];
 
-    public function status(): Attribute
-    {
-        return Attribute::make(
-            get: fn(string $value) => ChannelStatus::from($value),
-            set: fn(ChannelStatus $value) => $value->value,
-        );
-    }
+
 
     public function recordings()
     {
