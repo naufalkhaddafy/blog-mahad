@@ -30,6 +30,7 @@ Route::middleware([\App\Http\Middleware\TrackPageVisit::class])->group(function 
     Route::get('/', [BlogController::class, 'home'])->name('home');
     Route::get('/belajar-islam', [BlogController::class, 'list'])->name('blog.list');
     Route::get('/radio-online', [RadioController::class, 'index']);
+    Route::get('/audio-kajian', [RecordingController::class, 'publicIndex'])->name('audio-kajian');
     Route::get('/al-quran', [BlogController::class, 'quran'])->name('quran');
 });
 

@@ -132,7 +132,6 @@ class MonitoringController extends Controller
 
     public function logs(Request $request)
     {
-        // Read recent logs
         $logPath = storage_path('logs/laravel.log');
         $logs = [];
         if (File::exists($logPath)) {
@@ -141,8 +140,22 @@ class MonitoringController extends Controller
             $logs = array_reverse($logs);
         }
 
+        // Read ffmpeg logs
+        $recordLogs = [];
+        $ffmpegFiles = glob(storage_path('logs/ffmpeg-*.log'));
+        if ($ffmpegFiles) {
+            foreach ($ffmpegFiles as $f) {
+                $recordLogs[] = "=== " . basename($f) . " ===";
+                $lines = file($f, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                $slice = array_slice($lines, -50); // last 50 lines per file
+                $recordLogs = array_merge($recordLogs, $slice);
+                $recordLogs[] = ""; // empty line
+            }
+        }
+
         return Inertia::render('monitoring/logs', [
             'logs' => $logs,
+            'recordLogs' => $recordLogs,
         ]);
     }
 }

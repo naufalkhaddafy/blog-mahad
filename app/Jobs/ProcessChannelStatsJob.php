@@ -130,9 +130,15 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
             mkdir(storage_path('app/public/recordings'), 0755, true);
         }
 
-        // Shoutcast stream usually accessible at /; 
-        $streamUrl = rtrim($channel->url, '/') . '/;';
-        $cmd = "nohup ffmpeg -i " . escapeshellarg($streamUrl) . " -c copy " . escapeshellarg($absolutePath) . " > /dev/null 2>&1 & echo $!";
+        $parsedUrl = parse_url($channel->url);
+        $streamUrl = rtrim($channel->url, '/');
+        // Hanya tambahkan /; jika URL tidak memiliki path (untuk Shoutcast v1)
+        if (!isset($parsedUrl['path']) || $parsedUrl['path'] == '') {
+            $streamUrl .= '/;';
+        }
+
+        $logFile = storage_path('logs/ffmpeg-' . $channel->id . '.log');
+        $cmd = "nohup ffmpeg -user_agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64)\" -i " . escapeshellarg($streamUrl) . " -c copy " . escapeshellarg($absolutePath) . " > " . escapeshellarg($logFile) . " 2>&1 & echo $!";
         $pid = trim(shell_exec($cmd));
 
         $finalTitle = $title ? ($title . ' - ' . now()->format('d M Y H:i')) : ('Rekaman ' . $channel->name . ' ' . now()->format('d M Y H:i'));

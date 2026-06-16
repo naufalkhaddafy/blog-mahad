@@ -51,12 +51,45 @@ class BlogController extends Controller
             ->where('status', 'publish')
             ->latest()->take(10)->cursor();
 
+        $liveChannels = \App\Models\Channel::whereNotIn('status', [\App\Enums\ChannelStatus::Unactive])->get()->map(function ($channel) {
+            $keyName = \Illuminate\Support\Str::slug($channel->name);
+            $keyRedisChannel = "shoutcast:channel:{$keyName}:last_data";
+            $cachedData = \Illuminate\Support\Facades\Redis::get($keyRedisChannel);
+            
+            if ($cachedData) {
+                return json_decode($cachedData, true);
+            }
+            return array_merge($channel->toArray(), [
+                'currentlisteners' => 0,
+                'servertitle' => null,
+                'songtitle' => null,
+            ]);
+        });
+
+        $recordings = \App\Models\Recording::with('channel')
+            ->where('is_published', true)
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get()
+            ->map(function ($rec) {
+                return [
+                    'id' => $rec->id,
+                    'title' => $rec->title,
+                    'file_path' => $rec->file_path,
+                    'file_size' => $rec->file_size,
+                    'created_at' => $rec->created_at->toISOString(),
+                    'channel' => $rec->channel ? ['name' => $rec->channel->name] : null,
+                ];
+            });
+
         return Inertia('Blogs/Home/Index', [
             'posts' => PostResource::collection($post),
             'jadwalKajian' => PostResource::collection($jadwalKajian),
             'qna' => PostResource::collection($qna),
             'poster' => PostResource::collection($poster),
             "banner" => BannerResource::collection(Banner::query()->where('status', true)->orderBy('order')->get()),
+            'liveChannels' => $liveChannels,
+            'recordings' => $recordings,
         ]);
     }
 

@@ -1,6 +1,7 @@
 import { useAppearance } from '@/hooks/use-appearance';
 import useBookmark from '@/hooks/useBookmark';
 import { asset, getLimitTextContent } from '@/lib/utils';
+// @ts-ignore
 import { Link } from '@inertiajs/react';
 import { Bookmark, BookOpenText, ChevronDown, Menu, Moon, Search, Sun, Trash } from 'lucide-react';
 import { useState } from 'react';
@@ -31,6 +32,7 @@ const dataNav = [
         submenu: [
             { name: 'Info Taklim', url: route('blog.list', { category: 'info-taklim' }) },
             { name: 'Info Dauroh', url: route('blog.list', { category: 'info-dauroh' }) },
+            { name: 'Audio Kajian', url: '/audio-kajian' },
         ],
         isNew: false,
     },
@@ -109,7 +111,7 @@ export const Navbar = () => {
                             >
                                 <Link
                                     href={data.url}
-                                    onClick={(e) => {
+                                    onClick={(e: React.MouseEvent) => {
                                         if (!data.url) e.preventDefault();
                                     }}
                                     className="flex items-center gap-1.5"
@@ -283,7 +285,7 @@ export const Navbar = () => {
                             <div key={index} className="w-full">
                                 <Link
                                     href={data.url ?? '#'}
-                                    onClick={(e) => {
+                                    onClick={(e: React.MouseEvent) => {
                                         setActiveDropdown(activeDropdown === index ? null : index);
                                         if (!data.url) return e.preventDefault();
                                         setOpen(false);

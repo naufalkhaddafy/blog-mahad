@@ -13,11 +13,20 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
+// @ts-ignore
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { MoreHorizontal, Disc } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,13 +35,43 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const Index = ({ recordings, channels = [] }: { recordings: any; channels?: any[] }) => {
+const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; channels?: any[]; filters?: any }) => {
     const { errors } = usePage().props;
     const items = recordings?.data || [];
     const paginationData = recordings;
 
     const [selectEdit, setSelectEdit] = useState<any | null>(null);
     const [showUpload, setShowUpload] = useState(false);
+
+    const [filterSearch, setFilterSearch] = useState(filters?.search || '');
+    const [filterPublished, setFilterPublished] = useState(filters?.is_published || '');
+    const [filterDate, setFilterDate] = useState(filters?.date || '');
+
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const timeout = setTimeout(() => {
+            router.get('/recordings', {
+                search: filterSearch,
+                is_published: filterPublished,
+                date: filterDate,
+            }, { preserveState: true, preserveScroll: true, replace: true });
+        }, 300);
+
+        return () => clearTimeout(timeout);
+    }, [filterSearch, filterPublished, filterDate]);
+
+    const clearFilters = () => {
+        setFilterSearch('');
+        setFilterPublished('');
+        setFilterDate('');
+        router.get('/recordings');
+    };
 
     const { data, setData, reset, processing } = useForm<{ title: string; is_published: boolean }>({
         title: '',
@@ -171,7 +210,7 @@ const Index = ({ recordings, channels = [] }: { recordings: any; channels?: any[
                                         <Switch
                                             id="upload_is_published"
                                             checked={uploadForm.data.is_published}
-                                            onCheckedChange={(checked) => uploadForm.setData('is_published', checked)}
+                                            onCheckedChange={(checked: boolean) => uploadForm.setData('is_published', checked)}
                                         />
                                         <Label htmlFor="upload_is_published">Langsung Publish ke Publik</Label>
                                     </div>
@@ -205,7 +244,7 @@ const Index = ({ recordings, channels = [] }: { recordings: any; channels?: any[
                                         <Switch
                                             id="is_published"
                                             checked={data.is_published}
-                                            onCheckedChange={(checked) => setData('is_published', checked)}
+                                            onCheckedChange={(checked: boolean) => setData('is_published', checked)}
                                         />
                                         <Label htmlFor="is_published">Publish ke Publik</Label>
                                     </div>
@@ -218,108 +257,149 @@ const Index = ({ recordings, channels = [] }: { recordings: any; channels?: any[
                         </div>
                     )}
 
-                    <div className="grid gap-4">
-                        {items.map((item: any, index: number) => (
-                            <Card
-                                key={index}
-                                className="custom-scrollbar w-full max-w-screen overflow-x-auto p-2 md:p-4"
-                            >
-                                <div className="flex items-center gap-4 md:gap-8">
-                                    <div className="px-5 hidden md:block">
-                                        <Disc size={32} className={item.status === 'recording' ? 'animate-spin text-red-500' : 'text-gray-500'} />
-                                    </div>
-
-                                    <div className="w-full min-w-56 px-2">
-                                        <h3 className="text-md font-bold text-ellipsis">
-                                            {item.title}
-                                        </h3>
-                                        <div className="py-1 text-sm text-gray-500">
-                                            Channel: <strong>{item.channel?.name}</strong> &bull; Status: {item.status.toUpperCase()}
-                                        </div>
-                                        <div className="text-xs text-gray-400">
-                                            {new Date(item.created_at).toLocaleString()} &bull; {formatBytes(item.file_size)}
-                                        </div>
-                                    </div>
-
-                                    {item.status === 'completed' && (
-                                        <div className="w-full px-2">
-                                            <audio controls className="h-10 w-full" preload="none">
-                                                <source src={`/storage/${item.file_path}`} type="audio/mpeg" />
-                                                Browser Anda tidak mendukung audio player.
-                                            </audio>
-                                        </div>
-                                    )}
-
-                                    <div className="mx-8 flex flex-col items-center gap-2 lg:mx-0">
-                                        <Label htmlFor={`publish-${item.id}`} className="text-xs">Published</Label>
-                                        <Switch
-                                            id={`publish-${item.id}`}
-                                            checked={!!item.is_published}
-                                            onCheckedChange={() => handlePublishToggle(item.id, item.title, !!item.is_published)}
-                                        />
-                                    </div>
-
-                                    <div className="p-5">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    className="h-8 w-8 p-0"
-                                                >
-                                                    <MoreHorizontal />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>
-                                                    Actions
-                                                </DropdownMenuLabel>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem onClick={() => handleEdit(item)}>
-                                                    Edit
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleDelete(item.id)} className="text-red-600">
-                                                    Hapus
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
-                                </div>
-                            </Card>
-                        ))}
-                        {items.length === 0 && (
-                            <div className="text-center text-gray-500 py-10">
-                                Belum ada rekaman yang tersedia. Rekaman akan otomatis muncul ketika ada radio yang selesai siaran (Live).
-                            </div>
+                    <div className="flex flex-wrap gap-4 mb-4">
+                        <Input
+                            placeholder="Cari judul rekaman..."
+                            className="max-w-xs bg-white"
+                            value={filterSearch}
+                            onChange={(e) => setFilterSearch(e.target.value)}
+                        />
+                        <select
+                            className="flex h-10 w-full max-w-[200px] rounded-md border border-input bg-white px-3 py-2 text-sm"
+                            value={filterPublished}
+                            onChange={(e) => setFilterPublished(e.target.value)}
+                        >
+                            <option value="">Semua Status</option>
+                            <option value="1">Published</option>
+                            <option value="0">Draft</option>
+                        </select>
+                        <Input
+                            type="date"
+                            className="max-w-[160px] bg-white"
+                            value={filterDate}
+                            onChange={(e) => setFilterDate(e.target.value)}
+                        />
+                        {(filterSearch !== '' || filterPublished !== '' || filterDate !== '') && (
+                            <Button variant="destructive" onClick={clearFilters}>Reset Filter</Button>
                         )}
                     </div>
 
+                    <div className="rounded-md border overflow-x-auto bg-white">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[50px]"></TableHead>
+                                    <TableHead>Informasi Rekaman</TableHead>
+                                    <TableHead>Audio Player</TableHead>
+                                    <TableHead className="text-center">Published</TableHead>
+                                    <TableHead className="text-right">Aksi</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {items.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="text-center text-gray-500 h-32">
+                                            Belum ada rekaman yang tersedia. Rekaman akan otomatis muncul ketika ada radio yang selesai siaran (Live).
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    items.map((item: any, index: number) => (
+                                        <TableRow key={index}>
+                                            <TableCell className="text-center">
+                                                <Disc size={20} className={item.status === 'recording' ? 'animate-spin text-red-500 mx-auto' : 'text-gray-400 mx-auto'} />
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="min-w-48">
+                                                    <h3 className="text-sm font-bold text-ellipsis">
+                                                        {item.title}
+                                                    </h3>
+                                                    <div className="py-1 text-xs text-gray-500">
+                                                        Channel: <strong>{item.channel?.name || '-'}</strong> &bull; Status: {item.status.toUpperCase()}
+                                                    </div>
+                                                    <div className="text-[10px] text-gray-400">
+                                                        {new Date(item.created_at).toLocaleString()} &bull; {formatBytes(item.file_size)}
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.status === 'completed' ? (
+                                                    <div className="w-full min-w-48">
+                                                        <audio controls className="h-9 w-full" preload="none">
+                                                            <source src={`/storage/${item.file_path}`} type="audio/mpeg" />
+                                                            Browser Anda tidak mendukung audio player.
+                                                        </audio>
+                                                    </div>
+                                                ) : (
+                                                    <div className="text-xs text-gray-400 italic">Sedang merekam...</div>
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                                <div className="flex justify-center">
+                                                    <Switch
+                                                        id={`publish-${item.id}`}
+                                                        checked={!!item.is_published}
+                                                        onCheckedChange={() => handlePublishToggle(item.id, item.title, !!item.is_published)}
+                                                    />
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            className="h-8 w-8 p-0"
+                                                        >
+                                                            <MoreHorizontal size={16} />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem onClick={() => handleEdit(item)}>
+                                                            Edit
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => handleDelete(item.id)} className="text-red-600">
+                                                            Hapus
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
+
                     {/* Pagination */}
-                    {paginationData && paginationData.last_page > 1 && (
+                    {paginationData && (
                         <div className="flex flex-wrap items-center justify-between gap-4 pt-6">
                             <p className="text-muted-foreground text-sm">
-                                Menampilkan {paginationData.from} – {paginationData.to} dari {paginationData.total} data
+                                Menampilkan {paginationData.from || 0} – {paginationData.to || 0} dari {paginationData.total} data
                             </p>
-                            <div className="flex items-center gap-1">
-                                {paginationData.links.map((link: any, idx: number) => {
-                                    const isNav = idx === 0 || idx === paginationData.links.length - 1;
-                                    const label = link.label
-                                        .replace('&laquo;', '«')
-                                        .replace('&raquo;', '»')
-                                        .replace('Previous', 'Prev');
+                            {paginationData.last_page > 1 && (
+                                <div className="flex items-center gap-1">
+                                    {paginationData.links.map((link: any, idx: number) => {
+                                        const isNav = idx === 0 || idx === paginationData.links.length - 1;
+                                        const label = link.label
+                                            .replace('&laquo;', '«')
+                                            .replace('&raquo;', '»')
+                                            .replace('Previous', 'Prev');
 
-                                    return (
-                                        <Button
-                                            key={idx}
-                                            variant={link.active ? 'default' : 'outline'}
-                                            size="sm"
-                                            disabled={!link.url}
-                                            onClick={() => link.url && router.get(link.url, {}, { preserveState: true, preserveScroll: true })}
-                                            className={isNav ? 'px-3' : 'px-3'}
-                                            dangerouslySetInnerHTML={{ __html: label }}
-                                        />
-                                    );
-                                })}
-                            </div>
+                                        return (
+                                            <Button
+                                                key={idx}
+                                                variant={link.active ? 'default' : 'outline'}
+                                                size="sm"
+                                                disabled={!link.url}
+                                                onClick={() => link.url && router.get(link.url, {}, { preserveState: true, preserveScroll: true })}
+                                                className={isNav ? 'px-3' : 'px-3'}
+                                                dangerouslySetInnerHTML={{ __html: label }}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

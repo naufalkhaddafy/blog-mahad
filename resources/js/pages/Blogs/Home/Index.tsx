@@ -15,6 +15,7 @@ import BlogLayout from '@/layouts/BlogLayout';
 import { BannerProps } from '@/pages/Banner/Index';
 import { PostProps } from '@/pages/Posts/Partials/Type';
 import { QuranPromoModal } from '@/components/blog/QuranPromoModal';
+// @ts-ignore
 import { Head, Link } from '@inertiajs/react';
 import { CalendarDays, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -25,6 +26,7 @@ import 'swiper/css/pagination';
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Banner } from './Partials/Banner';
+import { RadioWidget } from '@/components/blog/RadioWidget';
 
 interface IndexProps {
     posts: PostProps[];
@@ -32,9 +34,11 @@ interface IndexProps {
     qna: PostProps[];
     poster: PostProps[];
     banner: BannerProps[];
+    liveChannels: any[];
+    recordings: any[];
 }
 
-const Index = ({ posts, jadwalKajian, qna, poster, banner }: IndexProps) => {
+const Index = ({ posts, jadwalKajian, qna, poster, banner, liveChannels = [], recordings = [] }: IndexProps) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -63,9 +67,14 @@ const Index = ({ posts, jadwalKajian, qna, poster, banner }: IndexProps) => {
             {/* Al-Quran Promo Modal */}
             <QuranPromoModal />
 
+            {/* Radio & Podcast Widget */}
+            <Container className="pt-6 lg:pt-8">
+                <RadioWidget liveChannels={liveChannels} recordings={recordings} />
+            </Container>
+
             {/* Top Rencent */}
             <Container>
-                <div className="py-10 lg:py-15">
+                <div className="pb-10 pt-6 lg:pb-15 lg:pt-8">
                     <ScrollReveal variant="fade-up">
                         <div className="flex items-center justify-between">
                             <h2 className="text-primary relative h-fit w-auto text-xl font-extrabold after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl dark:text-green-600 dark:after:bg-green-400">
