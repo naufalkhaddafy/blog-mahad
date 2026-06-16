@@ -2,9 +2,17 @@ import useRadio from '@/hooks/useRadio';
 import { globalAudio } from '@/lib/globalAudio';
 // @ts-ignore
 import { router } from '@inertiajs/react';
-import { ChevronUp, Download, List, Mic, Pause, Play, SkipBack, SkipForward, Square, X } from 'lucide-react';
+import { ChevronUp, Download, List, Mic, Pause, Play, RefreshCw, SkipBack, SkipForward, Square, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Container } from '../Container';
+
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            marquee: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { behavior?: string, direction?: string, scrollamount?: string }, HTMLElement>;
+        }
+    }
+}
 
 export const RadioPlay = () => {
     const { channel, setChannelPlay, playNext, playPrev, hasNext, hasPrev, playlist, currentIndex, setPlaylist } = useRadio();
@@ -61,6 +69,13 @@ export const RadioPlay = () => {
         setShowPlaylist(false);
     };
 
+    const handleRetry = () => {
+        setErrors(false);
+        setIsLoading(true);
+        audio.load();
+        audio.play().catch((e) => console.error(e));
+    };
+
     const isActive = !!(channel.url || channel.file_path);
 
     return (
@@ -79,11 +94,10 @@ export const RadioPlay = () => {
                     )}
                     {/* Collapsible Playlist Panel */}
                     <div
-                        className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                            channel.type === 'recording' && showPlaylist && playlist.length > 0
-                                ? 'max-h-[400px] opacity-100'
-                                : 'max-h-0 opacity-0'
-                        }`}
+                        className={`overflow-hidden transition-all duration-500 ease-in-out ${channel.type === 'recording' && showPlaylist && playlist.length > 0
+                            ? 'max-h-[400px] opacity-100'
+                            : 'max-h-0 opacity-0'
+                            }`}
                     >
                         <div className="bg-green-950 border-b border-green-800 shadow-inner">
                             <Container className="w-full max-w-2xl px-3 py-3">
@@ -97,19 +111,17 @@ export const RadioPlay = () => {
                                     {playlist.slice(0, 10).map((item, idx) => (
                                         <div
                                             key={idx}
-                                            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-xl transition border ${
-                                                idx === currentIndex
-                                                    ? 'bg-green-800 border-green-600 text-white shadow-sm'
-                                                    : 'bg-green-900/40 border-transparent text-white/70 hover:bg-green-800/60'
-                                            }`}
+                                            className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-xl transition border ${idx === currentIndex
+                                                ? 'bg-green-800 border-green-600 text-white shadow-sm'
+                                                : 'bg-green-900/40 border-transparent text-white/70 hover:bg-green-800/60'
+                                                }`}
                                         >
                                             <button
                                                 onClick={() => setPlaylist(playlist, idx)}
                                                 className="flex-1 flex items-center gap-3 min-w-0 text-left cursor-pointer group"
                                             >
-                                                <div className={`h-7 w-7 flex-shrink-0 rounded-full flex items-center justify-center text-xs shadow-sm transition ${
-                                                    idx === currentIndex ? 'bg-green-500 text-white font-bold' : 'bg-green-800 text-white/50 group-hover:bg-green-700 group-hover:text-white'
-                                                }`}>
+                                                <div className={`h-7 w-7 flex-shrink-0 rounded-full flex items-center justify-center text-xs shadow-sm transition ${idx === currentIndex ? 'bg-green-500 text-white font-bold' : 'bg-green-800 text-white/50 group-hover:bg-green-700 group-hover:text-white'
+                                                    }`}>
                                                     {idx === currentIndex ? '▶' : idx + 1}
                                                 </div>
                                                 <div className="flex-1 min-w-0 pr-2">
@@ -117,7 +129,7 @@ export const RadioPlay = () => {
                                                     <p className={`text-xs transition ${idx === currentIndex ? 'text-green-200' : 'text-white/40 group-hover:text-white/60'}`}>{item.stats?.description}</p>
                                                 </div>
                                             </button>
-                                            
+
                                             <a
                                                 href={`/storage/${item.file_path}`}
                                                 download={`${item.name}.mp3`}
@@ -147,13 +159,18 @@ export const RadioPlay = () => {
                     </div>
 
                     {/* Main Player Bar */}
-                    <Container className="w-full max-w-2xl pl-3 pr-6 py-3 text-white">
+                    <Container className="w-full max-w-2xl pl-4 pr-4 py-4 sm:pl-5 sm:pr-8 sm:py-5 text-white">
                         {errors ? (
-                            <div className="flex items-center justify-between px-3 py-5">
-                                <p>Afwan radio tidak dapat diputar</p>
-                                <button onClick={handleStop}>
-                                    <X className="cursor-pointer transition duration-300 hover:scale-130 hover:text-red-500 active:text-red-500" />
-                                </button>
+                            <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-3 sm:gap-0 px-1 sm:px-3 py-1 sm:py-0">
+                                <p className="text-xs sm:text-sm font-semibold text-red-200 text-center sm:text-left">Afwan radio tidak dapat diputar</p>
+                                <div className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-end">
+                                    <button onClick={handleRetry} className="flex items-center gap-1.5 px-3 py-1.5 bg-green-700 hover:bg-green-600 rounded-lg transition text-[11px] font-bold shadow-sm cursor-pointer">
+                                        <RefreshCw size={14} /> Coba Lagi
+                                    </button>
+                                    <button onClick={handleStop} className="p-1.5 bg-red-900/50 hover:bg-red-600 text-white rounded-lg transition cursor-pointer shadow-sm">
+                                        <X size={16} />
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <div className="flex items-center justify-between gap-4">
@@ -192,7 +209,7 @@ export const RadioPlay = () => {
                                                 </>
                                             ) : channel.type === 'recording' ? (
                                                 <>
-                                                    <span className="line-clamp-1">{channel.stats?.description}</span>
+                                                    <span className="line-clamp-1">{channel.name}</span>
                                                     <span className="flex-shrink-0 flex items-center rounded-full bg-blue-600 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] text-white font-semibold">
                                                         Audio Kajian
                                                     </span>
@@ -204,17 +221,17 @@ export const RadioPlay = () => {
                                         {/* Bottom line: marquee */}
                                         {/* @ts-ignore */}
                                         <marquee behavior="scroll" direction="left" scrollamount="2" className="font-bold text-sm mt-0.5">
-                                            {channel.stats?.description || channel.description}
+                                            {channel.type === 'recording' ? channel.name : (channel.stats?.description || channel.description)}
                                             {/* @ts-ignore */}
                                         </marquee>
                                     </div>
                                 </div>
 
                                 {/* Controls */}
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1 sm:gap-2 ml-auto pl-2">
                                     {isLoading ? (
-                                        <div className="px-3">
-                                            <div className="size-7 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                        <div className="px-1 sm:px-3">
+                                            <div className="size-5 sm:size-7 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                                         </div>
                                     ) : (
                                         <>
@@ -222,37 +239,36 @@ export const RadioPlay = () => {
                                                 <button
                                                     onClick={playPrev}
                                                     disabled={!hasPrev}
-                                                    className={`cursor-pointer rounded-full p-2 transition ${hasPrev ? 'bg-green-700 hover:bg-green-500' : 'bg-green-900/50 opacity-40 cursor-not-allowed'}`}
+                                                    className={`cursor-pointer rounded-full p-1.5 sm:p-2 transition ${hasPrev ? 'bg-green-700 hover:bg-green-500' : 'bg-green-900/50 opacity-40 cursor-not-allowed'}`}
                                                 >
-                                                    <SkipBack className="size-4" fill="currentColor" />
+                                                    <SkipBack className="size-3.5 sm:size-4" fill="currentColor" />
                                                 </button>
                                             )}
                                             <button
                                                 onClick={togglePlayPause}
-                                                className="cursor-pointer rounded-full bg-green-700 p-2 transition hover:bg-green-500"
+                                                className="cursor-pointer rounded-full bg-green-700 p-1.5 sm:p-2 transition hover:bg-green-500"
                                             >
                                                 {!pause ? (
-                                                    <Pause className="size-4" />
+                                                    <Pause className="size-3.5 sm:size-4" />
                                                 ) : (
-                                                    <Play className="size-4" />
+                                                    <Play className="size-3.5 sm:size-4" />
                                                 )}
                                             </button>
                                             {channel.type === 'recording' && (
                                                 <button
                                                     onClick={playNext}
                                                     disabled={!hasNext}
-                                                    className={`cursor-pointer rounded-full p-2 transition ${hasNext ? 'bg-green-700 hover:bg-green-500' : 'bg-green-900/50 opacity-40 cursor-not-allowed'}`}
+                                                    className={`cursor-pointer rounded-full p-1.5 sm:p-2 transition ${hasNext ? 'bg-green-700 hover:bg-green-500' : 'bg-green-900/50 opacity-40 cursor-not-allowed'}`}
                                                 >
-                                                    <SkipForward className="size-4" fill="currentColor" />
+                                                    <SkipForward className="size-3.5 sm:size-4" fill="currentColor" />
                                                 </button>
                                             )}
                                             <button
                                                 onClick={handleStop}
-                                                className="cursor-pointer rounded-full bg-green-700 p-2 transition hover:bg-green-500"
+                                                className="cursor-pointer rounded-full bg-green-700 p-1.5 sm:p-2 transition hover:bg-green-500"
                                             >
-                                                <Square className="size-4" />
+                                                <Square className="size-3.5 sm:size-4" />
                                             </button>
-
                                         </>
                                     )}
                                 </div>

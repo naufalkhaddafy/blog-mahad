@@ -112,15 +112,15 @@ const Index = ({ posts, jadwalKajian, qna, poster, banner, liveChannels = [], re
                                                 key={index}
                                                 className="col-span-5 row-span-3 h-full w-full lg:col-span-2"
                                             >
-                                            <ScrollReveal variant="fade-up" delay={0}>
-                                                <Link
-                                                    href={route('blog.show', {
-                                                        post: dataPost.slug,
-                                                    })}
-                                                >
-                                                    <CardGrid dataPost={dataPost} />
-                                                </Link>
-                                            </ScrollReveal>
+                                                <ScrollReveal variant="fade-up" delay={0}>
+                                                    <Link
+                                                        href={route('blog.show', {
+                                                            post: dataPost.slug,
+                                                        })}
+                                                    >
+                                                        <CardGrid dataPost={dataPost} />
+                                                    </Link>
+                                                </ScrollReveal>
                                             </div>
                                         );
                                     } else {
@@ -129,7 +129,7 @@ const Index = ({ posts, jadwalKajian, qna, poster, banner, liveChannels = [], re
                                                 key={index}
                                                 className="col-span-5 w-full max-w-3xl xl:w-3xl"
                                             >
-                                                <ScrollReveal variant="fade-left" delay={index * 100}>
+                                                <ScrollReveal variant="fade-up" delay={index * 100}>
                                                     <Link
                                                         href={route('blog.show', {
                                                             post: dataPost.slug,
@@ -153,7 +153,7 @@ const Index = ({ posts, jadwalKajian, qna, poster, banner, liveChannels = [], re
             {/* Jadwal Kajian */}
             <section className="bg-gradient-to-b from-green-50 to-white py-10 lg:py-15 dark:from-green-950/30 dark:to-transparent">
                 <Container>
-                    <ScrollReveal variant="fade-right">
+                    <ScrollReveal variant="fade-up">
                         <div className="flex items-center justify-between">
                             <h2 className="text-primary relative flex items-center gap-3 text-xl font-extrabold after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] lg:text-2xl dark:text-green-600 dark:after:bg-green-400">
                                 <CalendarDays className="h-6 w-6 text-green-600 lg:h-7 lg:w-7 dark:text-green-400" />
@@ -255,7 +255,7 @@ const Index = ({ posts, jadwalKajian, qna, poster, banner, liveChannels = [], re
             {/* Question */}
             <section className="pt-15">
                 <Container>
-                    <ScrollReveal variant="fade-left">
+                    <ScrollReveal variant="fade-up">
                         <h2 className="text-primary relative h-fit w-fit text-2xl font-extrabold after:absolute after:-bottom-3 after:left-0 after:h-1 after:w-[60px] after:rounded-2xl after:bg-green-500 after:content-[''] dark:text-green-600 dark:after:bg-green-400">
                             Problematika Ummat
                         </h2>
