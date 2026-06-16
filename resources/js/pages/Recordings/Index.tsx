@@ -10,6 +10,14 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -41,7 +49,27 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
     const paginationData = recordings;
 
     const [selectEdit, setSelectEdit] = useState<any | null>(null);
+    const [selectTrim, setSelectTrim] = useState<any | null>(null);
+    const [showTrimConfirm, setShowTrimConfirm] = useState(false);
+    const [duration, setDuration] = useState<number>(0);
+    const audioRef = useRef<HTMLAudioElement>(null);
     const [showUpload, setShowUpload] = useState(false);
+
+    const formatTime = (totalSeconds: number) => {
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = Math.floor(totalSeconds % 60);
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    };
+
+    const parseTime = (timeStr: string) => {
+        if (!timeStr) return 0;
+        const parts = timeStr.split(':').map(Number);
+        if (parts.length === 3) {
+            return parts[0] * 3600 + parts[1] * 60 + parts[2];
+        }
+        return 0;
+    };
 
     const [filterSearch, setFilterSearch] = useState(filters?.search || '');
     const [filterPublished, setFilterPublished] = useState(filters?.is_published || '');
@@ -85,6 +113,11 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
         audio: null,
     });
 
+    const trimForm = useForm<{ start_time: string; end_time: string }>({
+        start_time: '00:00:00',
+        end_time: '01:00:00',
+    });
+
     const handleEdit = (rec: any) => {
         setSelectEdit(rec);
         setData({
@@ -95,9 +128,11 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
 
     const handleCancel = () => {
         setSelectEdit(null);
+        setSelectTrim(null);
         setShowUpload(false);
         reset();
         uploadForm.reset();
+        trimForm.reset();
     };
 
     const onSubmit = (e: React.FormEvent) => {
@@ -117,6 +152,33 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                 uploadForm.reset();
                 setShowUpload(false);
             },
+        });
+    };
+
+    const handleTrim = (rec: any) => {
+        setSelectTrim(rec);
+        setDuration(0);
+        trimForm.setData({
+            start_time: '00:00:00',
+            end_time: '00:00:00',
+        });
+    };
+
+    const onTrimSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setShowTrimConfirm(true);
+    };
+
+    const executeTrim = () => {
+        trimForm.post(route('recordings.trim', selectTrim.id), {
+            onSuccess: () => {
+                trimForm.reset();
+                setSelectTrim(null);
+                setShowTrimConfirm(false);
+            },
+            onError: () => {
+                setShowTrimConfirm(false);
+            }
         });
     };
 
@@ -257,6 +319,97 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                         </div>
                     )}
 
+                    {selectTrim && (
+                        <div className="mb-6 rounded-xl border p-4 shadow bg-blue-50/50">
+                            <h3 className="font-bold text-lg mb-2">Potong Audio: <span className="text-blue-600">{selectTrim.title}</span></h3>
+                            <p className="text-sm text-gray-600 mb-4">Pilih bagian audio yang ingin dipertahankan. File asli akan langsung tertimpa (replaced).</p>
+                            
+                            <div className="mb-4">
+                                <audio 
+                                    controls 
+                                    className="w-full" 
+                                    src={`/storage/${selectTrim.file_path}`} 
+                                    ref={audioRef}
+                                    onLoadedMetadata={(e) => {
+                                        const d = (e.target as HTMLAudioElement).duration;
+                                        setDuration(d);
+                                        trimForm.setData({
+                                            start_time: '00:00:00',
+                                            end_time: formatTime(d)
+                                        });
+                                    }}
+                                />
+                            </div>
+
+                            <form onSubmit={onTrimSubmit}>
+                                <div className="bg-white p-4 rounded-md border">
+                                    <div className="flex justify-between text-sm font-bold mb-6">
+                                        <div className="flex flex-col">
+                                            <span className="text-gray-500 text-xs font-normal">Waktu Mulai</span>
+                                            <span className="text-blue-600 font-mono text-base">{trimForm.data.start_time}</span>
+                                        </div>
+                                        <div className="flex flex-col text-right">
+                                            <span className="text-gray-500 text-xs font-normal">Waktu Selesai</span>
+                                            <span className="text-red-600 font-mono text-base">{trimForm.data.end_time}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="relative w-full h-8 flex items-center">
+                                        {/* Track Background */}
+                                        <div className="absolute w-full h-3 bg-gray-200 rounded-full" />
+                                        
+                                        {/* Highlighted Range */}
+                                        <div 
+                                            className="absolute h-3 bg-blue-200 rounded-full pointer-events-none" 
+                                            style={{ 
+                                                left: `${(parseTime(trimForm.data.start_time) / (duration || 1)) * 100}%`, 
+                                                right: `${100 - (parseTime(trimForm.data.end_time) / (duration || 1)) * 100}%` 
+                                            }} 
+                                        />
+                                        
+                                        {/* Start Slider */}
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max={duration || 100}
+                                            step="1"
+                                            className="absolute w-full h-3 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-blue-600 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-grab active:[&::-webkit-slider-thumb]:cursor-grabbing [&::-webkit-slider-thumb]:shadow-md"
+                                            value={parseTime(trimForm.data.start_time)}
+                                            onChange={(e) => {
+                                                const val = Number(e.target.value);
+                                                const maxVal = parseTime(trimForm.data.end_time) - 1;
+                                                const safeVal = Math.min(val, maxVal);
+                                                trimForm.setData('start_time', formatTime(safeVal));
+                                                if (audioRef.current) audioRef.current.currentTime = safeVal;
+                                            }}
+                                        />
+                                        
+                                        {/* End Slider */}
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max={duration || 100}
+                                            step="1"
+                                            className="absolute w-full h-3 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-red-600 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-grab active:[&::-webkit-slider-thumb]:cursor-grabbing [&::-webkit-slider-thumb]:shadow-md"
+                                            value={parseTime(trimForm.data.end_time)}
+                                            onChange={(e) => {
+                                                const val = Number(e.target.value);
+                                                const minVal = parseTime(trimForm.data.start_time) + 1;
+                                                const safeVal = Math.max(val, minVal);
+                                                trimForm.setData('end_time', formatTime(safeVal));
+                                                if (audioRef.current) audioRef.current.currentTime = safeVal;
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex gap-2 mt-4">
+                                    <Button type="submit" disabled={trimForm.processing}>Potong & Simpan</Button>
+                                    <Button type="button" variant="outline" onClick={handleCancel}>Batal</Button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
+
                     <div className="flex flex-wrap gap-4 mb-4">
                         <Input
                             placeholder="Cari judul rekaman..."
@@ -358,6 +511,11 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                                         <DropdownMenuItem onClick={() => handleEdit(item)}>
                                                             Edit
                                                         </DropdownMenuItem>
+                                                        {item.status === 'completed' && (
+                                                            <DropdownMenuItem onClick={() => handleTrim(item)}>
+                                                                Potong Audio
+                                                            </DropdownMenuItem>
+                                                        )}
                                                         <DropdownMenuItem onClick={() => handleDelete(item.id)} className="text-red-600">
                                                             Hapus
                                                         </DropdownMenuItem>
@@ -404,6 +562,27 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                     )}
                 </div>
             </div>
+
+            {/* Modal Konfirmasi Potong Audio */}
+            <Dialog open={showTrimConfirm} onOpenChange={setShowTrimConfirm}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Konfirmasi Potong Audio</DialogTitle>
+                        <DialogDescription>
+                            Apakah Anda yakin ingin memotong rekaman ini dari <strong className="text-black">{trimForm.data.start_time}</strong> hingga <strong className="text-black">{trimForm.data.end_time}</strong>? 
+                            <br /><br />
+                            <span className="text-red-600 font-semibold">Perhatian:</span> File mentah rekaman ini akan langsung tertimpa (terhapus dan diganti dengan versi yang dipotong) untuk menghemat penyimpanan. Tindakan ini tidak dapat dibatalkan.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-4 gap-2 sm:gap-0">
+                        <Button variant="outline" onClick={() => setShowTrimConfirm(false)}>Batal</Button>
+                        <Button variant="destructive" onClick={executeTrim} disabled={trimForm.processing}>
+                            {trimForm.processing ? 'Memotong...' : 'Ya, Potong & Timpa'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         </AppLayout>
     );
 };

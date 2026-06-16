@@ -125,4 +125,56 @@ class RecordingController extends Controller
 
         return back();
     }
+
+    public function trim(Request $request, Recording $recording)
+    {
+        $request->validate([
+            'start_time' => 'required|string',
+            'end_time' => 'required|string',
+        ]);
+
+        if (!$recording->file_path || !Storage::disk('public')->exists($recording->file_path)) {
+            return back()->withErrors(['message' => 'File rekaman asli tidak ditemukan.']);
+        }
+
+        $originalPath = Storage::disk('public')->path($recording->file_path);
+        $extension = pathinfo($originalPath, PATHINFO_EXTENSION);
+        if (empty($extension)) {
+            $extension = 'mp3';
+        }
+
+        $tempFileName = 'recordings/' . uniqid('trimmed_') . '.' . $extension;
+        $tempPath = Storage::disk('public')->path($tempFileName);
+
+        $start = escapeshellarg($request->start_time);
+        $end = escapeshellarg($request->end_time);
+        $input = escapeshellarg($originalPath);
+        $output = escapeshellarg($tempPath);
+
+        // Run ffmpeg with stream copy for fast trimming
+        $command = "ffmpeg -i {$input} -ss {$start} -to {$end} -c copy {$output} 2>&1";
+        
+        exec($command, $outputLog, $returnCode);
+
+        if ($returnCode !== 0) {
+            \Illuminate\Support\Facades\Log::error('FFMPEG Trim failed: ' . implode("\n", $outputLog));
+            return back()->withErrors(['message' => 'Gagal memotong audio. Pastikan format waktu benar (HH:MM:SS) dan ffmpeg terinstall.']);
+        }
+
+        if (file_exists($tempPath)) {
+            // Replace old file with new file
+            rename($tempPath, $originalPath);
+            
+            // Update database with new file size
+            $recording->update([
+                'file_size' => filesize($originalPath),
+            ]);
+            
+            flashMessage('Success', 'Berhasil memotong rekaman audio.');
+        } else {
+            return back()->withErrors(['message' => 'File hasil potongan tidak ditemukan.']);
+        }
+
+        return back();
+    }
 }
