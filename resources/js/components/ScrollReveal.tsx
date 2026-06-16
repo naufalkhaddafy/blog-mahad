@@ -46,7 +46,7 @@ export const ScrollReveal = ({
     delay = 0,
     duration = 600,
     className,
-    threshold = 0.15,
+    threshold = 0,
     as: Component = 'div',
 }: ScrollRevealProps) => {
     const { ref, isVisible } = useScrollAnimation({ threshold });

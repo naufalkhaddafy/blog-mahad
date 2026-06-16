@@ -16,7 +16,8 @@ export const RadioPlay = () => {
     const audio = globalAudio.audio;
 
     useEffect(() => {
-        const handlePlay = () => { setPause(false); setIsLoading(false); };
+        const handlePlay = () => { setPause(false); };
+        const handlePlaying = () => { setIsLoading(false); setPause(false); };
         const handlePause = () => setPause(true);
         const handleWaiting = () => setIsLoading(true);
         const handleCanPlay = () => { setIsLoading(false); };
@@ -24,6 +25,7 @@ export const RadioPlay = () => {
         const handleEnded = () => { if (hasNext) playNext(); };
 
         audio.addEventListener('play', handlePlay);
+        audio.addEventListener('playing', handlePlaying);
         audio.addEventListener('pause', handlePause);
         audio.addEventListener('waiting', handleWaiting);
         audio.addEventListener('canplaythrough', handleCanPlay);
@@ -37,6 +39,7 @@ export const RadioPlay = () => {
 
         return () => {
             audio.removeEventListener('play', handlePlay);
+            audio.removeEventListener('playing', handlePlaying);
             audio.removeEventListener('pause', handlePause);
             audio.removeEventListener('waiting', handleWaiting);
             audio.removeEventListener('canplaythrough', handleCanPlay);
@@ -144,7 +147,7 @@ export const RadioPlay = () => {
                     </div>
 
                     {/* Main Player Bar */}
-                    <Container className="w-full max-w-2xl px-3 py-3 text-white">
+                    <Container className="w-full max-w-2xl pl-3 pr-6 py-3 text-white">
                         {errors ? (
                             <div className="flex items-center justify-between px-3 py-5">
                                 <p>Afwan radio tidak dapat diputar</p>
@@ -201,7 +204,7 @@ export const RadioPlay = () => {
                                         {/* Bottom line: marquee */}
                                         {/* @ts-ignore */}
                                         <marquee behavior="scroll" direction="left" scrollamount="2" className="font-bold text-sm mt-0.5">
-                                            {channel.status === 'live' ? (channel.stats?.description || channel.description) : channel.name}
+                                            {channel.stats?.description || channel.description}
                                             {/* @ts-ignore */}
                                         </marquee>
                                     </div>

@@ -64,10 +64,10 @@ export const RadioWidget: React.FC<RadioWidgetProps> = ({ liveChannels, recordin
         <div className="w-full overflow-hidden rounded-xl shadow-sm border border-green-100 hover:shadow-md transition-all duration-300 dark:border-green-900/30 dark:bg-gray-900 group">
             <div className="flex flex-row items-stretch h-14 sm:h-16">
                 {/* Left Label */}
-                <div className="bg-green-600 flex flex-col items-center justify-center px-3 sm:px-5 flex-shrink-0 text-white w-24 sm:w-32 relative overflow-hidden">
+                <div className="bg-green-600 flex flex-col items-center justify-center px-1 sm:px-5 flex-shrink-0 text-white w-20 sm:w-32 relative overflow-hidden">
                     <div className="absolute -right-4 -top-4 w-12 h-12 bg-white/10 rounded-full blur-xl"></div>
-                    <Mic size={14} className="mb-0.5 sm:mb-1 animate-pulse" />
-                    <span className="font-bold text-[9px] sm:text-[10px] leading-tight text-center tracking-wider uppercase z-10">Audio<br />Kajian Terbaru</span>
+                    <Mic className="mb-0.5 sm:mb-1 animate-pulse size-3 sm:size-4" />
+                    <span className="font-bold text-[7.5px] sm:text-[10px] leading-[1.1] text-center tracking-wider uppercase z-10">Audio Kajian<br />Terbaru</span>
                 </div>
 
                 {/* Ticker Content */}
@@ -85,10 +85,10 @@ export const RadioWidget: React.FC<RadioWidgetProps> = ({ liveChannels, recordin
                             <SwiperSlide key={`rec-${idx}`}>
                                 <div className="flex items-center h-full w-full gap-2 sm:gap-3 px-3 sm:px-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors" onClick={() => handlePlayRecording(rec)}>
                                     <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                        <h4 className="font-bold text-xs sm:text-sm text-gray-800 dark:text-gray-200 truncate group-hover:text-green-600 transition-colors" title={rec.title}>
+                                        <h4 className="font-bold text-[11px] sm:text-sm text-gray-800 dark:text-gray-200 truncate group-hover:text-green-600 transition-colors" title={rec.title}>
                                             {rec.title}
                                         </h4>
-                                        <p className="text-[10px] text-green-600 dark:text-green-400 mt-0.5 truncate flex items-center gap-1.5">
+                                        <p className="text-[9px] sm:text-[10px] text-green-600 dark:text-green-400 mt-0.5 truncate flex items-center gap-1.5">
                                             <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2 flex-shrink-0">
                                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-green-500"></span>
@@ -96,8 +96,8 @@ export const RadioWidget: React.FC<RadioWidgetProps> = ({ liveChannels, recordin
                                             {new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(rec.created_at || new Date()))}
                                         </p>
                                     </div>
-                                    <button className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-600 hover:text-white dark:bg-green-900/30 dark:text-green-400 transition-colors flex-shrink-0 shadow-sm border border-green-100 dark:border-green-800">
-                                        <Play size={12} fill="currentColor" className="ml-0.5 sm:ml-1" />
+                                    <button className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-600 hover:text-white dark:bg-green-900/30 dark:text-green-400 transition-colors flex-shrink-0 shadow-sm border border-green-100 dark:border-green-800">
+                                        <Play size={10} fill="currentColor" className="ml-0.5" />
                                     </button>
                                 </div>
                             </SwiperSlide>
@@ -107,7 +107,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = ({ liveChannels, recordin
 
                 {/* Right Arrow */}
                 <Link href="/audio-kajian" className="flex items-center justify-center gap-1 px-3 sm:px-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-green-50 dark:hover:bg-green-900/20 text-gray-500 hover:text-green-600 transition-colors border-l border-gray-100 dark:border-gray-800 flex-shrink-0 group" title="Lihat Semua Audio">
-                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">Lihat Semua</span>
+                    <span className="hidden sm:block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Lihat Semua</span>
                     <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
                 </Link>
             </div>
