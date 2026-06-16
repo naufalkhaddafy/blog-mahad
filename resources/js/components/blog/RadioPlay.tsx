@@ -131,7 +131,7 @@ export const RadioPlay = () => {
                                             </button>
 
                                             <a
-                                                href={`/storage/${item.file_path}`}
+                                                href={`/storage/${item.file_path}?v=${item.updated_at ? new Date(item.updated_at).getTime() : new Date().getTime()}`}
                                                 download={`${item.name}.mp3`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"

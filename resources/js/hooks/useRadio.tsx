@@ -10,6 +10,7 @@ export type channelParams = {
     image?: string;
     type?: 'live' | 'recording';
     file_path?: string;
+    updated_at?: string;
     stats?: {
         name: string;
         listeners: number;
@@ -71,7 +72,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
             globalAudio.setChannel(value);
             const src = value.type === 'recording'
-                ? `/storage/${value.file_path}`
+                ? `/storage/${value.file_path}?v=${value.updated_at ? new Date(value.updated_at).getTime() : new Date().getTime()}`
                 : `${value.url}/stream`;
             globalAudio.audio.src = src;
             globalAudio.audio.play().catch((e) => console.error('Playback failed', e));
@@ -83,7 +84,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
         const track = list[startIndex];
         if (track) {
             const src = track.type === 'recording'
-                ? `/storage/${track.file_path}`
+                ? `/storage/${track.file_path}?v=${track.updated_at ? new Date(track.updated_at).getTime() : new Date().getTime()}`
                 : `${track.url}/stream`;
             globalAudio.audio.src = src;
             globalAudio.audio.play().catch((e) => console.error('Playback failed', e));
@@ -97,7 +98,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
             globalAudio.setChannel(playlist[nextIndex]);
             const track = playlist[nextIndex];
             const src = track.type === 'recording'
-                ? `/storage/${track.file_path}`
+                ? `/storage/${track.file_path}?v=${track.updated_at ? new Date(track.updated_at).getTime() : new Date().getTime()}`
                 : `${track.url}/stream`;
             globalAudio.audio.src = src;
             globalAudio.audio.play().catch((e) => console.error('Playback failed', e));
@@ -111,7 +112,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
             globalAudio.setChannel(playlist[prevIndex]);
             const track = playlist[prevIndex];
             const src = track.type === 'recording'
-                ? `/storage/${track.file_path}`
+                ? `/storage/${track.file_path}?v=${track.updated_at ? new Date(track.updated_at).getTime() : new Date().getTime()}`
                 : `${track.url}/stream`;
             globalAudio.audio.src = src;
             globalAudio.audio.play().catch((e) => console.error('Playback failed', e));

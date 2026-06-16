@@ -21,6 +21,7 @@ interface Recording {
     file_path: string;
     file_size: number;
     created_at: string;
+    updated_at?: string;
     created_at_formatted: string;
     year: string;
     channel: { name: string } | null;
@@ -215,7 +216,7 @@ const Index = ({ recordings, search }: IndexProps) => {
                                                                 </span>
                                                             )}
                                                             <a
-                                                                href={`/storage/${rec.file_path}`}
+                                                                href={`/storage/${rec.file_path}?v=${rec.updated_at ? new Date(rec.updated_at).getTime() : new Date().getTime()}`}
                                                                 download={`${rec.title}.mp3`}
                                                                 className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-green-600 hover:text-white transition-colors dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-green-600 dark:hover:text-white cursor-pointer"
                                                                 title="Download Audio"
