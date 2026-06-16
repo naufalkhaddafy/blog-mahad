@@ -138,10 +138,11 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
         }
 
         $logFile = storage_path('logs/ffmpeg-' . $channel->id . '.log');
-        $cmd = "nohup ffmpeg -user_agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64)\" -i " . escapeshellarg($streamUrl) . " -c copy " . escapeshellarg($absolutePath) . " > " . escapeshellarg($logFile) . " 2>&1 & echo $!";
+        $cmd = "nohup ffmpeg -user_agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64)\" -i " . escapeshellarg($streamUrl) . " -c:a libmp3lame -b:a 64k " . escapeshellarg($absolutePath) . " > " . escapeshellarg($logFile) . " 2>&1 & echo $!";
         $pid = trim(shell_exec($cmd));
 
-        $finalTitle = $title ? ($title . ' - ' . now()->format('d M Y H:i')) : ('Rekaman ' . $channel->name . ' ' . now()->format('d M Y H:i'));
+        $timeString = now()->timezone('Asia/Makassar')->format('d M Y H:i \W\I\T\A');
+        $finalTitle = $title ? ($title . ' - ' . $timeString) : ('Rekaman ' . $channel->name . ' ' . $timeString);
 
         \App\Models\Recording::create([
             'channel_id' => $channel->id,

@@ -328,7 +328,7 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                 <audio 
                                     controls 
                                     className="w-full" 
-                                    src={`/storage/${selectTrim.file_path}`} 
+                                    src={`/storage/${selectTrim.file_path}?v=${new Date().getTime()}`} 
                                     ref={audioRef}
                                     onLoadedMetadata={(e) => {
                                         const d = (e.target as HTMLAudioElement).duration;
@@ -470,7 +470,7 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                                         Channel: <strong>{item.channel?.name || '-'}</strong> &bull; Status: {item.status.toUpperCase()}
                                                     </div>
                                                     <div className="text-[10px] text-gray-400">
-                                                        {new Date(item.created_at).toLocaleString()} &bull; {formatBytes(item.file_size)}
+                                                        {new Date(item.created_at).toLocaleString('id-ID', { timeZone: 'Asia/Makassar', dateStyle: 'medium', timeStyle: 'short' })} WITA &bull; {formatBytes(item.file_size)}
                                                     </div>
                                                 </div>
                                             </TableCell>
@@ -478,7 +478,7 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                                 {item.status === 'completed' ? (
                                                     <div className="w-full min-w-48">
                                                         <audio controls className="h-9 w-full" preload="none">
-                                                            <source src={`/storage/${item.file_path}`} type="audio/mpeg" />
+                                                            <source src={`/storage/${item.file_path}?v=${new Date(item.updated_at).getTime()}`} type="audio/mpeg" />
                                                             Browser Anda tidak mendukung audio player.
                                                         </audio>
                                                     </div>
