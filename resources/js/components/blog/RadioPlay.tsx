@@ -209,7 +209,7 @@ export const RadioPlay = () => {
                                                 </>
                                             ) : channel.type === 'recording' ? (
                                                 <>
-                                                    <span className="line-clamp-1">{channel.name}</span>
+                                                    <span className="line-clamp-1">{channel.stats?.description}</span>
                                                     <span className="flex-shrink-0 flex items-center rounded-full bg-blue-600 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] text-white font-semibold">
                                                         Audio Kajian
                                                     </span>
