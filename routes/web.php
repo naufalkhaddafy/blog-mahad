@@ -34,6 +34,7 @@ Route::middleware([\App\Http\Middleware\TrackPageVisit::class])->group(function 
     Route::get('/al-quran', [BlogController::class, 'quran'])->name('quran');
 });
 
+Route::get('/stream-recording/{recording}', [RecordingController::class, 'stream'])->name('recordings.stream');
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::get('/sitemap-pages.xml', [SitemapController::class, 'pages']);
 Route::get('/sitemap-posts.xml', [SitemapController::class, 'posts']);

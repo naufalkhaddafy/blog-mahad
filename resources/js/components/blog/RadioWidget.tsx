@@ -66,8 +66,10 @@ export const RadioWidget: React.FC<RadioWidgetProps> = ({ liveChannels, recordin
                 {/* Left Label */}
                 <div className="bg-green-600 flex flex-col items-center justify-center px-1 sm:px-5 flex-shrink-0 text-white w-20 sm:w-32 relative overflow-hidden">
                     <div className="absolute -right-4 -top-4 w-12 h-12 bg-white/10 rounded-full blur-xl"></div>
-                    <Mic className="mb-0.5 sm:mb-1 animate-pulse size-3 sm:size-4" />
-                    <span className="font-bold text-[7.5px] sm:text-[10px] leading-[1.1] text-center tracking-wider uppercase z-10">Audio Kajian<br />Terbaru</span>
+                    <div className="mb-0.5 sm:mb-1 w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-md flex items-center justify-center p-1 z-10 shadow-sm">
+                        <img src="/assets/kis-icon.png" alt="KIS" className="w-full h-full object-contain animate-pulse" />
+                    </div>
+                    <span className="font-bold text-[7.5px] sm:text-[10px] leading-[1.1] text-center tracking-wider uppercase z-10 mt-0.5">Audio Kajian<br />Terbaru</span>
                 </div>
 
                 {/* Ticker Content */}

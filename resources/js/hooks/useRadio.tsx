@@ -72,7 +72,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
             globalAudio.setChannel(value);
             const src = value.type === 'recording'
-                ? `/storage/${value.file_path}?v=${value.updated_at ? new Date(value.updated_at).getTime() : new Date().getTime()}`
+                ? `/stream-recording/${value.id}?v=${value.updated_at ? new Date(value.updated_at).getTime() : new Date().getTime()}`
                 : `${value.url}/stream`;
             globalAudio.audio.src = src;
             globalAudio.audio.play().catch((e) => console.error('Playback failed', e));
@@ -84,7 +84,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
         const track = list[startIndex];
         if (track) {
             const src = track.type === 'recording'
-                ? `/storage/${track.file_path}?v=${track.updated_at ? new Date(track.updated_at).getTime() : new Date().getTime()}`
+                ? `/stream-recording/${track.id}?v=${track.updated_at ? new Date(track.updated_at).getTime() : new Date().getTime()}`
                 : `${track.url}/stream`;
             globalAudio.audio.src = src;
             globalAudio.audio.play().catch((e) => console.error('Playback failed', e));
@@ -98,7 +98,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
             globalAudio.setChannel(playlist[nextIndex]);
             const track = playlist[nextIndex];
             const src = track.type === 'recording'
-                ? `/storage/${track.file_path}?v=${track.updated_at ? new Date(track.updated_at).getTime() : new Date().getTime()}`
+                ? `/stream-recording/${track.id}?v=${track.updated_at ? new Date(track.updated_at).getTime() : new Date().getTime()}`
                 : `${track.url}/stream`;
             globalAudio.audio.src = src;
             globalAudio.audio.play().catch((e) => console.error('Playback failed', e));
@@ -112,7 +112,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
             globalAudio.setChannel(playlist[prevIndex]);
             const track = playlist[prevIndex];
             const src = track.type === 'recording'
-                ? `/storage/${track.file_path}?v=${track.updated_at ? new Date(track.updated_at).getTime() : new Date().getTime()}`
+                ? `/stream-recording/${track.id}?v=${track.updated_at ? new Date(track.updated_at).getTime() : new Date().getTime()}`
                 : `${track.url}/stream`;
             globalAudio.audio.src = src;
             globalAudio.audio.play().catch((e) => console.error('Playback failed', e));
@@ -121,6 +121,29 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
 
     const hasNext = currentIndex < playlist.length - 1;
     const hasPrev = currentIndex > 0;
+
+    // Update Media Session (Lock Screen Controls)
+    useEffect(() => {
+        if ('mediaSession' in navigator && channel.id !== 0) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: channel.name,
+                artist: channel.type === 'recording' ? 'Kajian Islam Sangatta' : 'Radio KIS',
+                album: channel.description || 'Audio Kajian',
+                artwork: [
+                    { src: channel.image || '/assets/kis-icon.png', sizes: '512x512', type: 'image/png' }
+                ]
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => { globalAudio.audio.play().catch(e => console.error(e)); });
+            navigator.mediaSession.setActionHandler('pause', () => { globalAudio.audio.pause(); });
+            
+            navigator.mediaSession.setActionHandler('previoustrack', hasPrev ? playPrev : null);
+            navigator.mediaSession.setActionHandler('nexttrack', hasNext ? playNext : null);
+        } else if ('mediaSession' in navigator) {
+            // Clear metadata if nothing is playing
+            navigator.mediaSession.metadata = null;
+        }
+    }, [channel, hasPrev, hasNext]);
 
     const value: RadioContextType = {
         channel,

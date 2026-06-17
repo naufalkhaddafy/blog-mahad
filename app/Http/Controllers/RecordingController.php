@@ -64,6 +64,17 @@ class RecordingController extends Controller
         ]);
     }
 
+    public function stream(Recording $recording)
+    {
+        $path = storage_path('app/public/' . $recording->file_path);
+
+        if (!file_exists($path)) {
+            abort(404, 'Audio file not found.');
+        }
+
+        return response()->file($path);
+    }
+
     public function store(Request $request)
     {
         try {

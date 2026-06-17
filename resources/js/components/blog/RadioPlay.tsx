@@ -3,7 +3,7 @@ import { globalAudio } from '@/lib/globalAudio';
 // @ts-ignore
 import { router } from '@inertiajs/react';
 import { ChevronUp, Download, List, Mic, Pause, Play, RefreshCw, SkipBack, SkipForward, Square, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Container } from '../Container';
 
 declare global {
@@ -20,6 +20,18 @@ export const RadioPlay = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState(false);
     const [showPlaylist, setShowPlaylist] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [playbackRate, setPlaybackRate] = useState(1);
+    const isSeekingRef = useRef(false);
+
+    const formatTime = (time: number) => {
+        if (isNaN(time)) return '00:00';
+        const h = Math.floor(time / 3600);
+        const m = Math.floor((time % 3600) / 60).toString().padStart(2, '0');
+        const s = Math.floor(time % 60).toString().padStart(2, '0');
+        return h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
+    };
 
     const audio = globalAudio.audio;
 
@@ -31,6 +43,20 @@ export const RadioPlay = () => {
         const handleCanPlay = () => { setIsLoading(false); };
         const handleError = () => setErrors(true);
         const handleEnded = () => { if (hasNext) playNext(); };
+        const handleTimeUpdate = () => {
+            if (!isSeekingRef.current) {
+                setCurrentTime(audio.currentTime);
+            }
+        };
+        const handleLoadedMetadata = () => {
+            if (audio.duration === Infinity) {
+                // If duration is Infinity, it might be a stream or missing metadata
+                setDuration(0);
+            } else {
+                setDuration(audio.duration);
+            }
+            audio.playbackRate = playbackRate;
+        };
 
         audio.addEventListener('play', handlePlay);
         audio.addEventListener('playing', handlePlaying);
@@ -39,11 +65,17 @@ export const RadioPlay = () => {
         audio.addEventListener('canplaythrough', handleCanPlay);
         audio.addEventListener('error', handleError);
         audio.addEventListener('ended', handleEnded);
+        audio.addEventListener('timeupdate', handleTimeUpdate);
+        audio.addEventListener('loadedmetadata', handleLoadedMetadata);
 
         // Sync initial state
         setPause(audio.paused);
         setIsLoading(false);
         setErrors(false);
+        if (!isNaN(audio.duration) && audio.duration !== Infinity) {
+            setDuration(audio.duration);
+        }
+        setCurrentTime(audio.currentTime || 0);
 
         return () => {
             audio.removeEventListener('play', handlePlay);
@@ -53,8 +85,10 @@ export const RadioPlay = () => {
             audio.removeEventListener('canplaythrough', handleCanPlay);
             audio.removeEventListener('error', handleError);
             audio.removeEventListener('ended', handleEnded);
+            audio.removeEventListener('timeupdate', handleTimeUpdate);
+            audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
         };
-    }, [audio, hasNext]);
+    }, [audio, hasNext, channel, playbackRate]);
 
     const togglePlayPause = () => {
         if (audio.paused) {
@@ -74,6 +108,34 @@ export const RadioPlay = () => {
         setIsLoading(true);
         audio.load();
         audio.play().catch((e) => console.error(e));
+    };
+
+    const handleSpeedChange = () => {
+        const speeds = [1, 1.25, 1.5, 2];
+        const currentIndex = speeds.indexOf(playbackRate);
+        const nextSpeed = speeds[(currentIndex + 1) % speeds.length];
+        setPlaybackRate(nextSpeed);
+        audio.playbackRate = nextSpeed;
+    };
+
+    const handleSeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const time = Number(e.target.value);
+        try {
+            audio.currentTime = time;
+        } catch (err) {
+            console.error("Seek failed:", err);
+        }
+        setCurrentTime(time);
+    };
+
+    const handleSeekCommit = () => {
+        setTimeout(() => {
+            isSeekingRef.current = false;
+        }, 150);
+    };
+
+    const handleSeekStart = () => {
+        isSeekingRef.current = true;
     };
 
     const isActive = !!(channel.url || channel.file_path);
@@ -159,7 +221,7 @@ export const RadioPlay = () => {
                     </div>
 
                     {/* Main Player Bar */}
-                    <Container className="w-full max-w-2xl pl-4 pr-4 py-4 sm:pl-5 sm:pr-8 sm:py-5 text-white">
+                    <Container className="w-full max-w-2xl pl-4 pr-4 py-3 sm:pl-5 sm:pr-8 sm:py-4 text-white">
                         {errors ? (
                             <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-3 sm:gap-0 px-1 sm:px-3 py-1 sm:py-0">
                                 <p className="text-xs sm:text-sm font-semibold text-red-200 text-center sm:text-left">Afwan radio tidak dapat diputar</p>
@@ -180,8 +242,8 @@ export const RadioPlay = () => {
                                 >
                                     {/* Icon / Image */}
                                     {channel.type === 'recording' ? (
-                                        <div className="w-11 h-11 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
-                                            <Mic size={20} className="text-white" />
+                                        <div className="w-11 h-11 rounded-lg bg-white p-1 flex items-center justify-center flex-shrink-0">
+                                            <img src="/assets/kis-icon.png" alt="KIS" className="w-full h-full object-contain" />
                                         </div>
                                     ) : channel.image ? (
                                         <img
@@ -272,6 +334,33 @@ export const RadioPlay = () => {
                                         </>
                                     )}
                                 </div>
+                            </div>
+                        )}
+
+                        {/* Progress Bar (Only for Recordings) */}
+                        {channel.type === 'recording' && !errors && (
+                            <div className="flex items-center gap-3 w-full mt-3">
+                                <span className="text-[10px] font-mono text-green-200 w-9 text-right">{formatTime(currentTime)}</span>
+                                <input
+                                    type="range"
+                                    min={0}
+                                    max={duration || 0}
+                                    step="any"
+                                    value={currentTime}
+                                    onMouseDown={handleSeekStart}
+                                    onTouchStart={handleSeekStart}
+                                    onChange={handleSeekChange}
+                                    onMouseUp={handleSeekCommit}
+                                    onTouchEnd={handleSeekCommit}
+                                    className="flex-1 h-1.5 bg-green-900 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all"
+                                />
+                                <span className="text-[10px] font-mono text-green-200 w-9">{formatTime(duration)}</span>
+                                <button
+                                    onClick={handleSpeedChange}
+                                    className="cursor-pointer text-[10px] sm:text-[11px] font-bold text-green-100 bg-green-900/50 hover:bg-green-600 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded transition border border-green-700 w-10 sm:w-12 text-center"
+                                >
+                                    {playbackRate}x
+                                </button>
                             </div>
                         )}
                     </Container>
