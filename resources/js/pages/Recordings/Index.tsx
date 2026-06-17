@@ -18,6 +18,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -328,7 +329,7 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                 <audio 
                                     controls 
                                     className="w-full" 
-                                    src={`/storage/${selectTrim.file_path}?v=${new Date().getTime()}`} 
+                                    src={`/storage/${selectTrim.file_path}?v=${new Date(selectTrim.updated_at || '').getTime()}`} 
                                     ref={audioRef}
                                     onLoadedMetadata={(e) => {
                                         const d = (e.target as HTMLAudioElement).duration;
@@ -462,10 +463,19 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                                 <Disc size={20} className={item.status === 'recording' ? 'animate-spin text-red-500 mx-auto' : 'text-gray-400 mx-auto'} />
                                             </TableCell>
                                             <TableCell>
-                                                <div className="min-w-48">
-                                                    <h3 className="text-sm font-bold text-ellipsis">
-                                                        {item.title}
-                                                    </h3>
+                                                <div className="min-w-48 max-w-[250px] sm:max-w-[300px] md:max-w-[450px] lg:max-w-[600px] whitespace-normal break-words">
+                                                    <TooltipProvider delayDuration={300}>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <h3 className="text-sm font-bold line-clamp-2 cursor-help text-left">
+                                                                    {item.title}
+                                                                </h3>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className="max-w-[300px] sm:max-w-[400px] lg:max-w-[500px] break-words whitespace-normal p-3 z-50">
+                                                                <p className="font-medium">{item.title}</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
                                                     <div className="py-1 text-xs text-gray-500">
                                                         Channel: <strong>{item.channel?.name || '-'}</strong> &bull; Status: {item.status.toUpperCase()}
                                                     </div>
