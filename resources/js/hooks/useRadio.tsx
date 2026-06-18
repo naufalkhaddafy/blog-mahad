@@ -127,7 +127,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
         if ('mediaSession' in navigator && channel.id !== 0) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: channel.name,
-                artist: channel.type === 'recording' ? 'Kajian Islam Sangatta' : 'Radio KIS',
+                artist: channel.type === 'recording' ? 'Kajian Islam Sangatta' : 'Kajian Islam Sangatta',
                 album: channel.description || 'Audio Kajian',
                 artwork: [
                     { src: channel.image || '/assets/kis-icon.png', sizes: '512x512', type: 'image/png' }
@@ -136,7 +136,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
 
             navigator.mediaSession.setActionHandler('play', () => { globalAudio.audio.play().catch(e => console.error(e)); });
             navigator.mediaSession.setActionHandler('pause', () => { globalAudio.audio.pause(); });
-            
+
             navigator.mediaSession.setActionHandler('previoustrack', hasPrev ? playPrev : null);
             navigator.mediaSession.setActionHandler('nexttrack', hasNext ? playNext : null);
         } else if ('mediaSession' in navigator) {

@@ -60,12 +60,14 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
         $resp = Http::timeout(10)->get($channel->url . '/stats?sid=1&json=1');
         if (!$resp->successful()) {
             Log::error("HTTP request failed for channel: {$channel->name}");
+            $this->setOfflineData($channel, $key);
             return;
         }
 
         $new = $resp->json();
         if (!$new) {
             Log::error("Failed to decode JSON for channel: {$channel->name}");
+            $this->setOfflineData($channel, $key);
             return;
         }
 
@@ -175,6 +177,25 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
             ]);
 
             Log::info("Stopped recording for channel {$channel->name}. File size: {$size} bytes");
+        }
+    }
+
+    protected function setOfflineData(Channel $channel, $key)
+    {
+        $offlineDataSource = [
+            ...$channel->toArray(),
+            'currentlisteners' => 0,
+            'servertitle' => $channel->name,
+            'songtitle' => 'Radio Offline',
+            'status' => 'record',
+        ];
+
+        Redis::set($key, json_encode($offlineDataSource));
+
+        if ($channel->status?->value !== 'record') {
+            $this->stopRecording($channel);
+            $channel->update(['status' => 'record']);
+            Log::info("Update status channel {$channel->name} ke record karena gagal koneksi/offline");
         }
     }
 }
