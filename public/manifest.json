@@ -1,0 +1,17 @@
+{
+    "name": "Kajian Islam Sangatta",
+    "short_name": "KIS",
+    "description": "Media belajar Islam untuk memperdalam pemahaman tentang Al-Qur'an dan As-Sunnah.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#16a34a",
+    "icons": [
+        {
+            "src": "/assets/logo-kis-share-new.png",
+            "sizes": "192x192 512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

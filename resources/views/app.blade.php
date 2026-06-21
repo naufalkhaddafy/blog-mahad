@@ -8,6 +8,8 @@
     <title inertia>{{ config('app.name', 'Kajian Islam Sangatta') }}</title>
     <link rel="icon" href="{{ asset('assets/logo-kis-new.png') }}" type="image/png">
     <link rel="apple-touch-icon" href="{{ asset('assets/logo-kis-share-new.png') }}">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#16a34a">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
