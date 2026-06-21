@@ -41,6 +41,15 @@ return Application::configure(basePath: dirname(__DIR__))
                     ->toResponse($request)
                     ->setStatusCode($response->getStatusCode());
             } elseif ($response->getStatusCode() === 404) {
+                // Hapus karakter invisible (seperti U+2060 dari WhatsApp) yang bikin URL gagal match
+                $path = $request->path();
+                $cleanPath = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}\x{2060}]+/u', '', $path);
+                
+                if ($path !== $cleanPath) {
+                    $queryString = $request->getQueryString();
+                    return redirect('/' . ltrim($cleanPath, '/') . ($queryString ? '?' . $queryString : ''));
+                }
+
                 return \Inertia\Inertia::render('Error', ['status' => 404])
                     ->toResponse($request)
                     ->setStatusCode($response->getStatusCode());

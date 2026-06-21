@@ -208,7 +208,7 @@ export const RadioPlay = () => {
                                         <button
                                             onClick={() => {
                                                 setShowPlaylist(false);
-                                                router.visit('/audio-kajian');
+                                                router.visit('/audio');
                                             }}
                                             className="w-full flex items-center justify-center gap-2 text-xs font-bold text-green-300 hover:text-white py-3 hover:bg-green-800/50 rounded-xl transition cursor-pointer mt-2 border border-green-800 border-dashed"
                                         >
@@ -238,7 +238,7 @@ export const RadioPlay = () => {
                             <div className="flex items-center justify-between gap-4">
                                 <div
                                     className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer group"
-                                    onClick={() => channel.type === 'recording' ? router.visit('/audio-kajian') : router.visit('/radio-online')}
+                                    onClick={() => channel.type === 'recording' ? router.visit('/audio') : router.visit('/radio-online')}
                                 >
                                     {/* Icon / Image */}
                                     {channel.type === 'recording' ? (
@@ -369,3 +369,4 @@ export const RadioPlay = () => {
         </>
     );
 };
+

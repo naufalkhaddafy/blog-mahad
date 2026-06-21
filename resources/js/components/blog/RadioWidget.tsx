@@ -108,7 +108,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = ({ liveChannels, recordin
                 </div>
 
                 {/* Right Arrow */}
-                <Link href="/audio-kajian" className="flex items-center justify-center gap-1 px-3 sm:px-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-green-50 dark:hover:bg-green-900/20 text-gray-500 hover:text-green-600 transition-colors border-l border-gray-100 dark:border-gray-800 flex-shrink-0 group" title="Lihat Semua Audio">
+                <Link href="/audio" className="flex items-center justify-center gap-1 px-3 sm:px-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-green-50 dark:hover:bg-green-900/20 text-gray-500 hover:text-green-600 transition-colors border-l border-gray-100 dark:border-gray-800 flex-shrink-0 group" title="Lihat Semua Audio">
                     <span className="hidden sm:block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Lihat Semua</span>
                     <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
                 </Link>
@@ -116,3 +116,4 @@ export const RadioWidget: React.FC<RadioWidgetProps> = ({ liveChannels, recordin
         </div>
     );
 };
+

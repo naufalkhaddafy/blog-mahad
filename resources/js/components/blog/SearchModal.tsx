@@ -158,7 +158,7 @@ export const SearchModal = ({
                                 </div>
                             </Link>
                             <Link
-                                href="/audio-kajian"
+                                href="/audio"
                                 onClick={() => onOpenChange(false)}
                                 className="flex items-center gap-2.5 rounded-lg border px-3 py-2.5 transition-colors hover:bg-green-50 hover:border-green-200 dark:hover:bg-green-900/20 dark:hover:border-green-800"
                             >
@@ -190,3 +190,4 @@ export const SearchModal = ({
         </Dialog>
     );
 };
+

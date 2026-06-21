@@ -40,7 +40,7 @@ export const Footer = () => {
                                         </Link>
                                     </li>
                                     <li className="transition hover:text-green-600 active:text-green-500">
-                                        <Link href="audio-kajian">Audio</Link>
+                                        <Link href="audio">Audio</Link>
                                     </li>
                                     <li className="transition hover:text-green-600 active:text-green-500">
                                         <Link href="belajar-islam?category=e-book">E-book</Link>
@@ -125,3 +125,4 @@ export const Footer = () => {
         </footer>
     );
 };
+

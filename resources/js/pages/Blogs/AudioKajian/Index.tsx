@@ -74,7 +74,7 @@ const Index = ({ recordings, search }: IndexProps) => {
             return;
         }
         const timeout = setTimeout(() => {
-            router.get('/audio-kajian', { search: searchQuery || undefined }, {
+            router.get('/audio', { search: searchQuery || undefined }, {
                 preserveState: true,
                 preserveScroll: true,
                 replace: true,
@@ -100,7 +100,14 @@ const Index = ({ recordings, search }: IndexProps) => {
     return (
         <>
             <Head title="Audio Kajian - Kajian Islam Sangatta">
-                <meta name="description" content="Dengarkan koleksi audio kajian Islam ilmiah dari para Asatidz. Tersedia rekaman kajian rutin dan dauroh." />
+                <link rel="preconnect" href="https://fonts.bunny.net" />
+                <link
+                    href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600"
+                    rel="stylesheet"
+                />
+                <meta name="author" content="Kajian Islam Sangatta"></meta>
+                <meta name="robots" content="index, follow"></meta>
+                <meta name="description" content="Dengarkan koleksi audio kajian Islam ilmiah dari para Asatidz. Tersedia rekaman kajian rutin dan dauroh dari Kajian Islam Sangatta." />
             </Head>
 
             <Container className="max-w-4xl">
@@ -111,6 +118,7 @@ const Index = ({ recordings, search }: IndexProps) => {
                             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
                                 <Mic className="w-8 h-8 text-green-600" />
                             </div>
+                            
                             <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-800 dark:text-green-500 mb-2">
                                 Audio Kajian
                             </h1>
@@ -263,3 +271,5 @@ const Index = ({ recordings, search }: IndexProps) => {
 export default Index;
 
 Index.layout = (page: React.ReactNode) => <BlogLayout children={page} breadcrumbs={breadcrumbs} />;
+
+
