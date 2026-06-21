@@ -235,7 +235,7 @@ class BlogController extends Controller
             ->get()
             ->map(fn($rec) => [
                 'title' => $rec->title,
-                'slug' => 'audio-kajian?search=' . urlencode($rec->title),
+                'slug' => 'audio?search=' . urlencode($rec->title),
                 'imageSrc' => asset('assets/logo-kis-new.png'),
                 'category' => 'Audio Kajian',
                 'created_at' => $rec->created_at,

@@ -33,7 +33,8 @@ class TrackPageVisit
             }
 
             $sessionId = request()->hasSession() ? $request->session()->getId() : Str::slug($request->ip() ?? 'unknown');
-            $url = $request->fullUrl();
+            // Truncate URL to 255 chars to prevent database "Data too long" errors (SQLSTATE 22001)
+            $url = substr($request->fullUrl(), 0, 255);
             $today = Carbon::today()->toDateString();
             
             // Opsional: cegah duplikat per session per URL per hari

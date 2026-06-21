@@ -32,14 +32,16 @@ const dataNav = [
         submenu: [
             { name: 'Info Taklim', url: route('blog.list', { category: 'info-taklim' }) },
             { name: 'Info Dauroh', url: route('blog.list', { category: 'info-dauroh' }) },
-            { name: 'Audio Kajian', url: '/audio-kajian' },
         ],
         isNew: false,
     },
     {
         name: 'Belajar Islam',
-        url: '/belajar-islam',
-        submenu: [],
+        url: '',
+        submenu: [
+            { name: 'Artikel', url: '/belajar-islam' },
+            { name: 'Audio Kajian', url: '/audio' },
+        ],
         isNew: false,
     },
     {
