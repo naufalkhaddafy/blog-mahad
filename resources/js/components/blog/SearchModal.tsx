@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Link, router } from '@inertiajs/react';
 import axios from 'axios';
-import { BookOpen, Loader2, Radio, Search, X } from 'lucide-react';
+import { BookOpen, Loader2, Mic, Radio, Search, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface SearchResult {
@@ -158,9 +158,22 @@ export const SearchModal = ({
                                 </div>
                             </Link>
                             <Link
-                                href="/al-quran"
+                                href="/audio-kajian"
                                 onClick={() => onOpenChange(false)}
                                 className="flex items-center gap-2.5 rounded-lg border px-3 py-2.5 transition-colors hover:bg-green-50 hover:border-green-200 dark:hover:bg-green-900/20 dark:hover:border-green-800"
+                            >
+                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                                    <Mic className="h-4 w-4 text-blue-600" />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold">Audio</p>
+                                    <p className="text-[10px] text-gray-500">Rekaman Kajian</p>
+                                </div>
+                            </Link>
+                            <Link
+                                href="/al-quran"
+                                onClick={() => onOpenChange(false)}
+                                className="col-span-2 flex items-center gap-2.5 rounded-lg border px-3 py-2.5 transition-colors hover:bg-green-50 hover:border-green-200 dark:hover:bg-green-900/20 dark:hover:border-green-800"
                             >
                                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
                                     <BookOpen className="h-4 w-4 text-emerald-600" />

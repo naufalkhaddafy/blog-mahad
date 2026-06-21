@@ -223,13 +223,36 @@ class BlogController extends Controller
             ->map(fn($post) => [
                 'title' => $post->title,
                 'slug' => $post->slug,
-                'imageSrc' => $post->image ? asset(Storage::url($post->image)) : null,
+                'imageSrc' => $post->image ? asset(\Illuminate\Support\Facades\Storage::url($post->image)) : null,
                 'category' => $post->category?->name,
-                'created_at' => $post->created_at->diffInMonths() < 1
-                    ? $post->created_at->diffForHumans()
-                    : $post->created_at->translatedFormat('d F Y'),
+                'created_at' => $post->created_at,
             ]);
 
-        return response()->json($posts);
+        $recordings = \App\Models\Recording::where('is_published', true)
+            ->where('title', 'like', "%{$query}%")
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(fn($rec) => [
+                'title' => $rec->title,
+                'slug' => 'audio-kajian?search=' . urlencode($rec->title),
+                'imageSrc' => asset('assets/logo-kis-new.png'),
+                'category' => 'Audio Kajian',
+                'created_at' => $rec->created_at,
+            ]);
+
+        $results = collect($posts->toArray())
+            ->merge(collect($recordings->toArray()))
+            ->sortByDesc('created_at')
+            ->values()
+            ->map(function ($item) {
+                $date = \Carbon\Carbon::parse($item['created_at']);
+                $item['created_at'] = $date->diffInMonths() < 1
+                    ? $date->diffForHumans()
+                    : $date->translatedFormat('d F Y');
+                return $item;
+            });
+
+        return response()->json($results);
     }
 }

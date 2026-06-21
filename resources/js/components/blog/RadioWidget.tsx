@@ -28,7 +28,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = ({ liveChannels, recordin
             stats: {
                 name: rec.title,
                 listeners: 0,
-                description: new Date(rec.created_at).toLocaleDateString(),
+                description: new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(rec.created_at || new Date())),
             },
         }));
     };
