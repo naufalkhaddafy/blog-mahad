@@ -82,9 +82,9 @@ export const Navbar = () => {
                     <Link href="/">
                         <div className="flex items-center gap-2 lg:gap-4">
                             <img
-                                src={asset('assets/kis-icon.png')}
+                                src={asset('assets/logo-kis-new.png')}
                                 alt="Kajian Islam Sangatta Icon"
-                                className="aspect-square size-8 lg:size-14"
+                                className="aspect-square size-8 lg:size-14 bg-white p-1 rounded-lg"
                                 loading="lazy"
                             />
                             <div className="flex flex-col">

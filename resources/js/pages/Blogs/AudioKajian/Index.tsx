@@ -58,7 +58,7 @@ const Index = ({ recordings, search }: IndexProps) => {
             file_path: rec.file_path,
             description: rec.channel?.name || 'Audio Kajian',
             type: 'recording' as const,
-            image: '/images/default-podcast.png',
+            image: '/assets/logo-kis-new.png',
             stats: {
                 name: rec.title,
                 listeners: 0,
@@ -165,8 +165,8 @@ const Index = ({ recordings, search }: IndexProps) => {
                                                     <div
                                                         key={rec.id}
                                                         className={`group flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-2xl transition-all duration-300 border ${playing
-                                                                ? 'bg-green-50/80 border-green-200 shadow-sm dark:bg-green-900/20 dark:border-green-800/50'
-                                                                : 'bg-white hover:bg-gray-50/80 border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md dark:bg-gray-900 dark:border-gray-800 dark:hover:border-gray-700'
+                                                            ? 'bg-green-50/80 border-green-200 shadow-sm dark:bg-green-900/20 dark:border-green-800/50'
+                                                            : 'bg-white hover:bg-gray-50/80 border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md dark:bg-gray-900 dark:border-gray-800 dark:hover:border-gray-700'
                                                             }`}
                                                     >
                                                         {/* Avatar / Play Button */}
@@ -174,8 +174,8 @@ const Index = ({ recordings, search }: IndexProps) => {
                                                             <button
                                                                 onClick={() => handlePlay(rec)}
                                                                 className={`h-12 w-12 flex-shrink-0 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-sm ${playing
-                                                                        ? 'bg-green-600 text-white animate-pulse ring-4 ring-green-600/20'
-                                                                        : 'bg-green-100 text-green-600 hover:bg-green-600 hover:text-white dark:bg-green-900/40 dark:text-green-400 dark:hover:bg-green-600 dark:hover:text-white'
+                                                                    ? 'bg-green-600 text-white animate-pulse ring-4 ring-green-600/20'
+                                                                    : 'bg-green-100 text-green-600 hover:bg-green-600 hover:text-white dark:bg-green-900/40 dark:text-green-400 dark:hover:bg-green-600 dark:hover:text-white'
                                                                     }`}
                                                             >
                                                                 {playing ? (
@@ -187,11 +187,11 @@ const Index = ({ recordings, search }: IndexProps) => {
 
                                                             {/* Info */}
                                                             <div className="flex-1 min-w-0 cursor-pointer" onClick={() => handlePlay(rec)}>
-                                                                <h4 
+                                                                <h4
                                                                     className={`text-base font-bold line-clamp-1 transition-colors ${playing
                                                                         ? 'text-green-700 dark:text-green-400'
                                                                         : 'text-gray-800 group-hover:text-green-600 dark:text-gray-200 dark:group-hover:text-green-400'
-                                                                    }`}
+                                                                        }`}
                                                                     title={rec.title}
                                                                 >
                                                                     {rec.title}

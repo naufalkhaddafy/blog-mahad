@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title inertia>{{ config('app.name', 'Kajian Islam Sangatta') }}</title>
-    <link rel="icon" href="{{ asset('assets/kis-icon.png') }}" type="image/png">
-    <link rel="apple-touch-icon" href="{{ asset('assets/icon-share.jpg') }}">
+    <link rel="icon" href="{{ asset('assets/logo-kis-new.png') }}" type="image/png">
+    <link rel="apple-touch-icon" href="{{ asset('assets/logo-kis-share-new.png') }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
@@ -17,7 +17,7 @@
             $page['props']['meta']->description ??
             "Kajian Islam Sangatta, Media belajar Islam untuk memperdalam pemahaman tentang Al-Qur'an dan As-Sunnah sesuai dengan pemahaman Salaf - kajianislamsangatta.com";
         $url = $page['props']['meta']->url ?? url()->current();
-        $image = $page['props']['meta']->image ?? asset('assets/icon-share.jpg');
+        $image = $page['props']['meta']->image ?? asset('assets/logo-kis-share-new.png');
         $sizeHeight = isset($page['props']['meta']->title) && !empty($page['props']['meta']->title) ? 451 : 800;
     @endphp
 

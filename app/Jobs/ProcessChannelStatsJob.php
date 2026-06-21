@@ -57,18 +57,51 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
         $cached = Redis::get($key);
         $old = $cached ? json_decode($cached, true) : [];
 
+        $isOffline = false;
         $resp = Http::timeout(10)->get($channel->url . '/stats?sid=1&json=1');
-        if (!$resp->successful()) {
-            Log::error("HTTP request failed for channel: {$channel->name}");
-            $this->setOfflineData($channel, $key);
-            return;
+        if (!$resp->successful() || !($new = $resp->json())) {
+            $isOffline = true;
+            Log::error("Failed to fetch/decode stats for channel: {$channel->name}");
         }
 
-        $new = $resp->json();
-        if (!$new) {
-            Log::error("Failed to decode JSON for channel: {$channel->name}");
-            $this->setOfflineData($channel, $key);
-            return;
+        $gracePeriodKey = "shoutcast:channel:{$slug}:grace_period";
+
+        if ($isOffline) {
+            $titleNow = false;
+            $new = [
+                'uniquelisteners' => 0,
+                'servertitle' => $channel->name,
+                'songtitle' => 'Radio Offline (Buffering...)',
+            ];
+        } else {
+            $newTitle = $new['songtitle'] ?? null;
+            $titleNow = Str::contains(Str::upper($newTitle ?? ''), ['LIVE', 'ONAIR']);
+        }
+
+        $newStatus = 'record';
+        if ($titleNow) {
+            $newStatus = 'live';
+            Redis::del($gracePeriodKey);
+        } else {
+            if ($channel->status?->value === 'live') {
+                $graceStart = Redis::get($gracePeriodKey);
+                if (!$graceStart) {
+                    Redis::set($gracePeriodKey, time());
+                    $newStatus = 'live';
+                    Log::warning("Channel {$channel->name} lost LIVE signal. Starting 5-min grace period.");
+                } else {
+                    if (time() - $graceStart > 300) {
+                        $newStatus = 'record';
+                        Redis::del($gracePeriodKey);
+                        Log::info("Grace period ended for {$channel->name}. Changing status to record.");
+                    } else {
+                        $newStatus = 'live';
+                    }
+                }
+            } else {
+                $newStatus = 'record';
+                Redis::del($gracePeriodKey);
+            }
         }
 
         // Cek perubahan title
@@ -78,11 +111,10 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
         $newListeners = $new['uniquelisteners'] ?? null;
         $titleChanged = ($oldTitle !== $newTitle);
         $listenersChanged = ($oldListeners !== $newListeners);
-        $titleNow = Str::contains(Str::upper($newTitle ?? ''), ['LIVE', 'ONAIR']);
-        $newStatus = $titleNow ? 'live' : 'record';
 
         // Update hanya jika status berubah
-        if ($channel->status->value !== $newStatus) {
+        // Update hanya jika status berubah
+        if ($channel->status?->value !== $newStatus) {
             if ($newStatus == 'live') {
                 $this->startRecording($channel, $newTitle);
 
@@ -99,7 +131,26 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
                 $this->stopRecording($channel);
             }
             $channel->update(['status' => $newStatus]);
-            Log::info("Update status channel {$channel->name} dari {$channel->status->value} ke {$newStatus}");
+            Log::info("Update status channel {$channel->name} dari {$channel->status?->value} ke {$newStatus}");
+        } else {
+            // Jika tetap LIVE, pantau apakah proses FFMPEG mati
+            if ($newStatus === 'live') {
+                $activeRecording = \App\Models\Recording::where('channel_id', $channel->id)->where('status', 'recording')->latest()->first();
+                if ($activeRecording && $activeRecording->ffmpeg_pid) {
+                    if (!$this->isProcessRunning($activeRecording->ffmpeg_pid)) {
+                        Log::warning("FFMPEG process {$activeRecording->ffmpeg_pid} died unexpectedly for {$channel->name}. Restarting recording...");
+                        
+                        $absolutePath = storage_path('app/public/' . $activeRecording->file_path);
+                        $size = file_exists($absolutePath) ? filesize($absolutePath) : 0;
+                        $activeRecording->update([
+                            'status' => 'completed',
+                            'file_size' => $size,
+                        ]);
+
+                        $this->startRecording($channel, $newTitle);
+                    }
+                }
+            }
         }
 
         $dataSource = [
@@ -140,7 +191,7 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
         }
 
         $logFile = storage_path('logs/ffmpeg-' . $channel->id . '.log');
-        $cmd = "nohup ffmpeg -user_agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64)\" -i " . escapeshellarg($streamUrl) . " -c:a libmp3lame -b:a 64k " . escapeshellarg($absolutePath) . " > " . escapeshellarg($logFile) . " 2>&1 & echo $!";
+        $cmd = "nohup ffmpeg -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 10 -user_agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64)\" -i " . escapeshellarg($streamUrl) . " -c:a libmp3lame -b:a 64k " . escapeshellarg($absolutePath) . " > " . escapeshellarg($logFile) . " 2>&1 & echo $!";
         $pid = trim(shell_exec($cmd));
 
         $timeString = now()->timezone('Asia/Makassar')->format('d M Y H:i \W\I\T\A');
@@ -157,6 +208,16 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
         Log::info("Started recording channel {$channel->name} with PID {$pid}");
     }
 
+    protected function isProcessRunning($pid)
+    {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            exec("tasklist /FI \"PID eq $pid\" 2>NUL", $output);
+            return count($output) > 1 && strpos(implode(" ", $output), (string)$pid) !== false;
+        } else {
+            return trim(shell_exec("ps -p " . escapeshellarg($pid) . " -o pid=")) !== "";
+        }
+    }
+
     protected function stopRecording(Channel $channel)
     {
         $recordings = \App\Models\Recording::where('channel_id', $channel->id)
@@ -165,7 +226,11 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
 
         foreach ($recordings as $rec) {
             if ($rec->ffmpeg_pid) {
-                exec("kill -9 " . escapeshellarg($rec->ffmpeg_pid));
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    exec("taskkill /F /PID " . escapeshellarg($rec->ffmpeg_pid) . " >NUL 2>&1");
+                } else {
+                    exec("kill -15 " . escapeshellarg($rec->ffmpeg_pid) . " >/dev/null 2>&1");
+                }
             }
             
             $absolutePath = storage_path('app/public/' . $rec->file_path);
@@ -177,25 +242,6 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
             ]);
 
             Log::info("Stopped recording for channel {$channel->name}. File size: {$size} bytes");
-        }
-    }
-
-    protected function setOfflineData(Channel $channel, $key)
-    {
-        $offlineDataSource = [
-            ...$channel->toArray(),
-            'currentlisteners' => 0,
-            'servertitle' => $channel->name,
-            'songtitle' => 'Radio Offline',
-            'status' => 'record',
-        ];
-
-        Redis::set($key, json_encode($offlineDataSource));
-
-        if ($channel->status?->value !== 'record') {
-            $this->stopRecording($channel);
-            $channel->update(['status' => 'record']);
-            Log::info("Update status channel {$channel->name} ke record karena gagal koneksi/offline");
         }
     }
 }

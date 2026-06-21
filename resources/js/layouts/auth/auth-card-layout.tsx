@@ -19,10 +19,10 @@ export default function AuthCardLayout({
                     href={route('home')}
                     className="flex items-center gap-2 self-center font-medium"
                 >
-                    <div className="flex h-9 w-9 items-center justify-center">
+                    <div className="flex h-24 items-center justify-center">
                         <img
-                            src={asset('assets/kis-icon.png')}
-                            className="size-9 fill-current text-black dark:text-white"
+                            src={asset('assets/logo-kis-new.png')}
+                            className="h-24 w-auto object-contain fill-current text-black dark:text-white"
                         />
                     </div>
                 </Link>

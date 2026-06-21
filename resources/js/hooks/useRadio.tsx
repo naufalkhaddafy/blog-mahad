@@ -130,7 +130,7 @@ export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
                 artist: channel.type === 'recording' ? 'Kajian Islam Sangatta' : 'Kajian Islam Sangatta',
                 album: channel.description || 'Audio Kajian',
                 artwork: [
-                    { src: channel.image || '/assets/kis-icon.png', sizes: '512x512', type: 'image/png' }
+                    { src: channel.image || '/assets/logo-kis-new.png', sizes: '512x512', type: 'image/png' }
                 ]
             });
 

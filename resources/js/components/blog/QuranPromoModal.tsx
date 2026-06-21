@@ -136,8 +136,8 @@ export const QuranPromoModal = () => {
                         <div className="relative z-10 flex flex-col items-center gap-5 text-center">
                             {/* Icon */}
                             <div className="relative">
-                                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/20 shadow-lg backdrop-blur-sm">
-                                    <MessageCircle className="h-10 w-10 text-white" />
+                                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-lg backdrop-blur-sm p-2">
+                                    <img src="/assets/logo-kis-new.png" className="h-full w-full object-contain" alt="KIS Logo" />
                                 </div>
                                 <Bell className="absolute -top-2 -right-2 h-6 w-6 animate-bounce text-yellow-300" />
                             </div>
