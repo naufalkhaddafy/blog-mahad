@@ -210,11 +210,21 @@ class ProcessChannelStatsJob implements ShouldQueue, ShouldBeUnique
 
     protected function isProcessRunning($pid)
     {
+        if (!$pid) return false;
+
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             exec("tasklist /FI \"PID eq $pid\" 2>NUL", $output);
             return count($output) > 1 && strpos(implode(" ", $output), (string)$pid) !== false;
         } else {
-            return trim(shell_exec("ps -p " . escapeshellarg($pid) . " -o pid=")) !== "";
+            if (function_exists('posix_kill')) {
+                $isRunning = posix_kill((int)$pid, 0);
+                if (posix_get_last_error() === 1) { // EPERM (process exists but belongs to another user)
+                    return true;
+                }
+                return $isRunning;
+            }
+            exec("kill -0 " . escapeshellarg($pid) . " 2>/dev/null", $output, $returnCode);
+            return $returnCode === 0;
         }
     }
 
