@@ -25,13 +25,19 @@ class RecordingController extends Controller
             $query->whereDate('created_at', $request->date);
         }
 
-        $recordings = $query->paginate(10)->withQueryString();
+        $perPage = $request->input('per_page', 10);
+        $recordings = $query->paginate($perPage)->withQueryString();
         $channels = \App\Models\Channel::all();
         
         return Inertia('Recordings/Index', [
             'recordings' => $recordings,
             'channels' => $channels,
-            'filters' => $request->only(['search', 'is_published', 'date']),
+            'filters' => [
+                'search' => $request->search,
+                'is_published' => $request->is_published,
+                'date' => $request->date,
+                'per_page' => $perPage,
+            ],
         ]);
     }
 
@@ -133,6 +139,27 @@ class RecordingController extends Controller
         $recording->delete();
 
         flashMessage('Success', 'Berhasil menghapus rekaman.');
+
+        return back();
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:recordings,id'
+        ]);
+
+        $recordings = Recording::whereIn('id', $request->ids)->get();
+
+        foreach ($recordings as $recording) {
+            if ($recording->file_path && Storage::disk('public')->exists($recording->file_path)) {
+                Storage::disk('public')->delete($recording->file_path);
+            }
+            $recording->delete();
+        }
+
+        flashMessage('Success', 'Berhasil menghapus rekaman terpilih.');
 
         return back();
     }

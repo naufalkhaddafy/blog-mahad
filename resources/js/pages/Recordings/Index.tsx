@@ -55,6 +55,40 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
     const [duration, setDuration] = useState<number>(0);
     const audioRef = useRef<HTMLAudioElement>(null);
     const [showUpload, setShowUpload] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null);
+
+    const handleBulkDelete = () => {
+        if (selectedIds.length === 0) return;
+        setShowBulkDeleteConfirm(true);
+    };
+
+    const executeBulkDelete = () => {
+        router.delete(route('recordings.bulk-destroy'), {
+            data: { ids: selectedIds },
+            onSuccess: () => {
+                setSelectedIds([]);
+                setShowBulkDeleteConfirm(false);
+            }
+        });
+    };
+
+    const toggleSelectAll = (checked: boolean) => {
+        if (checked) {
+            setSelectedIds(items.map((item: any) => item.id));
+        } else {
+            setSelectedIds([]);
+        }
+    };
+
+    const toggleSelect = (id: number, checked: boolean) => {
+        if (checked) {
+            setSelectedIds(prev => [...prev, id]);
+        } else {
+            setSelectedIds(prev => prev.filter(itemId => itemId !== id));
+        }
+    };
 
     const formatTime = (totalSeconds: number) => {
         const h = Math.floor(totalSeconds / 3600);
@@ -75,6 +109,7 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
     const [filterSearch, setFilterSearch] = useState(filters?.search || '');
     const [filterPublished, setFilterPublished] = useState(filters?.is_published || '');
     const [filterDate, setFilterDate] = useState(filters?.date || '');
+    const [filterPerPage, setFilterPerPage] = useState(filters?.per_page?.toString() || '10');
 
     const isFirstRender = useRef(true);
 
@@ -89,16 +124,18 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                 search: filterSearch,
                 is_published: filterPublished,
                 date: filterDate,
+                per_page: filterPerPage,
             }, { preserveState: true, preserveScroll: true, replace: true });
         }, 300);
 
         return () => clearTimeout(timeout);
-    }, [filterSearch, filterPublished, filterDate]);
+    }, [filterSearch, filterPublished, filterDate, filterPerPage]);
 
     const clearFilters = () => {
         setFilterSearch('');
         setFilterPublished('');
         setFilterDate('');
+        setFilterPerPage('10');
         router.get('/recordings');
     };
 
@@ -184,8 +221,14 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
     };
 
     const handleDelete = (id: number) => {
-        if (confirm('Apakah Anda yakin ingin menghapus rekaman ini? File audio juga akan terhapus secara permanen.')) {
-            router.delete(route('recordings.destroy', id));
+        setShowDeleteConfirm(id);
+    };
+
+    const executeDelete = () => {
+        if (showDeleteConfirm !== null) {
+            router.delete(route('recordings.destroy', showDeleteConfirm), {
+                onSuccess: () => setShowDeleteConfirm(null)
+            });
         }
     };
 
@@ -324,12 +367,12 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                         <div className="mb-6 rounded-xl border p-4 shadow bg-blue-50/50">
                             <h3 className="font-bold text-lg mb-2">Potong Audio: <span className="text-blue-600">{selectTrim.title}</span></h3>
                             <p className="text-sm text-gray-600 mb-4">Pilih bagian audio yang ingin dipertahankan. File asli akan langsung tertimpa (replaced).</p>
-                            
+
                             <div className="mb-4">
-                                <audio 
-                                    controls 
-                                    className="w-full" 
-                                    src={`/storage/${selectTrim.file_path}?v=${new Date(selectTrim.updated_at || '').getTime()}`} 
+                                <audio
+                                    controls
+                                    className="w-full"
+                                    src={`/storage/${selectTrim.file_path}?v=${new Date(selectTrim.updated_at || '').getTime()}`}
                                     ref={audioRef}
                                     onLoadedMetadata={(e) => {
                                         const d = (e.target as HTMLAudioElement).duration;
@@ -354,20 +397,20 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                             <span className="text-red-600 font-mono text-base">{trimForm.data.end_time}</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="relative w-full h-8 flex items-center">
                                         {/* Track Background */}
                                         <div className="absolute w-full h-3 bg-gray-200 rounded-full" />
-                                        
+
                                         {/* Highlighted Range */}
-                                        <div 
-                                            className="absolute h-3 bg-blue-200 rounded-full pointer-events-none" 
-                                            style={{ 
-                                                left: `${(parseTime(trimForm.data.start_time) / (duration || 1)) * 100}%`, 
-                                                right: `${100 - (parseTime(trimForm.data.end_time) / (duration || 1)) * 100}%` 
-                                            }} 
+                                        <div
+                                            className="absolute h-3 bg-blue-200 rounded-full pointer-events-none"
+                                            style={{
+                                                left: `${(parseTime(trimForm.data.start_time) / (duration || 1)) * 100}%`,
+                                                right: `${100 - (parseTime(trimForm.data.end_time) / (duration || 1)) * 100}%`
+                                            }}
                                         />
-                                        
+
                                         {/* Start Slider */}
                                         <input
                                             type="range"
@@ -384,7 +427,7 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                                 if (audioRef.current) audioRef.current.currentTime = safeVal;
                                             }}
                                         />
-                                        
+
                                         {/* End Slider */}
                                         <input
                                             type="range"
@@ -433,8 +476,23 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                             value={filterDate}
                             onChange={(e) => setFilterDate(e.target.value)}
                         />
-                        {(filterSearch !== '' || filterPublished !== '' || filterDate !== '') && (
+                        <select
+                            className="flex h-10 max-w-[100px] rounded-md border border-input bg-white px-3 py-2 text-sm"
+                            value={filterPerPage}
+                            onChange={(e) => setFilterPerPage(e.target.value)}
+                        >
+                            <option value="10">10 </option>
+                            <option value="25">25 </option>
+                            <option value="50">50 </option>
+                            <option value="100">100 </option>
+                        </select>
+                        {(filterSearch !== '' || filterPublished !== '' || filterDate !== '' || filterPerPage !== '10') && (
                             <Button variant="destructive" onClick={clearFilters}>Reset Filter</Button>
+                        )}
+                        {selectedIds.length > 0 && (
+                            <Button variant="destructive" onClick={handleBulkDelete}>
+                                Hapus {selectedIds.length} Terpilih
+                            </Button>
                         )}
                     </div>
 
@@ -442,7 +500,15 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[50px]"></TableHead>
+                                    <TableHead className="w-[40px] text-center">
+                                        <input
+                                            type="checkbox"
+                                            className="cursor-pointer rounded border-gray-300 text-red-600 focus:ring-red-500"
+                                            checked={items.length > 0 && selectedIds.length === items.length}
+                                            onChange={(e) => toggleSelectAll(e.target.checked)}
+                                        />
+                                    </TableHead>
+                                    <TableHead className="w-[40px]"></TableHead>
                                     <TableHead>Informasi Rekaman</TableHead>
                                     <TableHead>Audio Player</TableHead>
                                     <TableHead className="text-center">Published</TableHead>
@@ -452,13 +518,21 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                             <TableBody>
                                 {items.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="text-center text-gray-500 h-32">
+                                        <TableCell colSpan={6} className="text-center text-gray-500 h-32">
                                             Belum ada rekaman yang tersedia. Rekaman akan otomatis muncul ketika ada radio yang selesai siaran (Live).
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     items.map((item: any, index: number) => (
                                         <TableRow key={index}>
+                                            <TableCell className="text-center">
+                                                <input
+                                                    type="checkbox"
+                                                    className="cursor-pointer rounded border-gray-300 text-red-600 focus:ring-red-500"
+                                                    checked={selectedIds.includes(item.id)}
+                                                    onChange={(e) => toggleSelect(item.id, e.target.checked)}
+                                                />
+                                            </TableCell>
                                             <TableCell className="text-center">
                                                 <Disc size={20} className={item.status === 'recording' ? 'animate-spin text-red-500 mx-auto' : 'text-gray-400 mx-auto'} />
                                             </TableCell>
@@ -552,7 +626,8 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                         const label = link.label
                                             .replace('&laquo;', '«')
                                             .replace('&raquo;', '»')
-                                            .replace('Previous', 'Prev');
+                                            .replace('Previous', 'Previous')
+                                            .replace('Next', 'Next');
 
                                         return (
                                             <Button
@@ -579,7 +654,7 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                     <DialogHeader>
                         <DialogTitle>Konfirmasi Potong Audio</DialogTitle>
                         <DialogDescription>
-                            Apakah Anda yakin ingin memotong rekaman ini dari <strong className="text-black">{trimForm.data.start_time}</strong> hingga <strong className="text-black">{trimForm.data.end_time}</strong>? 
+                            Apakah Anda yakin ingin memotong rekaman ini dari <strong className="text-black">{trimForm.data.start_time}</strong> hingga <strong className="text-black">{trimForm.data.end_time}</strong>?
                             <br /><br />
                             <span className="text-red-600 font-semibold">Perhatian:</span> File mentah rekaman ini akan langsung tertimpa (terhapus dan diganti dengan versi yang dipotong) untuk menghemat penyimpanan. Tindakan ini tidak dapat dibatalkan.
                         </DialogDescription>
@@ -588,6 +663,44 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                         <Button variant="outline" onClick={() => setShowTrimConfirm(false)}>Batal</Button>
                         <Button variant="destructive" onClick={executeTrim} disabled={trimForm.processing}>
                             {trimForm.processing ? 'Memotong...' : 'Ya, Potong & Timpa'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showBulkDeleteConfirm} onOpenChange={setShowBulkDeleteConfirm}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Konfirmasi Hapus Massal</DialogTitle>
+                        <DialogDescription>
+                            Apakah Anda yakin ingin menghapus {selectedIds.length} rekaman terpilih?
+                            <br /><br />
+                            <span className="text-red-600 font-semibold">Perhatian:</span> File audio dari rekaman-rekaman tersebut juga akan terhapus secara permanen dari server. Tindakan ini tidak dapat dibatalkan.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-4 gap-2 sm:gap-0">
+                        <Button variant="outline" onClick={() => setShowBulkDeleteConfirm(false)}>Batal</Button>
+                        <Button variant="destructive" onClick={executeBulkDelete}>
+                            Ya, Hapus {selectedIds.length} Rekaman
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showDeleteConfirm !== null} onOpenChange={(open) => !open && setShowDeleteConfirm(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Konfirmasi Hapus</DialogTitle>
+                        <DialogDescription>
+                            Apakah Anda yakin ingin menghapus rekaman ini?
+                            <br /><br />
+                            <span className="text-red-600 font-semibold">Perhatian:</span> File audio juga akan terhapus secara permanen dari server. Tindakan ini tidak dapat dibatalkan.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-4 gap-2 sm:gap-0">
+                        <Button variant="outline" onClick={() => setShowDeleteConfirm(null)}>Batal</Button>
+                        <Button variant="destructive" onClick={executeDelete}>
+                            Ya, Hapus
                         </Button>
                     </DialogFooter>
                 </DialogContent>

@@ -55,6 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('channels', ChannelController::class)->except('create', 'show', 'edit');
     Route::post('/channels/change-status', [ChannelController::class, 'status'])->name('channel.change.status');
     Route::get('radio/live-stream', [ChannelController::class, 'liveStream'])->name('radio.live-stream');
+    Route::delete('/recordings/bulk-delete', [RecordingController::class, 'bulkDestroy'])->name('recordings.bulk-destroy');
     Route::resource('recordings', RecordingController::class)->except('create', 'show', 'edit');
     Route::post('/recordings/{recording}/trim', [RecordingController::class, 'trim'])->name('recordings.trim');
 
