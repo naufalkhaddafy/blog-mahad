@@ -58,6 +58,7 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null);
+    const [showStopConfirm, setShowStopConfirm] = useState<number | null>(null);
 
     const handleBulkDelete = () => {
         if (selectedIds.length === 0) return;
@@ -228,6 +229,18 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
         if (showDeleteConfirm !== null) {
             router.delete(route('recordings.destroy', showDeleteConfirm), {
                 onSuccess: () => setShowDeleteConfirm(null)
+            });
+        }
+    };
+
+    const handleStop = (id: number) => {
+        setShowStopConfirm(id);
+    };
+
+    const executeStop = () => {
+        if (showStopConfirm !== null) {
+            router.post(route('recordings.stop', showStopConfirm), {}, {
+                onSuccess: () => setShowStopConfirm(null)
             });
         }
     };
@@ -600,6 +613,11 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                                                                 Potong Audio
                                                             </DropdownMenuItem>
                                                         )}
+                                                        {item.status === 'recording' && (
+                                                            <DropdownMenuItem onClick={() => handleStop(item.id)} className="text-orange-600">
+                                                                Hentikan Rekaman
+                                                            </DropdownMenuItem>
+                                                        )}
                                                         <DropdownMenuItem onClick={() => handleDelete(item.id)} className="text-red-600">
                                                             Hapus
                                                         </DropdownMenuItem>
@@ -701,6 +719,25 @@ const Index = ({ recordings, channels = [], filters = {} }: { recordings: any; c
                         <Button variant="outline" onClick={() => setShowDeleteConfirm(null)}>Batal</Button>
                         <Button variant="destructive" onClick={executeDelete}>
                             Ya, Hapus
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showStopConfirm !== null} onOpenChange={(open) => !open && setShowStopConfirm(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Konfirmasi Hentikan Rekaman</DialogTitle>
+                        <DialogDescription>
+                            Apakah Anda yakin ingin menghentikan rekaman ini?
+                            <br /><br />
+                            Tindakan ini akan menghentikan proses rekaman secara manual dan menyimpan file audio yang berhasil direkam sejauh ini.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="mt-4 gap-2 sm:gap-0">
+                        <Button variant="outline" onClick={() => setShowStopConfirm(null)}>Batal</Button>
+                        <Button variant="destructive" className="bg-orange-600 hover:bg-orange-700 text-white" onClick={executeStop}>
+                            Ya, Hentikan
                         </Button>
                     </DialogFooter>
                 </DialogContent>

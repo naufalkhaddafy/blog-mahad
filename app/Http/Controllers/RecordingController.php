@@ -215,4 +215,33 @@ class RecordingController extends Controller
 
         return back();
     }
+
+    public function stop(Recording $recording)
+    {
+        if ($recording->status !== 'recording') {
+            return back()->withErrors(['message' => 'Rekaman ini tidak sedang berjalan.']);
+        }
+
+        if ($recording->ffmpeg_pid) {
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                exec("taskkill /F /PID " . escapeshellarg($recording->ffmpeg_pid) . " >NUL 2>&1");
+            } else {
+                exec("kill -15 " . escapeshellarg($recording->ffmpeg_pid) . " >/dev/null 2>&1");
+            }
+        }
+        
+        $absolutePath = storage_path('app/public/' . $recording->file_path);
+        $size = file_exists($absolutePath) ? filesize($absolutePath) : 0;
+
+        $recording->update([
+            'status' => 'completed',
+            'file_size' => $size,
+        ]);
+
+        \Illuminate\Support\Facades\Log::info("Manually stopped recording {$recording->id}. File size: {$size} bytes");
+
+        flashMessage('Success', 'Berhasil menghentikan rekaman secara manual.');
+
+        return back();
+    }
 }

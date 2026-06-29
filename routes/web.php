@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/recordings/bulk-delete', [RecordingController::class, 'bulkDestroy'])->name('recordings.bulk-destroy');
     Route::resource('recordings', RecordingController::class)->except('create', 'show', 'edit');
     Route::post('/recordings/{recording}/trim', [RecordingController::class, 'trim'])->name('recordings.trim');
+    Route::post('/recordings/{recording}/stop', [RecordingController::class, 'stop'])->name('recordings.stop');
 
     // Backup & Restore (super-admin only)
     Route::middleware('role:super-admin')->group(function () {
